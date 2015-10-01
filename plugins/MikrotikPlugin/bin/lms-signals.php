@@ -171,7 +171,7 @@ foreach ($rs AS $id => $radiosector) {
 			$dev['rx-rate']=preg_replace('/Mbps.*/','',$dev['rx-rate']);
 			$dev['tx-rate']=preg_replace('/Mbps.*/','',$dev['tx-rate']);
 			$bytes=preg_split('/,/',$dev['bytes']);
-			$args=array(strftime('%Y-%m-%d %H:%M:%S'),$nodeid,$netdev['id'],$channel,$dev['routeros-version'],$dev['signal-strength'],$dev['tx-signal-strength'],$dev['rx-rate'],$dev['tx-rate'],$dev['tx-ccq'],$dev['rx-ccq'],$bytes[0],$bytes[1]);
+			$args=array(strftime('%Y-%m-%d %H:%M:%S'),$nodeid,$netdev['id'],$channel,$dev['routeros-version'],$dev['signal-strength'],$dev['tx-signal-strength'],$dev['rx-rate'],$dev['tx-rate'],$dev['rx-ccq'],$dev['tx-ccq'],$bytes[0],$bytes[1]);
 
 			#date nodeid netdev channel software rxsignal txsignal rxrate txrate rxccq txccq rxbytes txbytes
 			$DB->Execute("INSERT INTO signals VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",$args);
