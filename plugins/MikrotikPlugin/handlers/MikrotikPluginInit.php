@@ -67,6 +67,6 @@ class MikrotikPluginInit
 	public function accessTableInit() {
 		$access = AccessRights::getInstance();
 		$permission=$access->getPermission('node_management');
-		$permission->addRegExp('^(nodesignals)$',1);
+		$permission->addRegExp('^(nodesignals)$',Permission::REGEXP_ALLOW);
 	}
 }
