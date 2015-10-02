@@ -16,10 +16,17 @@ class Mikrotik {
 		self::$password=ConfigHelper::getConfig('mikrotik.password');
 		self::$ip=$mtip;
 		self::$mt = new RouterosAPI();
+		self::$mt->attempts=1;
+		self::$mt->timeout=1;
 		self::$mt->debug=false;
+		self::$mt->connect(self::$ip,self::$login,self::$password);
 	}	
 	public function __destruct() {
 		self::$mt->disconnect();
+	}
+	public function is_connected() { 
+		self::$mt->connect(self::$ip,self::$login,self::$password);
+		return(self::$mt->connected); 
 	}
 	function GetChannel($interface) {
 		if ($interface=='all') $interface='wlan1';
@@ -50,7 +57,6 @@ class Mikrotik {
 		$array=self::$mt->comm("/interface/wireless/registration-table/print",$arg);
 		return($array);	
 	}
-
 	public function get_connected() {
 		self::$mt->connect(self::$ip,self::$login,self::$password);
 		if (self::$mt->connected) 
@@ -74,8 +80,12 @@ class Mikrotik {
 	}
 	public function wireless() {
 		self::$mt->connect(self::$ip,self::$login,self::$password);
-		$wireless=self::$mt->comm("/interface/wireless/print");
-		return(isset($wireless[0]['name']));
+		if (self::$mt->connected) {
+			$wireless=self::$mt->comm("/interface/wireless/print");
+			return(isset($wireless[0]['name']));
+		} else {
+			return(-1);
+		}
 	}
 }
 

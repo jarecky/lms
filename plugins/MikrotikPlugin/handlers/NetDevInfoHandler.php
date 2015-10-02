@@ -39,17 +39,17 @@ class NetDevInfoHandler {
 		global $LMS;
 
 		$SMARTY=$hook_data['smarty'];
-		#echo '<PRE>';var_dump($SMARTY);echo '</PRE>';
 		$netdevinfo=$SMARTY->getTemplateVars('netdevinfo');
 		$netdevips=$SMARTY->getTemplateVars('netdevips');
-		if ($netdevinfo['producer']!='Mikrotik') {
+		if (!preg_match('/mikrotik/i',$netdevinfo['producer'])) {
 			return($hook_data);
+		} else {
+			$mtip=$netdevips[0]['ip'];
+			if ($mtip=='') return($hook_data);
+			$mt=new Mikrotik($mtip);
+			if (!$mt->is_connected())
+				return($hook_data);
 		}
-		
-		$mtip=$netdevips[0]['ip'];
-		if ($mtip=='') return($hook_data);
-		$mt=new Mikrotik($mtip);
-
 		if (preg_match('/-cl/i',$netdevinfo['name'])) {
 			return $hook_data;
 		} elseif ($mt->wireless()) {
