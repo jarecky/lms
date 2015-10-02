@@ -10,13 +10,13 @@ class Mikrotik {
 	
 
 
-	public function __construct($mtip) {
+	public function __construct($mtip,$attempts=5) {
 		require_once('routeros_api.class.php');
 		self::$login=ConfigHelper::getConfig('mikrotik.user');
 		self::$password=ConfigHelper::getConfig('mikrotik.password');
 		self::$ip=$mtip;
 		self::$mt = new RouterosAPI();
-		self::$mt->attempts=1;
+		self::$mt->attempts=$attempts;
 		self::$mt->timeout=1;
 		self::$mt->debug=false;
 		self::$mt->connect(self::$ip,self::$login,self::$password);

@@ -46,7 +46,7 @@ class NetDevInfoHandler {
 		} else {
 			$mtip=$netdevips[0]['ip'];
 			if ($mtip=='') return($hook_data);
-			$mt=new Mikrotik($mtip);
+			$mt=new Mikrotik($mtip,1);
 			if (!$mt->is_connected())
 				return($hook_data);
 		}
@@ -65,7 +65,7 @@ class NetDevInfoHandler {
 	}
 	private function readMikrotikPOE($mtip,$hook_data) {
 		global $LMS;
-		$mt=new Mikrotik($mtip);
+		$mt=new Mikrotik($mtip,3);
 		if (is_array($hook_data['netdevconnected'])) foreach ($hook_data['netdevconnected'] AS $id => $netdev) {
 			$ether=$mt->get_ether_stats($netdev['srcport']);
 			$hook_data['netdevconnected'][$id]['mt']['speed']=$ether[0]['speed'];
@@ -96,7 +96,7 @@ class NetDevInfoHandler {
 	}
 	private function readMikrotikWireless($mtip,$hook_data) {
 		global $LMS,$DB;
-		$mt=new Mikrotik($mtip);
+		$mt=new Mikrotik($mtip,3);
 		if (is_array($hook_data['netdevconnected'])) foreach ($hook_data['netdevconnected'] AS $id => $netdev) {
 			if ($netdev['linktype']==0) {
 				$ether=$mt->get_ether_stats($netdev['srcport']);

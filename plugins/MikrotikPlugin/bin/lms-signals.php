@@ -163,7 +163,7 @@ foreach ($rs AS $id => $radiosector) {
 			$interface='all';
 			
 		if ($debug) echo "Urządzenie ".$netdev['name']."($ip): $interface\n";
-		$mt=new Mikrotik($ip);
+		$mt=new Mikrotik($ip,5);
 		$channel=$mt->GetChannel($interface);
 		$connected=$mt->GetRadiosectorConnected($interface);
 		foreach ($connected AS $id => $dev) {
