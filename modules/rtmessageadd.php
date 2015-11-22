@@ -73,7 +73,7 @@ if(isset($_POST['message']))
 	if($message['body'] == '')
 		$error['body'] = trans('Message body not specified!');
 
-	if($message['destination']!='' && !check_emails($message['destination']))
+	if($message['destination']!='' && !check_email($message['destination']))
 		$error['destination'] = trans('Incorrect email!');
 
 	if($message['destination']!='' && $message['sender']=='customer')
@@ -284,18 +284,18 @@ if(isset($_POST['message']))
 				{
 					$info = $DB->GetRow('SELECT id, pin, '.$DB->Concat('UPPER(lastname)',"' '",'name').' AS customername,
 							address, zip, city FROM customers WHERE id = ?', array($cid));
-					$info['contacts'] = $DB->GetAll('SELECT contact, name FROM customercontacts
+					$info['contacts'] = $DB->GetAll('SELECT contact, name, type FROM customercontacts
 						WHERE customerid = ?', array($cid));
 
 					$emails = array();
 					$phones = array();
 					if (!empty($info['contacts']))
 						foreach ($info['contacts'] as $contact) {
-							$contact = $contact['contact'] . (strlen($contact['name']) ? ' (' . $contact['name'] . ')' : '');
-							if ($contact['type'] == CONTACT_EMAIL)
-								$emails[] = $contact;
+							$target = $contact['contact'] . (strlen($contact['name']) ? ' (' . $contact['name'] . ')' : '');
+							if ($contact['type'] & CONTACT_EMAIL )
+								$emails[] = $target;
 							else
-								$phones[] = $contact;
+								$phones[] = $target;
 						}
 
 					$body .= "\n\n-- \n";

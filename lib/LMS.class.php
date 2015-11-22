@@ -455,10 +455,10 @@ class LMS
         return $manager->GetCustomerNodesAC($id);
     }
 
-    public function GetCustomerList($order = 'customername,asc', $state = null, $network = null, $customergroup = null, $search = null, $time = null, $sqlskey = 'AND', $nodegroup = null, $division = null)
+    public function GetCustomerList($order = 'customername,asc', $state = null, $network = null, $customergroup = null, $search = null, $time = null, $sqlskey = 'AND', $nodegroup = null, $division = null, $limit = null, $offset = null, $count = false)
     {
         $manager = $this->getCustomerManager();
-        return $manager->getCustomerList($order, $state, $network, $customergroup, $search, $time, $sqlskey, $nodegroup, $division);
+        return $manager->getCustomerList($order, $state, $network, $customergroup, $search, $time, $sqlskey, $nodegroup, $division, $limit, $offset, $count);
     }
 
     public function GetCustomerNodes($id, $count = null)
@@ -1656,6 +1656,9 @@ class LMS
 
         $message = preg_replace("/\r/", "", $message);
 
+		if (ConfigHelper::checkConfig('sms.transliterate_message'))
+			$message = iconv('UTF-8', 'ASCII//TRANSLIT', $message);
+
         $max_length = ConfigHelper::getConfig('sms.max_length');
         if (!empty($max_length) && intval($max_length) > 6 && $msg_len > intval($max_length))
             $message = mb_substr($message, 0, $max_length - 6) . ' [...]';
@@ -1820,7 +1823,7 @@ class LMS
                 }
 
                 $filename = $dir . DIRECTORY_SEPARATOR . 'lms-' . $messageid . '-' . $number;
-                $latin1 = iconv('UTF-8', 'ISO-8859-15', $message);
+                $latin1 = iconv('UTF-8', 'ASCII', $message);
                 $alphabet = '';
                 if (strlen($latin1) != mb_strlen($message, 'UTF-8')) {
                     $alphabet = "Alphabet: UCS2\n";
@@ -2114,8 +2117,9 @@ class LMS
     public function GetNodeSessions($nodeid)
     {
         $nodesessions = $this->DB->GetAll('SELECT INET_NTOA(ipaddr) AS ipaddr, mac, start, stop,
-		download, upload, terminatecause
-		FROM nodesessions WHERE nodeid = ? ORDER BY stop DESC LIMIT 10', array($nodeid));
+		download, upload, terminatecause, type
+		FROM nodesessions WHERE nodeid = ? ORDER BY stop DESC LIMIT ?',
+			array($nodeid, ConfigHelper::getConfig('phpui.nodesession_limit', 10)));
         if (!empty($nodesessions))
             foreach ($nodesessions as $idx => $session) {
                 list ($number, $unit) = setunits($session['download']);

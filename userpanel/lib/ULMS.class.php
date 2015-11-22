@@ -44,9 +44,11 @@ class ULMS extends LMS {
 			$result['bankaccount'] = bankaccount($result['id']); 
 			$result['messengers'] = $this->DB->GetAllByKey('SELECT uid, type FROM imessengers WHERE customerid = ? ORDER BY type', 'type', array($id));
 			$result['contacts'] = $this->DB->GetAllByKey('SELECT id, contact AS phone, name
-				FROM customercontacts WHERE customerid = ? AND type < ? ORDER BY id', 'id', array($id, CONTACT_EMAIL));
+				FROM customercontacts WHERE customerid = ? AND type < ? ORDER BY id', 'id', 
+                                    array($id, CONTACT_MOBILE));
 			$result['emails'] = $this->DB->GetAllByKey('SELECT id, contact AS email, name
-				FROM customercontacts WHERE customerid = ? AND type = ? ORDER BY id', 'id', array($id, CONTACT_EMAIL));
+				FROM customercontacts WHERE customerid = ? AND (type & ? > 0) ORDER BY id', 'id', 
+                                    array($id, (CONTACT_EMAIL|CONTACT_INVOICES|CONTACT_NOTIFICATIONS)));
 
 			return $result;
 		} else
@@ -91,6 +93,11 @@ class ULMS extends LMS {
 				LEFT JOIN customers ON (customers.id = customerid)
 				LEFT JOIN users ON (users.id = userid)
 				WHERE ticketid = ? ORDER BY createtime ASC', array($id));
+
+		foreach ($ticket['messages'] as &$message)
+			$message['attachments'] = $this->DB->GetAll('SELECT filename, contenttype FROM rtattachments WHERE messageid = ?',
+				array($message['id']));
+
 		$ticket['queuename'] = $this->DB->GetOne('SELECT name FROM rtqueues WHERE id = ?', array($ticket['queueid']));
 
 		list($ticket['requestoremail']) = sscanf($ticket['requestor'], "<%[^>]");

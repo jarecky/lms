@@ -151,6 +151,7 @@ $LMS->lang = $_language;
 
 $plugin_manager = new LMSPluginManager();
 $LMS->setPluginManager($plugin_manager);
+$SMARTY->setPluginManager($plugin_manager);
 
 // Initialize Swekey class
 
@@ -267,7 +268,7 @@ if ($AUTH->islogged) {
 		if ($SYSLOG)
 			$SYSLOG->NewTransaction($module);
 
-		if ($allow) {
+		if ($global_allow || $allow) {
 			$layout['module'] = $module;
 			$LMS->InitUI();
 			$LMS->executeHook($module.'_on_load');

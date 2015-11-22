@@ -61,11 +61,11 @@ if ($id && !isset($_POST['ticket'])) {
 					$info = $DB->GetRow('SELECT id, pin, '.$DB->Concat('UPPER(lastname)',"' '",'name').' AS customername,
 							address, zip, city,
 								(SELECT ' . $DB->GroupConcat('contact', ',', true) . ' FROM customercontacts 
-								WHERE customerid = customers.id AND type = ?) AS emails,
+								WHERE customerid = customers.id AND (type & ? = ?)) AS emails,
 								(SELECT ' . $DB->GroupConcat('contact', ',', true) . ' FROM customercontacts 
-								WHERE customerid = customers.id AND type < ?) AS phones
+								WHERE customerid = customers.id AND (type & ? > 0)) AS phones
 							FROM customers
-							WHERE id = ?', array(CONTACT_EMAIL, CONTACT_EMAIL, $ticket['customerid']));
+							WHERE id = ?', array(CONTACT_EMAIL, CONTACT_EMAIL, (CONTACT_MOBILE|CONTACT_FAX|CONTACT_LANDLINE), $ticket['customerid']));
 					$custmail_subject = $queue['resolveticketsubject'];
 					$custmail_subject = str_replace('%tid', $id, $custmail_subject);
 					$custmail_subject = str_replace('%title', $ticket['subject'], $custmail_subject);
@@ -218,16 +218,16 @@ if(isset($_POST['ticket']))
 			if (ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.helpdesk_customerinfo', false)) && $ticketedit['customerid'])
 			{
 				$info = $DB->GetRow('SELECT id, pin, '.$DB->Concat('UPPER(lastname)',"' '",'name').' AS customername,
-							address, zip, city FROM customers WHERE id = ?', array($cid));
-				$info['contacts'] = $DB->GetAll('SELECT contact, name FROM customercontacts
-					WHERE customerid = ?', array($cid));
+							address, zip, city FROM customers WHERE id = ?', array($ticketedit['customerid']));
+				$info['contacts'] = $DB->GetAll('SELECT contact, name, type FROM customercontacts
+					WHERE customerid = ?', array($ticketedit['customerid']));
 
 				$emails = array();
 				$phones = array();
 				if (!empty($info['contacts']))
 					foreach ($info['contacts'] as $contact) {
 						$contact = $contact['contact'] . (strlen($contact['name']) ? ' (' . $contact['name'] . ')' : '');
-						if ($contact['type'] == CONTACT_EMAIL)
+						if ($contact['type'] & CONTACT_EMAIL)
 							$emails[] = $contact;
 						else
 							$phones[] = $contact;

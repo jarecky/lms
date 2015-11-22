@@ -144,18 +144,18 @@ if(isset($_POST['ticket']))
 							address, zip, city FROM customers
 							WHERE id = ?', array($ticket['customerid']));
 
-					$info['contacts'] = $DB->GetAll('SELECT contact, name FROM customercontacts
+					$info['contacts'] = $DB->GetAll('SELECT contact, name, type FROM customercontacts
 						WHERE customerid = ?', array($ticket['customerid']));
 
 					$emails = array();
 					$phones = array();
 					if (!empty($info['contacts']))
 						foreach ($info['contacts'] as $contact) {
-							$contact = $contact['contact'] . (strlen($contact['name']) ? ' (' . $contact['name'] . ')' : '');
-							if ($contact['type'] == CONTACT_EMAIL)
-								$emails[] = $contact;
+							$target = $contact['contact'] . (strlen($contact['name']) ? ' (' . $contact['name'] . ')' : '');
+							if ($contact['type'] & CONTACT_EMAIL)
+								$emails[] = $target;
 							else
-								$phones[] = $contact;
+								$phones[] = $target;
 						}
 
 					$body .= "\n\n-- \n";

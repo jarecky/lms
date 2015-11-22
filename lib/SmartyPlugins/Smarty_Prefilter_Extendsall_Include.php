@@ -34,7 +34,7 @@ class Smarty_Prefilter_Extendsall_Include {
 		if (is_array($template->smarty->template_dir) === false)
 			return $tpl_source;
 		// prepend all files in {include} blocks with resource type 'extendsall:'
-		return preg_replace('#(\{include\s*file=[\'"])(?:(?![a-z]+:|/))(.+)([\'"][^}]*\})#i', '$1extendsall:$2$3', $tpl_source);
+		return preg_replace('#(\{include\s*file=[\'"])(?:(?![a-z]+:|/|\{))(.+)([\'"][^}]*\})#i', '$1extendsall:$2$3', $tpl_source);
 	}
 }
 

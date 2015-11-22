@@ -130,9 +130,6 @@ if (isset($_POST['customeradd']))
         elseif(!preg_match('/^[0-9]{4,6}$/', $customeradd['pin']))
 	        $error['pin'] = trans('Incorrect PIN code!');
 
-	if($customeradd['email']!='' && !check_emails($customeradd['email']))
-		$error['email'] = trans('Incorrect email!');
-
 	foreach($customeradd['uid'] as $idx => $val)
 	{
 		$val = trim($val);
@@ -157,22 +154,37 @@ if (isset($_POST['customeradd']))
 
 	$contacts = array();
 
+       $emaileinvoice = FALSE;
 	foreach ($customeradd['emails'] as $idx => $val) {
 		$email = trim($val['email']);
 		$name = trim($val['name']);
+                $type = !empty($val['type']) ? array_sum($val['type']) : NULL;
+                $type += CONTACT_EMAIL;
 
-		if ($email != '' && !check_emails($email))
+                if($type & (CONTACT_INVOICES | CONTACT_DISABLED))
+                        $emaileinvoice = TRUE;
+
+                $customeradd['emails'][$idx]['type'] = $type;
+
+		if ($email != '' && !check_email($email))
 			$error['email' . $idx] = trans('Incorrect email!');
 		elseif ($name && !$email)
 			$error['email' . $idx] = trans('Email address is required!');
-		else
-			$contacts[] = array('name' => $name, 'contact' => $email, 'type' => CONTACT_EMAIL);
+		elseif ($email != '')
+			$contacts[] = array('name' => $name, 'contact' => $email, 'type' => $type);
 	}
+
+        if(isset($customeradd['invoicenotice']) && !$emaileinvoice)
+                $error['invoicenotice'] = trans('If the customer wants to receive an electronic invoice must be checked e-mail address to which to send e-invoices');
 
 	foreach ($customeradd['contacts'] as $idx => $val) {
 		$phone = trim($val['phone']);
 		$name = trim($val['name']);
 		$type = !empty($val['type']) ? array_sum($val['type']) : NULL;
+
+                if($type == CONTACT_DISABLED){
+                    $type += CONTACT_LANDLINE;
+                }
 
 		$customeradd['contacts'][$idx]['type'] = $type;
 
