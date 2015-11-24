@@ -14,13 +14,13 @@
 			<TABLE class="lmsbox-inner">
                             <THEAD>
 				<TR>
-					{if {$type}}<TD style="width: 1%;">&nbsp;</TD>{/if}
+					{if $type}<TD style="width: 1%;">&nbsp;</TD>{/if}
 					<TD style="width: 96%;" class="nobr">
 						<img src="img/node.gif" ALT=""> <span class="bold">{trans("Name:")}</span><BR>
 						<img src="img/customer.gif" ALT=""> {trans("Owner:")}
 					</TD>
-					{if {$type == 'wired'}}{$span=11}
-					{elseif {$type == 'wireless'}}{$span=11}
+					{if $type == 'wired'}{$span=11}
+					{elseif $type == 'wireless'}{$span=11}
 					<TD style="width: 10%;" class="nobr">{trans("Connection speed:")}</TD>
 					<TD style="width: 5%;" class="nobr">{trans("Connection signal:")}</TD>
 					<TD style="width: 5%;" class="nobr">{trans("Link Quality:")}</TD>
@@ -47,27 +47,27 @@
                             <TBODY>
 				{cycle values="light,lucid" print=false}
 				{section name=netcomplist loop=$netcomplist start=$start}
-				<TR class="highlight {cycle}{if {$netcomplist[netcomplist].mt.status==3}} blend{/if}">
-					{if {$type}}<TD class="valign-top nobr"><IMG src="plugins/MikrotikPlugin/img/bullet_{if {$netcomplist[netcomplist].mt}}{if {$netcomplist[netcomplist].mt.status==0}}red{elseif {$netcomplist[netcomplist].mt.status==1}}yellow{elseif {$netcomplist[netcomplist].mt.status==2}}green{elseif {$netcomplist[netcomplist].mt.status==3}}blue{else}grey{/if}{else}grey{/if}.png"></TD>{/if}
+				<TR class="highlight {cycle}{if $netcomplist[netcomplist].mt.status==3} blend{/if}">
+					{if $type}<TD class="valign-top nobr"><IMG src="plugins/MikrotikPlugin/img/bullet_{if $netcomplist[netcomplist].mt}{if $netcomplist[netcomplist].mt.status==0}red{elseif $netcomplist[netcomplist].mt.status==1}yellow{elseif $netcomplist[netcomplist].mt.status==2}green{elseif $netcomplist[netcomplist].mt.status==3}blue{else}grey{/if}{else}grey{/if}.png"></TD>{/if}
 					<TD onClick="return self.location.href='?m=nodeinfo&id={$netcomplist[netcomplist].id}';">
 						<IMG SRC="img/node.gif" ALT=""> <span class="bold">{$netcomplist[netcomplist].name}</span><BR>
 						<IMG SRC="img/customer.gif" ALT=""> <A href="?m=customerinfo&id={$netcomplist[netcomplist].ownerid}" {tip a=$netcomplist[netcomplist].ownerid dynpopup='?m=customerinfoshort&id=$a'}>{$netcomplist[netcomplist].owner}</A>
 					</TD>
-					{if {$type == 'wired'}}
+					{if $type == 'wired'}
 
-					{elseif {$type == 'wireless'}}
-					{if {$netcomplist[netcomplist].mt.rx_rate}}
+					{elseif $type == 'wireless'}
+					{if $netcomplist[netcomplist].mt.rx_rate}
 					<TD class="valign-top text-middle nobr">
 						{$netcomplist[netcomplist].mt.rx_rate}<BR>
 						{$netcomplist[netcomplist].mt.tx_rate}
 					</TD>
 					<TD class="valign-top text-right nobr">
 						{$netcomplist[netcomplist].mt.rx_signal}dB
-						{if {$netcomplist[netcomplist].mt.tx_signal}}<BR>{$netcomplist[netcomplist].mt.tx_signal}dB{/if}
+						{if $netcomplist[netcomplist].mt.tx_signal}<BR>{$netcomplist[netcomplist].mt.tx_signal}dB{/if}
 					</TD>
 					<TD class="valign-top text-right nobr">
 						{$netcomplist[netcomplist].mt.rx_ccq}%
-						{if {$netcomplist[netcomplist].mt.tx_ccq}}<BR>{$netcomplist[netcomplist].mt.tx_ccq}%{/if}
+						{if $netcomplist[netcomplist].mt.tx_ccq}<BR>{$netcomplist[netcomplist].mt.tx_ccq}%{/if}
 					</TD>
 					<TD class="valign-middle text-center nobr">
 						{$netcomplist[netcomplist].mt.uptime}

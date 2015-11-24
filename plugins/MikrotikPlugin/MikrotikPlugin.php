@@ -35,6 +35,7 @@ class MikrotikPlugin extends LMSPlugin {
 	const PLUGIN_DESCRIPTION = 'Obsługa Mikrotika w LMS';
 	const PLUGIN_AUTHOR = 'Jarosław Dziubek &lt;jaroslaw.dziubek@perfect.net.pl&gt;';
 	const PLUGIN_DBVERSION = '2015092800';
+	const plugin_priority = '50';
 
 	const plugin_directory_name = 'MikrotikPlugin';
 

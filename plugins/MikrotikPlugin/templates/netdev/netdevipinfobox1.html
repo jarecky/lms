@@ -64,7 +64,7 @@
 		</TD>
 		<TD WIDTH="99%" COLSPAN="2">
 			<a href="javascript:ping_popup('{$nodeipdata.ip}')">{$nodeipdata.ip}</a>
-			{if {$netdevinfo.producer} == 'Mikrotik'} <a href="winbox:{$nodeipdata.ip}"><img src="plugins/MikrotikPlugin/img/winbox.png" alt=" winbox " width="15"></a>{/if}
+			{if $netdevinfo.producer=='Mikrotik'} <a href="winbox:{$nodeipdata.ip}"><img src="plugins/MikrotikPlugin/img/winbox.png" alt=" winbox " width="15"></a>{/if}
 		</TD>
 	</TR>
 	{if $nodeipdata.ip_pub != "0.0.0.0"}
