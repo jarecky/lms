@@ -3026,4 +3026,14 @@ $_LANG['Check if send notification'] = 'Zaznacz, jeżeli chcesz wysyłać powiad
 $_LANG['Notification'] = 'Powiadomienia';
 
 $_LANG['Use customer location:'] = 'Użyj lokalizacji klienta:';
+
+
+$_LANG['Objects list'] = 'Lista obiektów';
+$_LANG['Network objects list'] = 'Lista obiektów sieciowych';
+$_LANG['New object'] = 'Nowy obiekt';
+$_LANG['Add new network object'] = 'Dodaj nowy obiekt sieciowy';
+$_LANG['New object'] = 'Nowy obiekt';
+$_LANG['Network Object'] = 'Obiekty sieciowe';
+
+
 ?>
