@@ -210,7 +210,7 @@ $menu = array(
 			'prio' => 15,
 			'submenu' => array(
 				array(
-					'name' => trans('List'),
+					'name' => trans('Devices list'),
 					'link' => '?m=netdevlist',
 					'tip' => trans('Network devices list'),
 					'prio' => 10,
@@ -222,7 +222,7 @@ $menu = array(
 					'prio' => 20,
 				),
 				array(
-					'name' => trans('Search'),
+					'name' => trans('Devices search'),
 					'link' => '?m=netdevsearch',
 					'tip' => trans('Allows you to search device'),
 					'prio' => 30,
