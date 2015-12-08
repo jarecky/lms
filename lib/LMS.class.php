@@ -50,6 +50,7 @@ class LMS
     protected $node_manager;
     protected $node_group_manager;
     protected $net_dev_manager;
+    protected $net_obj_manager;
     protected $helpdesk_manager;
     protected $finance_manager;
     protected $event_manager;
@@ -1235,6 +1236,40 @@ class LMS
     }
 
     /*
+     *   Network Objects
+     */
+
+    public function NetObjUpdate($data)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->NetObjUpdate($data);
+    }
+    
+    public function NetObjAdd($data)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->NetObjAdd($data);
+    }
+
+    public function DeleteNetObj($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->DeleteNetObj($id);
+    }
+
+    public function GetNetObj($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->GetNetObj($id);
+    }
+
+    public function NetObjExists($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->NetObjExists($id);
+    }
+
+    /*
      *   Request Tracker (Helpdesk)
      */
 
@@ -2286,6 +2321,20 @@ class LMS
     }
 
     /**
+     * Returns net dev manager
+     *
+     * @return LMSNetObjManagerInterface Net dev manager
+     */
+    protected function getNetObjManager()
+    {
+        if (!isset($this->net_obj_manager)) {
+            $this->net_obj_manager = new LMSNetObjManager($this->DB, $this->AUTH, $this->cache, $this->SYSLOG);
+        }
+        return $this->net_obj_manager;
+    }
+    
+
+    /**
      * Returns helpdesk manager
      * 
      * @return LMSHelpdeskManagerInterface Helpdesk manager
@@ -2502,6 +2551,17 @@ class LMS
     {
         $this->net_dev_manager = $manager;
     }
+
+    /**
+     * Sets net obj manager
+     *
+     * @param LMSNetObjManagerInterface $manager Manager
+     */
+    public function setNetObjManager(LMSNetObjManagerInterface $manager)
+    {
+        $this->net_obj_manager = $manager;
+    }
+
 
     /**
      * Sets helpdesk manager
