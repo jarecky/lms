@@ -24,6 +24,7 @@ function setNNProject() {
 
  }
 
+
 function changeObjectType() {
   var type     = document.getElementById('type');
   var serial   = document.getElementById('serial');

@@ -119,12 +119,12 @@ if (isset($_POST['netobj'])) {
 			}
 		}
 
-		$netobjid = $LMS->NetObjAdd($netobjdata);
+		#$netobjid = $LMS->NetObjAdd($netobjdata);
 
-		$SESSION->redirect('?m=netobjinfo&id='.$netobjid);
+		#$SESSION->redirect('?m=netobjinfo&id='.$netobjid);
 	}
 
-
+	echo '<PRE>';print_r($netobjdata);echo '</PRE>';
 	$SMARTY->assign('error', $error);
 	$SMARTY->assign('netobj', $netobjdata);
 

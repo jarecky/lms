@@ -32,185 +32,6 @@
 class LMSNetObjManager extends LMSManager implements LMSNetObjManagerInterface
 {
 
-    public function GetNetObjLinkedNodes($id)
-    {
-        return $this->db->GetAll('SELECT n.id AS id, n.name AS name, linktype, rs.name AS radiosector,
-        		linktechnology, linkspeed,
-			ipaddr, inet_ntoa(ipaddr) AS ip, ipaddr_pub, inet_ntoa(ipaddr_pub) AS ip_pub, 
-			n.netdev, port, ownerid,
-			' . $this->db->Concat('c.lastname', "' '", 'c.name') . ' AS owner,
-			net.name AS netname
-			FROM nodes n
-			JOIN customersview c ON c.id = ownerid
-			JOIN networks net ON net.id = n.netid
-			LEFT JOIN netradiosectors rs ON rs.id = n.linkradiosector
-			WHERE n.netdev = ? AND ownerid > 0 
-			ORDER BY n.name ASC', array($id));
-    }
-
-    public function NetObjLinkNode($id, $devid, $link = NULL)
-    {
-        global $SYSLOG_RESOURCE_KEYS;
-
-	if (empty($link)) {
-		$type = 0;
-		$technology = 0;
-		$radiosector = NULL;
-		$speed = 100000;
-		$port = 0;
-	} else {
-		$type = isset($link['type']) ? intval($link['type']) : 0;
-		$radiosector = isset($link['radiosector']) ? intval($link['radiosector']) : NULL;
-		$technology = isset($link['technology']) ? intval($link['technology']) : 0;
-		$speed = isset($link['speed']) ? intval($link['speed']) : 100000;
-		$port = isset($link['port']) ? intval($link['port']) : 0;
-	}
-
-        $args = array(
-            $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $devid,
-            'linktype' => $type,
-            'linkradiosector' => $radiosector,
-            'linktechnology' => $technology,
-            'linkspeed' => $speed,
-            'port' => intval($port),
-            $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE] => $id,
-        );
-        $res = $this->db->Execute('UPDATE nodes SET netdev=?, linktype=?, linkradiosector=?,
-			linktechnology=?, linkspeed=?, port=?
-			WHERE id=?', array_values($args));
-        if ($this->syslog && $res) {
-            $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]] = $this->db->GetOne('SELECT ownerid FROM nodes WHERE id=?', array($id));
-            $this->syslog->AddMessage(SYSLOG_RES_NODE, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE],
-                $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
-                $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
-        }
-        return $res;
-    }
-
-    public function SetNetObjLinkType($dev1, $dev2, $link = NULL)
-    {
-	global $SYSLOG_RESOURCE_KEYS;
-
-	if (empty($link)) {
-		$type = 0;
-		$srcradiosector = null;
-		$dstradiosector = null;
-		$technology = 0;
-		$speed = 100000;
-	} else {
-		$type = isset($link['type']) ? $link['type'] : 0;
-		$srcradiosector = isset($link['srcradiosector']) ? (intval($link['srcradiosector']) ? intval($link['srcradiosector']) : null) : null;
-		$dstradiosector = isset($link['dstradiosector']) ? (intval($link['dstradiosector']) ? intval($link['dstradiosector']) : null) : null;
-		$technology = isset($link['technology']) ? $link['technology'] : 0;
-		$speed = isset($link['speed']) ? $link['speed'] : 100000;
-	}
-
-	$args = array(
-		'type' => $type,
-		'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $srcradiosector,
-		'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $dstradiosector,
-		'technology' => $technology,
-		'speed' => $speed,
-		'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev2,
-		'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev1,
-	);
-	$res = $this->db->Execute('UPDATE netlinks SET type=?, srcradiosector=?, dstradiosector=?, technology=?, speed=?
-		WHERE src=? AND dst=?', array_values($args));
-	if (!$res) {
-		$args = array(
-			'type' => $type,
-			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $srcradiosector,
-			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $dstradiosector,
-			'technology' => $technology,
-			'speed' => $speed,
-			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev1,
-			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev2,
-		);
-		$res = $this->db->Execute('UPDATE netlinks SET type=?, dstradiosector=?, srcradiosector=?, technology=?, speed=?
-			WHERE src=? AND dst=?', array_values($args));
-	}
-	if ($this->syslog && $res) {
-		$args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK]] =
-			$this->db->GetOne('SELECT id FROM netlinks WHERE (src=? AND dst=?) OR (dst=? AND src=?)', array($dev1, $dev2, $dev1, $dev2));
-		$this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK],
-			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
-			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
-			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR],
-			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR],
-		));
-	}
-	return $res;
-    }
-
-    public function IsNetObjLink($dev1, $dev2)
-    {
-        return $this->db->GetOne('SELECT COUNT(id) FROM netlinks 
-			WHERE (src=? AND dst=?) OR (dst=? AND src=?)', array($dev1, $dev2, $dev1, $dev2));
-    }
-
-    public function NetObjLink($dev1, $dev2, $link)
-    {
-        global $SYSLOG_RESOURCE_KEYS;
-
-	$type = $link['type'];
-	$srcradiosector = ($type == 1 ?
-		(isset($link['srcradiosector']) && intval($link['srcradiosector']) ? intval($link['srcradiosector']) : null) : null);
-	$dstradiosector = ($type == 1 ?
-		(isset($link['dstradiosector']) && intval($link['dstradiosector']) ? intval($link['dstradiosector']) : null) : null);
-	$technology = $link['technology'];
-	$speed = $link['speed'];
-	$sport = $link['srcport'];
-	$dport = $link['dstport'];
-
-        if ($dev1 != $dev2)
-            if (!$this->IsNetObjLink($dev1, $dev2)) {
-                $args = array(
-                    'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev1,
-                    'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev2,
-                    'type' => $type,
-                    'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $srcradiosector,
-                    'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $dstradiosector,
-                    'technology' => $technology,
-                    'speed' => $speed,
-                    'srcport' => intval($sport),
-                    'dstport' => intval($dport),
-                );
-                $res = $this->db->Execute('INSERT INTO netlinks 
-					(src, dst, type, srcradiosector, dstradiosector, technology, speed, srcport, dstport) 
-					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args));
-                if ($this->syslog && $res) {
-                    $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK]] = $this->db->GetLastInsertID('netlinks');
-                    $this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK],
-                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
-                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
-                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR],
-                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR]));
-                }
-                return $res;
-            }
-
-        return FALSE;
-    }
-
-    public function NetObjUnLink($dev1, $dev2)
-    {
-        global $SYSLOG_RESOURCE_KEYS;
-
-        if ($this->syslog) {
-            $netlinks = $this->db->GetAll('SELECT id, src, dst FROM netlinks WHERE (src=? AND dst=?) OR (dst=? AND src=?)', array($dev1, $dev2, $dev1, $dev2));
-            if (!empty($netlinks))
-                foreach ($netlinks as $netlink) {
-                    $args = array(
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK] => $netlink['id'],
-                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['src'],
-                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['dst'],
-                    );
-                    $this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_DELETE, $args, array_keys($args));
-                }
-        }
-        $this->db->Execute('DELETE FROM netlinks WHERE (src=? AND dst=?) OR (dst=? AND src=?)', array($dev1, $dev2, $dev1, $dev2));
-    }
-
     public function NetObjUpdate($data)
     {
         global $SYSLOG_RESOURCE_KEYS;
@@ -256,6 +77,7 @@ class LMSNetObjManager extends LMSManager implements LMSNetObjManagerInterface
     public function NetObjAdd($data)
     {
         global $SYSLOG_RESOURCE_KEYS;
+        return FALSE;
 
         $args = array(
             'name' => $data['name'],
@@ -328,47 +150,6 @@ class LMSNetObjManager extends LMSManager implements LMSNetObjManagerInterface
     public function GetNetObjIDByNode($id)
     {
         return $this->db->GetOne('SELECT netdev FROM nodes WHERE id=?', array($id));
-    }
-
-    public function CountNetObjLinks($id)
-    {
-        return $this->db->GetOne('SELECT COUNT(*) FROM netlinks WHERE src = ? OR dst = ?', array($id, $id)) + $this->db->GetOne('SELECT COUNT(*) FROM nodes WHERE netdev = ? AND ownerid > 0', array($id));
-    }
-
-    public function GetNetObjLinkType($dev1, $dev2)
-    {
-        return $this->db->GetRow('SELECT type, technology, speed FROM netlinks
-			WHERE (src=? AND dst=?) OR (dst=? AND src=?)',
-			array($dev1, $dev2, $dev1, $dev2));
-    }
-
-    public function GetNetObjConnectedNames($id)
-    {
-        return $this->db->GetAll('SELECT d.id, d.name, d.description,
-			d.location, d.producer, d.ports, l.type AS linktype,
-			l.technology AS linktechnology, l.speed AS linkspeed, l.srcport, l.dstport,
-			srcrs.name AS srcradiosector, dstrs.name AS dstradiosector,
-			(SELECT COUNT(*) FROM netlinks WHERE src = d.id OR dst = d.id) 
-			+ (SELECT COUNT(*) FROM nodes WHERE netdev = d.id AND ownerid > 0)
-			AS takenports,
-			lc.name AS city_name, lb.name AS borough_name, lb.type AS borough_type,
-			ld.name AS district_name, ls.name AS state_name
-			FROM netdevices d
-			JOIN (SELECT DISTINCT type, technology, speed, 
-				(CASE src WHEN ? THEN dst ELSE src END) AS dev, 
-				(CASE src WHEN ? THEN dstport ELSE srcport END) AS srcport, 
-				(CASE src WHEN ? THEN srcport ELSE dstport END) AS dstport, 
-				(CASE src WHEN ? THEN dstradiosector ELSE srcradiosector END) AS srcradiosector,
-				(CASE src WHEN ? THEN srcradiosector ELSE dstradiosector END) AS dstradiosector
-				FROM netlinks WHERE src = ? OR dst = ?
-			) l ON (d.id = l.dev)
-			LEFT JOIN location_cities lc ON lc.id = d.location_city
-			LEFT JOIN location_boroughs lb ON lb.id = lc.boroughid
-			LEFT JOIN location_districts ld ON ld.id = lb.districtid
-			LEFT JOIN location_states ls ON ls.id = ld.stateid
-			LEFT JOIN netradiosectors srcrs ON srcrs.id = l.srcradiosector
-			LEFT JOIN netradiosectors dstrs ON dstrs.id = l.dstradiosector
-			ORDER BY name', array($id, $id, $id, $id, $id, $id, $id));
     }
 
     public function GetNetObjList($order = 'name,asc', $search = array())
@@ -466,19 +247,6 @@ class LMSNetObjManager extends LMSManager implements LMSNetObjManagerInterface
 			FROM netdevices ORDER BY name');
     }
 
-    public function GetNotConnectedObjices($id)
-    {
-        return $this->db->GetAll('SELECT d.id, d.name, d.description,
-			d.location, d.producer, d.ports
-			FROM netdevices d
-			LEFT JOIN (SELECT DISTINCT 
-				(CASE src WHEN ? THEN dst ELSE src END) AS dev 
-				FROM netlinks WHERE src = ? OR dst = ?
-			) l ON (d.id = l.dev)
-			WHERE l.dev IS NULL AND d.id != ?
-			ORDER BY name', array($id, $id, $id, $id));
-    }
-
     public function GetNetObj($id)
     {
         $result = $this->db->GetRow('SELECT d.*, t.name AS nastypename, c.name AS channel,
@@ -507,40 +275,6 @@ class LMSNetObjManager extends LMSManager implements LMSNetObjManagerInterface
             $result['guaranteeperiod'] = -1;
 
         return $result;
-    }
-
-    public function NetObjDelLinks($id)
-    {
-        global $SYSLOG_RESOURCE_KEYS;
-
-        if ($this->syslog) {
-            $netlinks = $this->db->GetAll('SELECT id, src, dst FROM netlinks WHERE src=? OR dst=?', array($id, $id));
-            if (!empty($netlinks))
-                foreach ($netlinks as $netlink) {
-                    $args = array(
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK] => $netlink['id'],
-                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['src'],
-                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['dst'],
-                    );
-                    $this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_DELETE, $args, array_keys($args));
-                }
-            $nodes = $this->db->GetAll('SELECT id, netdev, ownerid FROM nodes WHERE netdev=? AND ownerid>0', array($id));
-            if (!empty($nodes))
-                foreach ($nodes as $node) {
-                    $args = array(
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE] => $node['id'],
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $node['ownerid'],
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => 0,
-                        'port' => 0,
-                    );
-                    $this->syslog->AddMessage(SYSLOG_RES_NODE, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE],
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST],
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV]));
-                }
-        }
-        $this->db->Execute('DELETE FROM netlinks WHERE src=? OR dst=?', array($id, $id));
-        $this->db->Execute('UPDATE nodes SET netdev=0, port=0 
-				WHERE netdev=? AND ownerid>0', array($id));
     }
 
     public function DeleteNetObj($id)

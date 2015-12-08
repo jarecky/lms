@@ -53,13 +53,14 @@
                 <TD WIDTH="98%">
                         <SELECT ID="type" NAME="netobj[type]" {tip text="Select object type"} VALUE="{$netobj.type}" onchange="changeObjectType();">
                                 {foreach $_NETOBJECTTYPES as $idx => $type}
-                                <OPTION VALUE="{$idx}"{if $netobj.type == $idx} selected{/if}>{$type.label}</OPTION>
+                                <OPTION VALUE="{$idx}"{if $netobj.type
+				== $idx} selected{/if}>{$netobj.type} {$type.label}</OPTION>
                                 {/foreach}
                         </SELECT>
                 </TD>
         </TR>
 
-	<TR ID="producer" STYLE="display:none;">
+	<TR ID="producer">
 		<TD WIDTH="1%">
 			<IMG SRC="img/producer.gif" ALT="">
 		</TD>
@@ -70,7 +71,7 @@
 			<INPUT TYPE="TEXT" NAME="netobj[producer]" VALUE="{$netobj.producer}" {tip text="Enter producer name (optional)"}>
 		</TD>
 	</TR>
-	<TR ID="model" STYLE="display:none;">
+	<TR ID="model">
 		<TD WIDTH="1%">
 			<IMG SRC="img/netdev_model.gif" ALT="">
 		</TD>
@@ -83,7 +84,7 @@
                         <INPUT type="hidden" name="netobj[netobjicemodelid]" value="{$netobj.netobjicemodelid}">
 		</TD>
 	</TR>
-	<TR id="serial" STYLE="display:none;">
+	<TR id="serial">
 		<TD WIDTH="1%">
 			<IMG SRC="img/serialnumber.gif" ALT="">
 		</TD>
@@ -105,7 +106,7 @@
 			<INPUT TYPE="TEXT" NAME="netobj[reserve_quantity]" VALUE="{if $netobj.reserve_quantity}{$netobj.reserve_quantity}{/if}" {tip trigger="reserve_quantity" text="Enter quantity of fiberoptic cable"}>
 		</TD>
 	</TR>
-        <TR ID="closure" STYLE="display:none;">
+        <TR ID="closure">
                 <TD WIDTH="1%">
                         <IMG SRC="img/port.gif" ALT="">
                 </TD>
@@ -116,7 +117,7 @@
                         <INPUT TYPE="TEXT" NAME="netobj[closure_capacity]" VALUE="{if $netobj.closure_capacity}{$netobj.closure_capacity}{/if}" {tip trigger="closure_capacity" text="Enter the splice tray capacity"}>
                 </TD>
         </TR>
-        <TR ID="box" STYLE="display:none;">
+        <TR ID="box">
                 <TD WIDTH="1%">
                         <IMG SRC="img/port.gif" ALT="">
                 </TD>
@@ -127,7 +128,7 @@
                         <INPUT TYPE="TEXT" NAME="netobj[box_adaptors]" VALUE="{if $netobj.box_adaptors}{$netobj.box_adaptors}{/if}" {tip trigger="box_adaptors" text="Enter number of adaptors in splice box"}>
                 </TD>
         </TR>
-        <TR ID="splitter" STYLE="display:none;">
+        <TR ID="splitter">
                 <TD WIDTH="1%">
                         <IMG SRC="img/port.gif" ALT="">
                 </TD>
@@ -360,6 +361,7 @@
 document.forms['netobjadd'].elements['netobj[name]'].focus();
 check_teryt('location', true);
 setNNProject();
+changeObjectType();
 //-->
 </SCRIPT>
 {/block}
