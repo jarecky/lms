@@ -395,10 +395,10 @@ class LMS
         return $manager->CustomerAdd($customeradd);
     }
 
-    public function DeleteCustomer($id)
+    public function DeleteCustomer($id, $permanent = false)
     {
         $manager = $this->getCustomerManager();
-        return $manager->DeleteCustomer($id);
+        return $manager->DeleteCustomer($id, $permanent);
     }
 
     public function CustomerUpdate($customerdata)
@@ -465,6 +465,12 @@ class LMS
     {
         $manager = $this->getCustomerManager();
         return $manager->getCustomerNodes($id, $count);
+    }
+
+    public function GetCustomerNetworks($id, $count = null)
+    {
+        $manager = $this->getCustomerManager();
+        return $manager->GetCustomerNetworks($id, $count);
     }
 
     public function GetCustomerBalance($id, $totime = null)
@@ -678,10 +684,10 @@ class LMS
         return $manager->GetNode($id);
     }
 
-    public function GetNodeList($order = 'name,asc', $search = NULL, $sqlskey = 'AND', $network = NULL, $status = NULL, $customergroup = NULL, $nodegroup = NULL)
+    public function GetNodeList($order = 'name,asc', $search = NULL, $sqlskey = 'AND', $network = NULL, $status = NULL, $customergroup = NULL, $nodegroup = NULL, $limit = null, $offset = null, $count = false)
     {
         $manager = $this->getNodeManager();
-        return $manager->GetNodeList($order, $search, $sqlskey, $network, $status, $customergroup, $nodegroup);
+        return $manager->GetNodeList($order, $search, $sqlskey, $network, $status, $customergroup, $nodegroup, $limit, $offset, $count);
     }
 
     public function NodeSet($id, $access = -1)
@@ -1364,22 +1370,10 @@ class LMS
         return $manager->GetTicketContents($id);
     }
 
-    public function SetTicketState($ticket, $state)
+    public function TicketChange($ticketid, array $props)
     {
         $manager = $this->getHelpdeskManager();
-        return $manager->SetTicketState($ticket, $state);
-    }
-
-    public function SetTicketOwner($ticket, $owner)
-    {
-        $manager = $this->getHelpdeskManager();
-        return $manager->SetTicketOwner($ticket, $owner);
-    }
-
-    public function SetTicketQueue($ticket, $queue)
-    {
-        $manager = $this->getHelpdeskManager();
-        return $manager->SetTicketQueue($ticket, $queue);
+        return $manager->TicketChange($ticketid, $props);
     }
 
     public function GetMessage($id)
@@ -2130,8 +2124,8 @@ class LMS
     {
         $nodesessions = $this->DB->GetAll('SELECT INET_NTOA(ipaddr) AS ipaddr, mac, start, stop,
 		download, upload, terminatecause, type
-		FROM nodesessions WHERE nodeid = ? ORDER BY stop DESC LIMIT ?',
-			array($nodeid, ConfigHelper::getConfig('phpui.nodesession_limit', 10)));
+		FROM nodesessions WHERE nodeid = ? ORDER BY stop DESC LIMIT ' . intval(ConfigHelper::getConfig('phpui.nodesession_limit', 10)),
+			array($nodeid));
         if (!empty($nodesessions))
             foreach ($nodesessions as $idx => $session) {
                 list ($number, $unit) = setunits($session['download']);

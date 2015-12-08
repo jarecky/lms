@@ -239,15 +239,21 @@ if(isset($_POST['message']))
 
 		// setting status and the ticket owner
 		if (isset($message['state']))
-			$LMS->SetTicketState($message['ticketid'], RT_RESOLVED);
+			$message['state'] = RT_RESOLVED;
 		else if (!$DB->GetOne('SELECT state FROM rttickets WHERE id = ?', array($message['ticketid'])))
-			$LMS->SetTicketState($message['ticketid'], RT_OPEN);
+			$message['state'] = RT_OPEN;
+		
+		if (!$DB->GetOne('SELECT owner FROM rttickets WHERE id = ?', array($message['ticketid'])))
+			$message['owner'] = $AUTH->id;
 
-		$LMS->SetTicketOwner($message['ticketid'], $message['owner']);
-		$LMS->SetTicketQueue($message['ticketid'], $message['queueid']);
-
-		$DB->Execute('UPDATE rttickets SET cause = ? WHERE id = ?', array($message['cause'], $message['ticketid']));
-
+		$props = array(
+			'queueid' => $message['queueid'], 
+			'owner' => $message['owner'], 
+			'cause' => $message['cause'],
+			'state' => $message['state']
+		);
+		$LMS->TicketChange($message['ticketid'], $props);
+		
 		// Users notification
 		if (isset($message['notify']) && ($user['email'] || $queue['email']))
 		{

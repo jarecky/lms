@@ -130,9 +130,9 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
         return $this->db->GetAllByKey(
             'SELECT id, ' . $this->db->Concat('lastname', "' '", 'name')  . ' AS customername 
             FROM customersview 
-            WHERE status > 1 AND deleted = 0 
+            WHERE status <> ? AND deleted = 0 
             ORDER BY lastname, name', 
-            'id'
+            'id', array(CSTATUS_INTERESTED)
         );
     }
     
@@ -213,9 +213,9 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
     {
         ($direction == 'ASC' || $direction == 'asc') ? $direction == 'ASC' : $direction == 'DESC';
 
-        $saldolist = array();
+        $result = array();
 
-        $tslist = $this->db->GetAll(
+        $result['list'] = $this->db->GetAll(
             'SELECT cash.id AS id, time, cash.type AS type, 
                 cash.value AS value, taxes.label AS tax, cash.customerid AS customerid, 
                 comment, docid, users.name AS username,
@@ -229,29 +229,23 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
             . ' ORDER BY time ' . $direction . ', cash.id',
             array($id)
         );
-        
-        if ($tslist) {
-            $saldolist['balance'] = 0;
-            $saldolist['total'] = 0;
-            $i = 0;
 
-            foreach ($tslist as $row) {
-                // old format wrapper
-                foreach ($row as $column => $value)
-                    $saldolist[$column][$i] = $value;
+        if (!empty($result['list'])) {
+            $result['balance'] = 0;
+            $result['total'] = 0;
 
-                $saldolist['after'][$i] = round($saldolist['balance'] + $row['value'], 2);
-                $saldolist['balance'] += $row['value'];
-                $saldolist['date'][$i] = date('Y/m/d H:i', $row['time']);
-
-                $i++;
+            foreach ($result['list'] as &$row) {
+                $row['customlinks'] = array();
+                $row['after'] = round($result['balance'] + $row['value'], 2);
+                $result['balance'] += $row['value'];
+                $row['date'] = date('Y/m/d H:i', $row['time']);
             }
 
-            $saldolist['total'] = sizeof($tslist);
+            $result['total'] = sizeof($result['list']);
         }
 
-        $saldolist['customerid'] = $id;
-        return $saldolist;
+        $result['customerid'] = $id;
+        return $result;
     }
     
     
@@ -262,11 +256,12 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
      */
     public function customerStats()
     {
+		global $CSTATUSES;
+		$sql = '';
+		foreach ($CSTATUSES as $statusidx => $status)
+			$sql .= ' COUNT(CASE WHEN status = ' . $statusidx . ' THEN 1 END) AS ' . $status['alias'] . ',';
         $result = $this->db->GetRow(
-            'SELECT COUNT(id) AS total,
-                COUNT(CASE WHEN status = 3 THEN 1 END) AS connected,
-                COUNT(CASE WHEN status = 2 THEN 1 END) AS awaiting,
-                COUNT(CASE WHEN status = 1 THEN 1 END) AS interested
+            'SELECT ' . $sql . ' COUNT(id) AS total
             FROM customersview 
             WHERE deleted=0'
         );
@@ -355,6 +350,20 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
                     $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_DIV],
                     $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_COUNTRY]));
             }
+						if (ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.add_customer_group_required',false))) {
+							$gargs = array(
+									'customerid' => $id,
+									'customergroupid' => $customeradd['group'] 
+							);
+							$res = $this->db->Execute('INSERT INTO customerassignments (customerid, customergroupid) VALUES (?,?)', array_values($gargs));
+							if ($this->syslog && $res) {
+							}
+								$args = array(
+										$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $id,
+										$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUSTGROUP] => $customeradd['group']
+								);
+								$this->syslog->AddMessage(SYSLOG_RES_CUSTASSIGN, SYSLOG_OPER_ADD, $args, array_keys($args));
+							}
             return $id;
         } else {
             return false;
@@ -406,7 +415,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
         }
 
         switch ($state) {
-            case 4:
+            case 50:
                 // When customer is deleted we have no assigned groups or nodes, see DeleteCustomer().
                 // Return empty list in this case
                 if (!empty($network) || !empty($customergroup) || !empty($nodegroup)) {
@@ -418,24 +427,24 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
                 }
                 $deleted = 1;
                 break;
-            case 5: $disabled = 1;
+            case 51: $disabled = 1;
                 break;
-            case 6: $indebted = 1;
+            case 52: $indebted = 1;
                 break;
-            case 7: $online = 1;
+            case 53: $online = 1;
                 break;
-            case 8: $groupless = 1;
+            case 54: $groupless = 1;
                 break;
-            case 9: $tariffless = 1;
+            case 55: $tariffless = 1;
                 break;
-            case 10: $suspended = 1;
+            case 56: $suspended = 1;
                 break;
-            case 11: $indebted2 = 1;
+            case 57: $indebted2 = 1;
                 break;
-            case 12: $indebted3 = 1;
+            case 58: $indebted3 = 1;
                 break;
-            case 13: case 14: case 15:
-                     $contracts = $state - 12;
+            case 59: case 60: case 61:
+                     $contracts = $state - 58;
                      $contracts_days = intval(ConfigHelper::getConfig('contracts.contracts_days'));
                      break;
         }
@@ -635,7 +644,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
                             AND type IN (' . DOC_CONTRACT . ',' . DOC_ANNEX . ')
                     ) d ON d.customerid = c.id' : '')
                 . ' WHERE c.deleted = ' . intval($deleted)
-                . ($state <= 3 && $state > 0 ? ' AND c.status = ' . intval($state) : '')
+                . (($state < 50 && $state > 0) ? ' AND c.status = ' . intval($state) : '')
                 . ($division ? ' AND c.divisionid = ' . intval($division) : '')
                 . ($online ? ' AND s.online = 1' : '')
                 . ($indebted ? ' AND b.value < 0' : '')
@@ -760,6 +769,24 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
             }
         }
         return $result;
+    }
+
+    /**
+     * Returns customer networks
+     * 
+     * @param int $id Customer id
+     * @param int $count Limit
+     * @return array Networks
+     */
+    public function GetCustomerNetworks($id, $count = null)
+    {
+        return $this->db->GetAll('
+            SELECT *
+            FROM vnetworks
+            WHERE ownerid = ?
+            ORDER BY name ASC
+            ' . ($count ? ' LIMIT ' . $count : ''), array($id)
+        );
     }
 
     /**
@@ -934,18 +961,23 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
      * @global array $SYSLOG_RESOURCE_KEYS
      * @global type $LMS
      * @param int $id Customer id
+     * @param bool $permanent permanent customer removal?
      */
-    public function deleteCustomer($id)
+    public function deleteCustomer($id, $permanent = false)
     {
         
         global $SYSLOG_RESOURCE_KEYS, $LMS;
         $this->db->BeginTrans();
 
-        $this->db->Execute('UPDATE customers SET deleted=1, moddate=?NOW?, modid=?
-                                    WHERE id=?', array($this->auth->id, $id));
+		if (!$permanent)
+			$this->db->Execute('UPDATE customers SET deleted=1, moddate=?NOW?, modid=?
+				WHERE id=?', array($this->auth->id, $id));
 
         if ($this->syslog) {
-            $this->syslog->AddMessage(SYSLOG_RES_CUST, SYSLOG_OPER_UPDATE, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $id, 'deleted' => 1), array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
+            if (!$permanent)
+                $this->syslog->AddMessage(SYSLOG_RES_CUST, SYSLOG_OPER_UPDATE,
+                    array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $id, 'deleted' => 1),
+                    array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
             $assigns = $this->db->GetAll('SELECT id, customergroupid FROM customerassignments WHERE customerid = ?', array($id));
             if (!empty($assigns))
                 foreach ($assigns as $assign) {
@@ -1030,6 +1062,15 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
         $userpanel_dir = ConfigHelper::getConfig('directories.userpanel_dir');
         if (!empty($userpanel_dir))
             $this->db->Execute('DELETE FROM up_rights_assignments WHERE customerid=?', array($id));
+
+		if ($permanent) {
+			$this->db->Execute('DELETE FROM customers WHERE id = ?', array($id));
+
+			if ($this->syslog)
+				$this->syslog->AddMessage(SYSLOG_RES_CUST, SYSLOG_OPER_DELETE, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $id),
+					array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
+		}
+
 
         $this->db->CommitTrans();
     }

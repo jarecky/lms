@@ -158,6 +158,7 @@ $_LANG['Are you sure, you want to remove instance \\\'$a\\\' and all assigned co
 $_LANG['Are you sure, you want to remove invoice \\\'$a\\\' from database?'] = 'Jesteś pewien, że chcesz usunąć fakturę \\\'$a\\\' z bazy danych?';
 $_LANG['Are you sure, you want to remove network \\\'$a\\\'?'] = 'Jesteś pewien, że chcesz usunąć sieć \\\'$a\\\'?';
 $_LANG['Are you sure, you want to remove node \\\'$a\\\' from database?'] = 'Jesteś pewien, że chcesz usunąć komputer \\\'$a\\\' z bazy danych?';
+$_LANG['Are you sure, you want to remove network \\\'$a\\\' from database?'] = 'Jesteś pewien, że chcesz usunąć sieć \\\'$a\\\' z bazy danych?';
 $_LANG['Are you sure, you want to remove option \\\'$a\\\' from database?'] = 'Jesteś pewien, że chcesz usunąć opcję \\\'$a\\\' z bazy danych?';
 $_LANG['Are you sure, you want to remove queue \\\'$a\\\' and all assigned tickets and messages?'] = 'Jesteś pewien, że chcesz usunąć kolejkę \\\'$a\\\' oraz wszelkie zgłoszenia i wiadomości z nią skojarzone?';
 $_LANG['Are you sure, you want to remove receipt \\\'$a\\\' from database?'] = 'Jesteś pewien, że chcesz usunąć dowód wpłaty nr \\\'$a\\\' z bazy danych?';
@@ -296,6 +297,7 @@ $_LANG['customer name'] = 'nazwisko klienta';
 $_LANG['Customer name'] = 'Nazwisko klienta';
 $_LANG['Customer No.: $a'] = 'Numer klienta: $a';
 $_LANG['Customer Nodes ($a):'] = 'Komputery klienta ($a):';
+$_LANG['Customer Networks ($a):'] = 'Sieci klienta ($a):';
 $_LANG['Customer not selected!'] = 'Nie wybrano klienta!';
 $_LANG['Customer Remove: $a'] = 'Usunięcie klienta: $a';
 $_LANG['Customers'] = 'Klienci';
@@ -1281,6 +1283,7 @@ $_LANG['TEN/SSN'] = 'NIP/PESEL';
 $_LANG['Thanks for using our services!'] = 'Dziękujemy za korzystanie z naszych usług!';
 $_LANG['That customer hasn\'t got any assigned subscriptions.'] = 'Ten klient nie ma przypisanych żadnych taryf.';
 $_LANG['That customer hasn\'t got any node.'] = 'Ten klient nie posiada żadnych komputerów.';
+$_LANG['That customer hasn\'t got any network.'] = 'Ten klient nie posiada żadnych sieci.';
 $_LANG['That customer hasn\'t got any transactions.'] = 'Ten klient nie posiada żadnych transakcji.';
 $_LANG['That customer is not a member of any group.'] = 'Ten klient nie jest członkiem żadnej z grup.';
 $_LANG['That customer has been deleted.'] = 'Ten klient został usunięty.';
@@ -1717,6 +1720,9 @@ $_LANG['Cause:'] = 'Przyczyna:';
 $_LANG['company\'s side'] = 'po stronie firmy';
 $_LANG['customer\'s side'] = 'po stronie klienta';
 $_LANG['Enter customer ID'] = 'Wprowadź ID klienta';
+$_LANG['Enter customer ID (optional)'] = 'Wprowadź ID klienta (opcjonalnie)';
+$_LANG['Navigate to the customer'] = 'Przejdź na kartę klienta';
+$_LANG['Customer with the specified ID does not exist'] = 'Klient o podanym ID nie istnieje!';
 $_LANG['Select request cause'] = 'Wybierz przyczynę zgłoszenia';
 $_LANG['unknown/other'] = 'nieznana/inna';
 $_LANG['unknown/other<!plural>'] = 'nieznane/inne';
@@ -2975,9 +2981,13 @@ $_LANG['(default for link technology)'] = '(domyślna dla technologii łącza)';
 $_LANG['PPPoE Client'] = 'Klient PPPoE';
 $_LANG['DHCP Client'] = 'Klient DHCP';
 $_LANG['EAP Client'] = 'Klient EAP';
-$_LANG['Enable/disable PPPoE Server Client'] = 'Włącza/Wyłącza komputer jako klient PPPoE';
-$_LANG['Enable/disable DHCP Server Client'] = 'Włącza/Wyłącza komputer jako klient DHCP';
-$_LANG['Enable/disable EAP Server Client'] = 'Włącza/Wyłącza komputer jako klient EAP';
+$_LANG['WiFi AP Client'] = 'Klient WiFi AP';
+$_LANG['VoIP Gateway'] = 'Bramka VoIP';
+$_LANG['Enable/disable PPPoE Server Client'] = 'Włącza/wyłącza komputer jako klient PPPoE';
+$_LANG['Enable/disable DHCP Server Client'] = 'Włącza/wyłącza komputer jako klient DHCP';
+$_LANG['Enable/disable EAP Server Client'] = 'Włącza/wyłącza komputer jako klient EAP';
+$_LANG['Enable/disable WiFi AP Client access'] = 'Włącza/wyłącza komputer jako klient WiFi AP';
+$_LANG['Enable/disable VoIP Gateway access'] = 'Włącza/wyłącza komputer jako bramkę VoIP';
 
 $_LANG['Select network device:'] = 'Wybierz urządzenie sieciowe:';
 $_LANG['Click to select network device from map'] = 'Kliknij w celu wybrania urządzenia sieciowego z mapy';
@@ -3027,6 +3037,32 @@ $_LANG['Notification'] = 'Powiadomienia';
 
 $_LANG['Use customer location:'] = 'Użyj lokalizacji klienta:';
 
+$_LANG['Ticket\'s state has been changed from $a to $b.'] = 'Status zgłoszenia został zmieniony z $a na $b.';
+$_LANG['Ticket\'s cause has been changed from $a to $b.'] = 'Przyczyna zgłoszenia została zmieniona z $a na $b.';
+$_LANG['Ticket\'s subject has been changed from $a to $b.'] = 'Temat zgłoszenia został zmieniony z $a na $b.';
+$_LANG['Ticket has been moved from customer $a ($b) to customer $c ($d).'] = 'Zgłoszenie zostało przeniesione od klienta $a ($b) do klienta $c ($d).';
+$_LANG['Ticket has been moved from $a to customer $b ($c).'] = 'Zgłoszenie zostało przeniesione od $a do klienta $b ($c).';
+$_LANG['Changes of customers waiting for approval:'] = 'Zmiany klientów oczekujące na zatwierdzenie:';
+$_LANG['the whole network'] = 'cała sieć';
+$_LANG['Disconnected:<!summary>'] = 'Odłączeni:';
+$_LANG['with disconnected nodes'] = 'z odłączonymi komputerami';
+
+$_LANG['Select group to assign to customer'] = 'Wybierz grupę by przypisać do niej klienta';
+$_LANG['If isset "true" when adding new customer select group is required. Default "false"'] = 'Ustawienie opcji na "true" wymusza wybór grupy przypisanej do klienta. Domyślnie wyłączone';
+
+$_LANG['permanent customer removal'] = 'trwałe usunięcie klienta';
+$_LANG['Remove permanently'] = 'Usuń trwale';
+$_LANG['Permanent Customer Remove: $a'] = 'Trwałe usunięcie klienta: $a';
+$_LANG['Do you want to permanently remove $a customer?'] = 'Czy chcesz trwale usunąć klienta $a?';
+$_LANG['This operation will be irreversible!'] = 'Ta operacja będzie nieodwracalna!';
+$_LANG['Customer $a has been permanently removed.'] = 'Klient $a został trwale usunięty.';
+
+$_LANG['Check if you want do send message copy to sender'] = 'Zaznacz, jeśli ma być wysyłana kopia wiadomości do nadawcy';
+$_LANG['send copy to sender'] = 'wyślij kopię do nadawcy';
+
+$_LANG['Assign network to customer'] = 'Przypisz sieć do klienta';
+
+$_LANG['Automatically adjusts the size of the selection list to the number of users when set to 0.'] = 'Automatyczne dopasowanie wielokości listy wyboru do ilości użytkowników jeśli ustawione na 0.';
 
 $_LANG['Objects list'] = 'Lista obiektów';
 $_LANG['Network objects list'] = 'Lista obiektów sieciowych';
@@ -3034,6 +3070,5 @@ $_LANG['New object'] = 'Nowy obiekt';
 $_LANG['Add new network object'] = 'Dodaj nowy obiekt sieciowy';
 $_LANG['New object'] = 'Nowy obiekt';
 $_LANG['Network Object'] = 'Obiekty sieciowe';
-
 
 ?>
