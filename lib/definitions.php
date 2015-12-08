@@ -422,6 +422,29 @@ $NETELEMENTOWNERSHIPS = array(
 	2	=> 'węzeł obcy',
 );
 
+$NETOBJECTTYPES = array(
+	0 	=> array(
+		'label' => 'Zapas',
+		'tip' => 'Zapas kabla światłowodowego',
+		'table' => 'netobjreserve'
+	),
+	1	=> array(
+		'label' => 'Mufa',
+		'tip' => 'Mufa światłowodowa',
+		'table' => 'netobjspliceclosure'
+	),
+	2	=> array(
+		'label' => 'Przełącznica',
+		'tip' => 'Przełącznica światłowodowa',
+		'table' => 'netobjsplicebox'
+	),
+	3	=> array(
+		'label' => 'Splitter',
+		'tip' => 'Splitter optyczny',
+		'table' => 'netobjsplitter'
+	),
+);
+
 $USERPANEL_ID_TYPES = array(
 	1	=> array(
 		'label' => trans('Customer ID:'),
@@ -507,6 +530,7 @@ if(isset($SMARTY))
 	$SMARTY->assign('_NETELEMENTSTATUSES', $NETELEMENTSTATUSES);
 	$SMARTY->assign('_NETELEMENTTYPES', $NETELEMENTTYPES);
 	$SMARTY->assign('_NETELEMENTOWNERSHIPS', $NETELEMENTOWNERSHIPS);
+	$SMARTY->assign('_NETOBJECTTYPES', $NETOBJECTTYPES);
 	$SMARTY->assign('_USERPANEL_ID_TYPES', $USERPANEL_ID_TYPES);
 	$SMARTY->assign('_EVENTTYPES', $EVENTTYPES);
 	$SMARTY->assign('_SESSIONTYPES', $SESSIONTYPES);

@@ -3,9 +3,9 @@
 {block name=module_content}
 <!--// $Id$ //-->
 {include file="calendar_js.html"}
-<script type="text/javascript" src="img/netnodehelper.js"></script>
+<script type="text/javascript" src="img/netobjecthelper.js"></script>
 <H1>{$layout.pagetitle}</H1>
-<FORM NAME="netdevadd" METHOD="POST" ACTION="?m=netdevadd">
+<FORM NAME="netobjadd" METHOD="POST" ACTION="?m=netobjadd">
 <INPUT type="submit" class="hiddenbtn">
 <TABLE class="lmsbox">
     <THEAD>
@@ -16,7 +16,8 @@
 		<TD WIDTH="1%">
 			<B>{trans("Name:")}</B>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[name]" VALUE="{$netdev.name}" MAXLENGTH="32" {tip trigger="name" text="Enter device name" bold=1}>
+			<INPUT TYPE="TEXT" NAME="netobj[name]"
+			VALUE="{$netobj.name}" MAXLENGTH="32" {tip trigger="name" text="Enter object name" bold=1}>
 		</TD>
 	</TR>
     </THEAD>
@@ -35,14 +36,30 @@
 			<B>{trans("Status:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT NAME="netdev[status]" {tip text="Select device status"} VALUE="{$netdev.status}">
+			<SELECT NAME="netobj[status]" {tip text="Select device status"} VALUE="{$netobj.status}">
 				{foreach $_NETELEMENTSTATUSES as $idx => $status}
-				<OPTION VALUE="{$idx}"{if $netdev.status == $idx} selected{/if}>{$status}</OPTION>
+				<OPTION VALUE="{$idx}"{if $netobj.status == $idx} selected{/if}>{$status}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
 	</TR>
-	<TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/producer.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Type:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT ID="type" NAME="netobj[type]" {tip text="Select object type"} VALUE="{$netobj.type}" onchange="changeObjectType();">
+                                {foreach $_NETOBJECTTYPES as $idx => $type}
+                                <OPTION VALUE="{$idx}"{if $netobj.type == $idx} selected{/if}>{$type.label}</OPTION>
+                                {/foreach}
+                        </SELECT>
+                </TD>
+        </TR>
+
+	<TR ID="producer" STYLE="display:none;">
 		<TD WIDTH="1%">
 			<IMG SRC="img/producer.gif" ALT="">
 		</TD>
@@ -50,10 +67,10 @@
 			<B>{trans("Manufacturer:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[producer]" VALUE="{$netdev.producer}" {tip text="Enter producer name (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netobj[producer]" VALUE="{$netobj.producer}" {tip text="Enter producer name (optional)"}>
 		</TD>
 	</TR>
-	<TR>
+	<TR ID="model" STYLE="display:none;">
 		<TD WIDTH="1%">
 			<IMG SRC="img/netdev_model.gif" ALT="">
 		</TD>
@@ -61,13 +78,12 @@
 			<B>{trans("Model:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[model]" VALUE="{$netdev.model}" {tip text="Enter device model (optional)"}>
-                        <A href="javascript: void(0);" onclick="return netdevmodelchoosewin('netdev', 'netdevadd', document.forms['netdevadd'].elements['netdev[netdevicemodelid]'].value, document.forms['netdevadd'].elements['netdev[producer]'].value, document.forms['netdevadd'].elements['netdev[model]'].value)" {tip text="Click to select model"}>&raquo;&raquo;&raquo;</A>
+			<INPUT TYPE="TEXT" NAME="netobj[model]" VALUE="{$netobj.model}" {tip text="Enter device model (optional)"}>
 			<BR>
-                        <INPUT type="hidden" name="netdev[netdevicemodelid]" value="{$netdev.netdevicemodelid}">
+                        <INPUT type="hidden" name="netobj[netobjicemodelid]" value="{$netobj.netobjicemodelid}">
 		</TD>
 	</TR>
-	<TR>
+	<TR id="serial" STYLE="display:none;">
 		<TD WIDTH="1%">
 			<IMG SRC="img/serialnumber.gif" ALT="">
 		</TD>
@@ -75,20 +91,54 @@
 			<B>{trans("Serial number:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[serialnumber]" VALUE="{$netdev.serialnumber}" {tip text="Enter device serial number (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netobj[serialnumber]" VALUE="{$netobj.serialnumber}" {tip text="Enter device serial number (optional)"}>
 		</TD>
 	</TR>
-	<TR>
+	<TR ID="reserve">
 		<TD WIDTH="1%">
 			<IMG SRC="img/port.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Number of ports:")}</B>
+			<B>{trans("Quantity:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[ports]" VALUE="{if $netdev.ports}{$netdev.ports}{/if}" {tip trigger="ports" text="Enter number of ports (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netobj[reserve_quantity]" VALUE="{if $netobj.reserve_quantity}{$netobj.reserve_quantity}{/if}" {tip trigger="reserve_quantity" text="Enter quantity of fiberoptic cable"}>
 		</TD>
 	</TR>
+        <TR ID="closure" STYLE="display:none;">
+                <TD WIDTH="1%">
+                        <IMG SRC="img/port.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Capacity:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netobj[closure_capacity]" VALUE="{if $netobj.closure_capacity}{$netobj.closure_capacity}{/if}" {tip trigger="closure_capacity" text="Enter the splice tray capacity"}>
+                </TD>
+        </TR>
+        <TR ID="box" STYLE="display:none;">
+                <TD WIDTH="1%">
+                        <IMG SRC="img/port.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Number of adaptors:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netobj[box_adaptors]" VALUE="{if $netobj.box_adaptors}{$netobj.box_adaptors}{/if}" {tip trigger="box_adaptors" text="Enter number of adaptors in splice box"}>
+                </TD>
+        </TR>
+        <TR ID="splitter" STYLE="display:none;">
+                <TD WIDTH="1%">
+                        <IMG SRC="img/port.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Split:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netobj[splitter_in]" VALUE="{if $netobj.splitter_in}{$netobj.splitter_in}{/if}" {tip trigger=" splitter_in" text="Enter number of input channels"} SIZE="2"> :
+                        <INPUT TYPE="TEXT" NAME="netobj[splitter_out]" VALUE="{if $netobj.splitter_out}{$netobj.splitter_out}{/if}" {tip trigger=" splitter_out" text="Enter number of output channels"} SIZE="6">
+                </TD>
+        </TR>
 	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/home.gif" ALT="">
@@ -97,14 +147,14 @@
 			<B>{trans("Location:")}</B>
 		</TD>
 		<TD WIDTH="98%" NOWRAP>
-		    <INPUT TYPE="TEXT" SIZE="30" VALUE="{$netdev.location}" id="location" NAME="netdev[location]"  {tip text="Enter location (optional)" trigger="location"}>
-			<A href="javascript: void(0);" onclick="if (check_teryt()) return locationchoosewin('netdev', 'netdevadd', document.forms['netdevadd'].elements['netdev[location_city]'].value,  document.forms['netdevadd'].elements['netdev[location_street]'].value)" {tip text="Click to select location"}>&raquo;&raquo;&raquo;</A>
+		    <INPUT TYPE="TEXT" SIZE="30" VALUE="{$netobj.location}" id="location" NAME="netobj[location]"  {tip text="Enter location (optional)" trigger="location"}>
+			<A href="javascript: void(0);" onclick="if (check_teryt()) return locationchoosewin('netobj', 'netobjadd', document.forms['netobjadd'].elements['netobj[location_city]'].value,  document.forms['netobjadd'].elements['netobj[location_street]'].value)" {tip text="Click to select location"}>&raquo;&raquo;&raquo;</A>
 			<BR>
-		    <INPUT type="hidden" name="netdev[location_city]" value="{$netdev.location_city}">
-		    <INPUT type="hidden" name="netdev[location_street]" value="{$netdev.location_street}">
-		    <INPUT type="hidden" name="netdev[location_house]" value="{$netdev.location_house}">
-		    <INPUT type="hidden" name="netdev[location_flat]" value="{$netdev.location_flat}">
-			<INPUT TYPE="checkbox" name="netdev[teryt]" id="teryt" onchange="check_teryt('location')"{if $netdev.teryt} checked{/if}><label for="teryt">{trans("TERRIT-DB")}</label>
+		    <INPUT type="hidden" name="netobj[location_city]" value="{$netobj.location_city}">
+		    <INPUT type="hidden" name="netobj[location_street]" value="{$netobj.location_street}">
+		    <INPUT type="hidden" name="netobj[location_house]" value="{$netobj.location_house}">
+		    <INPUT type="hidden" name="netobj[location_flat]" value="{$netobj.location_flat}">
+			<INPUT TYPE="checkbox" name="netobj[teryt]" id="teryt" onchange="check_teryt('location')"{if $netobj.teryt} checked{/if}><label for="teryt">{trans("TERRIT-DB")}</label>
 		</TD>
 	</TR>
 	<TR>
@@ -115,8 +165,8 @@
 			<B>{trans("GPS longitude:")}</B>
 		</TD>
 		<TD WIDTH="98%" NOWRAP>
-			<INPUT id="longitude" TYPE="text" NAME="netdev[longitude]" VALUE="{$netdev.longitude}" {tip text="Enter device longitude (optional)" trigger="longitude"}>
-			<a href="javascript: void(0);" onClick="return gpscoordschoosewin(document.netdevadd.elements['netdev[longitude]'], document.netdevadd.elements['netdev[latitude]']);" {tip text="Click to select gps coordinates from map"}>&raquo;&raquo;&raquo;</A>
+			<INPUT id="longitude" TYPE="text" NAME="netobj[longitude]" VALUE="{$netobj.longitude}" {tip text="Enter device longitude (optional)" trigger="longitude"}>
+			<a href="javascript: void(0);" onClick="return gpscoordschoosewin(document.netobjadd.elements['netobj[longitude]'], document.netobjadd.elements['netobj[latitude]']);" {tip text="Click to select gps coordinates from map"}>&raquo;&raquo;&raquo;</A>
 		</TD>
 	</TR>
 	<TR>
@@ -127,8 +177,8 @@
 			<B>{trans("GPS latitude:")}</B>
 		</TD>
 		<TD WIDTH="98%" NOWRAP>
-			<INPUT id="latitude" TYPE="text" NAME="netdev[latitude]" VALUE="{$netdev.latitude}" {tip text="Enter device latitude (optional)" trigger="latitude"}>
-			<a href="javascript: void(0);" onClick="return gpscoordschoosewin(document.netdevadd.elements['netdev[longitude]'], document.netdevadd.elements['netdev[latitude]']);" {tip text="Click to select gps coordinates from map"}>&raquo;&raquo;&raquo;</A>
+			<INPUT id="latitude" TYPE="text" NAME="netobj[latitude]" VALUE="{$netobj.latitude}" {tip text="Enter device latitude (optional)" trigger="latitude"}>
+			<a href="javascript: void(0);" onClick="return gpscoordschoosewin(document.netobjadd.elements['netobj[longitude]'], document.netobjadd.elements['netobj[latitude]']);" {tip text="Click to select gps coordinates from map"}>&raquo;&raquo;&raquo;</A>
 		</TD>
 	</TR>
 {if ConfigHelper::checkConfig('phpui.radius')}
@@ -140,7 +190,7 @@
 			<B>{trans("Shortname:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[shortname]" VALUE="{$netdev.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netobj[shortname]" VALUE="{$netobj.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
 		</TD>
 	</TR>
 	<TR>
@@ -151,10 +201,10 @@
 			<B>{trans("Type:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT NAME="netdev[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
+			<SELECT NAME="netobj[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
 				<OPTION VALUE="0"></OPTION>
 				{foreach from=$nastype item=item key=key}
-				<OPTION VALUE="{$key}" {if $key==$netdevices.nastype} SELECTED{/if}>{$item.name}</OPTION>
+				<OPTION VALUE="{$key}" {if $key==$netobjices.nastype} SELECTED{/if}>{$item.name}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
@@ -167,7 +217,7 @@
 			<B>{trans("Max clients:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[clients]" VALUE="{if $netdev.clients}{$netdev.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netobj[clients]" VALUE="{if $netobj.clients}{$netobj.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
 		</TD>
 	</TR>
 	<TR>
@@ -178,7 +228,7 @@
 			<B>{trans("Secret:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[secret]" VALUE="{$netdev.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netobj[secret]" VALUE="{$netobj.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
 		</TD>
 	</TR>
 	<TR>
@@ -189,7 +239,7 @@
 			<B>{trans("Community:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[community]" VALUE="{$netdev.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netobj[community]" VALUE="{$netobj.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
 		</TD>
 	</TR>
 {/if}
@@ -202,10 +252,10 @@
 			<B>{trans("Channel:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT NAME="netdev[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
+			<SELECT NAME="netobj[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
 				<OPTION VALUE="">- {trans("none")} -</OPTION>
 				{foreach from=$channels item=item}
-				<OPTION VALUE="{$item.id}" {if $item.id == $netdev.channelid} SELECTED{/if}>{$item.name}</OPTION>
+				<OPTION VALUE="{$item.id}" {if $item.id == $netobj.channelid} SELECTED{/if}>{$item.name}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
@@ -224,7 +274,7 @@
 		</TD>
 		<TD WIDTH="98%">
 			<div class="calendar">
-			<INPUT TYPE="TEXT" NAME="netdev[purchasedate]" VALUE="{if $netdev.purchasedate}{$netdev.purchasedate}{/if}" SIZE="10" MAXSIZE="10" {tip trigger="purchasedate" text="Enter device purchase date in 'yyyy/mm/dd' format or click to choose date from calendar (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netobj[purchasedate]" VALUE="{if $netobj.purchasedate}{$netobj.purchasedate}{/if}" SIZE="10" MAXSIZE="10" {tip trigger="purchasedate" text="Enter device purchase date in 'yyyy/mm/dd' format or click to choose date from calendar (optional)"}>
 			</div>
 		</TD>
 	</TR>
@@ -236,9 +286,9 @@
 			<B>{trans("Guarantee period:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT SIZE="1" NAME="netdev[guaranteeperiod]" {tip text="Select device guarantee period (optional)"}>
+			<SELECT SIZE="1" NAME="netobj[guaranteeperiod]" {tip text="Select device guarantee period (optional)"}>
 				{foreach from=$_GUARANTEEPERIODS key=key item=period}
-				<OPTION VALUE="{$key}"{if $netdev.guaranteeperiod == $key} SELECTED{/if}>{$period}</OPTION>
+				<OPTION VALUE="{$key}"{if $netobj.guaranteeperiod == $key} SELECTED{/if}>{$period}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
@@ -251,7 +301,7 @@
 			<B>{trans("Description:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<TEXTAREA NAME="netdev[description]" COLS="40" ROWS="5" {tip text="Enter additional information (optional)"}>{$netdev.description}</TEXTAREA>
+			<TEXTAREA NAME="netobj[description]" COLS="40" ROWS="5" {tip text="Enter additional information (optional)"}>{$netobj.description}</TEXTAREA>
 		</TD>
 	</TR>
 	<TR>
@@ -262,15 +312,15 @@
 			{trans("Investment project:")}
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT NAME="netdev[invprojectid]" ID="NNproject" VALUE="{$netdevinfo.invprojectid}" {tip text="Select project for this node"} onchange="setNNProject();">
-				<OPTION value="-2" {if ($netdevinfo.invprojectid == '-2' ) } selected="selected" {/if} >- {trans("none")} -</OPTION>
-				<OPTION value="-1" {if ($netdevinfo.invprojectid == '-1' ) } selected="selected" {/if}>{trans("New project")}</OPTION>
-				<OPTION value="1" {if ($netdevinfo.invprojectid == '1' ) } selected="selected" {/if}>{trans("From root device")}</OPTION>
+			<SELECT NAME="netobj[invprojectid]" ID="NNproject" VALUE="{$netobjinfo.invprojectid}" {tip text="Select project for this node"} onchange="setNNProject();">
+				<OPTION value="-2" {if ($netobjinfo.invprojectid == '-2' ) } selected="selected" {/if} >- {trans("none")} -</OPTION>
+				<OPTION value="-1" {if ($netobjinfo.invprojectid == '-1' ) } selected="selected" {/if}>{trans("New project")}</OPTION>
+				<OPTION value="1" {if ($netobjinfo.invprojectid == '1' ) } selected="selected" {/if}>{trans("From root device")}</OPTION>
 				{section name=project loop=$NNprojects}
-				<OPTION VALUE="{$NNprojects[project].id}" {if ($netdevinfo.invprojectid == $NNprojects[project].id ) } selected="selected" {/if} >{$NNprojects[project].name}</OPTION>
+				<OPTION VALUE="{$NNprojects[project].id}" {if ($netobjinfo.invprojectid == $NNprojects[project].id ) } selected="selected" {/if} >{$NNprojects[project].name}</OPTION>
 				{/section}
 			</SELECT>
-			<INPUT TYPE="TEXT" NAME="netdev[projectname]" VALUE="{$netdevinfo.projectname}" {tip text="Enter new project name" trigger="projectname" } ID="NNprojectname">
+			<INPUT TYPE="TEXT" NAME="netobj[projectname]" VALUE="{$netobjinfo.projectname}" {tip text="Enter new project name" trigger="projectname" } ID="NNprojectname">
 		</TD>
 	</TR>
 	<TR>
@@ -281,10 +331,10 @@
 			{trans("Net node:")}
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT NAME="netdev[netnodeid]" VALUE="{$netdevinfo.netnodeid}" {tip text="Select node"} >
+			<SELECT NAME="netobj[netnodeid]" VALUE="{$netobjinfo.netnodeid}" {tip text="Select node"} >
 				<OPTION VALUE="-1">{trans("None")}</OPTION>
 				{section name=nd loop=$NNnodes}
-				<OPTION VALUE="{$NNnodes[nd].id}" {if ($netdevinfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+				<OPTION VALUE="{$NNnodes[nd].id}" {if ($netobjinfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
 				{/section}
 			</SELECT>
 		</TD>
@@ -298,8 +348,8 @@
 	</TR>
 	<TR>
 		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
-			<A HREF="javascript:document.netdevadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
-			<A HREF="?m=netdevlist">{trans("Cancel")} <IMG SRC="img/cancel.gif" alt=""></A>
+			<A HREF="javascript:document.netobjadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
+			<A HREF="?m=netobjlist">{trans("Cancel")} <IMG SRC="img/cancel.gif" alt=""></A>
 		</TD>
 	</TR>
     </TBODY>
@@ -307,7 +357,7 @@
 </FORM>
 <SCRIPT type="text/javascript">
 <!--
-document.forms['netdevadd'].elements['netdev[name]'].focus();
+document.forms['netobjadd'].elements['netobj[name]'].focus();
 check_teryt('location', true);
 setNNProject();
 //-->
