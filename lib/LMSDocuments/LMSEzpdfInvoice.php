@@ -24,6 +24,9 @@
  *  $Id$
  */
 
+// brzydkie hacki dla ezpdf
+@setlocale(LC_NUMERIC, 'C');
+
 class LMSEzpdfInvoice extends LMSInvoice {
 	public function __construct($pagesize, $orientation, $title) {
 		parent::__construct($pagesize, $orientation, $title, 'LMSEzpdfBackend');
@@ -168,9 +171,9 @@ class LMSEzpdfInvoice extends LMSInvoice {
 		}
 
 		//$font_size = 16;
-		//$y = $y - $this->backend->text_align_left($x, $y, $font_size, $type);
+		//$y = $y - $this->backend->text_align_left($x, $y, $font_size, $this->invoice['type']);
 
-		if ($this->type == trans('DUPLICATE')) {
+		if ($this->invoice['type'] == trans('DUPLICATE')) {
 			$font_size = 12;
 			$y = $y - $this->backend->text_align_left($x,$y+4,$font_size, trans('Duplicate draw-up date:') . ' ' . date('Y/m/d'));
 		}
