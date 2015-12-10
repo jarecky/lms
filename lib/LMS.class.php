@@ -1269,6 +1269,12 @@ class LMS
         return $manager->NetObjExists($id);
     }
 
+    public function GetNetObjList($order,$search)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->GetNetObjList($order,$search);
+    }
+
     /*
      *   Request Tracker (Helpdesk)
      */

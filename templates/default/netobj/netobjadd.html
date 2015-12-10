@@ -53,8 +53,7 @@
                 <TD WIDTH="98%">
                         <SELECT ID="type" NAME="netobj[type]" {tip text="Select object type"} VALUE="{$netobj.type}" onchange="changeObjectType();">
                                 {foreach $_NETOBJECTTYPES as $idx => $type}
-                                <OPTION VALUE="{$idx}"{if $netobj.type
-				== $idx} selected{/if}>{$netobj.type} {$type.label}</OPTION>
+                                <OPTION VALUE="{$idx}"{if $netobj.type==$idx} selected{/if}>{$type.label}</OPTION>
                                 {/foreach}
                         </SELECT>
                 </TD>
@@ -80,8 +79,6 @@
 		</TD>
 		<TD WIDTH="98%">
 			<INPUT TYPE="TEXT" NAME="netobj[model]" VALUE="{$netobj.model}" {tip text="Enter device model (optional)"}>
-			<BR>
-                        <INPUT type="hidden" name="netobj[netobjicemodelid]" value="{$netobj.netobjicemodelid}">
 		</TD>
 	</TR>
 	<TR id="serial">
@@ -100,7 +97,7 @@
 			<IMG SRC="img/port.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Quantity:")}</B>
+			<B>{trans("{$_NETOBJECTTYPES[0].parameter}:")}</B>
 		</TD>
 		<TD WIDTH="98%">
 			<INPUT TYPE="TEXT" NAME="netobj[reserve_quantity]" VALUE="{if $netobj.reserve_quantity}{$netobj.reserve_quantity}{/if}" {tip trigger="reserve_quantity" text="Enter quantity of fiberoptic cable"}>
@@ -111,7 +108,7 @@
                         <IMG SRC="img/port.gif" ALT="">
                 </TD>
                 <TD WIDTH="1%" NOWRAP>
-                        <B>{trans("Capacity:")}</B>
+			<B>{trans("{$_NETOBJECTTYPES[1].parameter}:")}</B>
                 </TD>
                 <TD WIDTH="98%">
                         <INPUT TYPE="TEXT" NAME="netobj[closure_capacity]" VALUE="{if $netobj.closure_capacity}{$netobj.closure_capacity}{/if}" {tip trigger="closure_capacity" text="Enter the splice tray capacity"}>
@@ -122,7 +119,7 @@
                         <IMG SRC="img/port.gif" ALT="">
                 </TD>
                 <TD WIDTH="1%" NOWRAP>
-                        <B>{trans("Number of adaptors:")}</B>
+			<B>{trans("{$_NETOBJECTTYPES[2].parameter}:")}</B>
                 </TD>
                 <TD WIDTH="98%">
                         <INPUT TYPE="TEXT" NAME="netobj[box_adaptors]" VALUE="{if $netobj.box_adaptors}{$netobj.box_adaptors}{/if}" {tip trigger="box_adaptors" text="Enter number of adaptors in splice box"}>
@@ -133,7 +130,7 @@
                         <IMG SRC="img/port.gif" ALT="">
                 </TD>
                 <TD WIDTH="1%" NOWRAP>
-                        <B>{trans("Split:")}</B>
+			<B>{trans("{$_NETOBJECTTYPES[3].parameter}:")}</B>
                 </TD>
                 <TD WIDTH="98%">
                         <INPUT TYPE="TEXT" NAME="netobj[splitter_in]" VALUE="{if $netobj.splitter_in}{$netobj.splitter_in}{/if}" {tip trigger=" splitter_in" text="Enter number of input channels"} SIZE="2"> :
@@ -182,86 +179,6 @@
 			<a href="javascript: void(0);" onClick="return gpscoordschoosewin(document.netobjadd.elements['netobj[longitude]'], document.netobjadd.elements['netobj[latitude]']);" {tip text="Click to select gps coordinates from map"}>&raquo;&raquo;&raquo;</A>
 		</TD>
 	</TR>
-{if ConfigHelper::checkConfig('phpui.radius')}
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/radius.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Shortname:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netobj[shortname]" VALUE="{$netobj.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/radius.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Type:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<SELECT NAME="netobj[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
-				<OPTION VALUE="0"></OPTION>
-				{foreach from=$nastype item=item key=key}
-				<OPTION VALUE="{$key}" {if $key==$netobjices.nastype} SELECTED{/if}>{$item.name}</OPTION>
-				{/foreach}
-			</SELECT>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/radius.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Max clients:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netobj[clients]" VALUE="{if $netobj.clients}{$netobj.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/radius.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Secret:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netobj[secret]" VALUE="{$netobj.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/radius.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Community:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netobj[community]" VALUE="{$netobj.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
-		</TD>
-	</TR>
-{/if}
-{if isset($channels)}
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/channel.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Channel:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<SELECT NAME="netobj[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
-				<OPTION VALUE="">- {trans("none")} -</OPTION>
-				{foreach from=$channels item=item}
-				<OPTION VALUE="{$item.id}" {if $item.id == $netobj.channelid} SELECTED{/if}>{$item.name}</OPTION>
-				{/foreach}
-			</SELECT>
-		</TD>
-	</TR>
-{/if}
                                         </TABLE>
 				</TD>
 				<TD WIDTH="50%" style="vertical-align:top;">

@@ -24,7 +24,7 @@
  *  $Id$
  */
 
-$layout['pagetitle'] = trans('Network Object');
+$layout['pagetitle'] = trans('Network Objects');
 
 if(!isset($_GET['o']))
 	$SESSION->restore('ndlo', $o);
@@ -50,18 +50,62 @@ else
 	$n = $_GET['n'];
 $SESSION->save('ndfn', $n);
 
-$netdevlist = $LMS->GetNetDevList($o, $search);
-$listdata['total'] = $netdevlist['total'];
-$listdata['order'] = $netdevlist['order'];
-$listdata['direction'] = $netdevlist['direction'];
+if(!isset($_GET['producer']))
+	$SESSION->restore('ndfproducer', $producer);
+else
+	$producer = $_GET['producer'];
+$SESSION->save('ndfproducer', $producer);
+
+if(!isset($_GET['type']))
+        $SESSION->restore('ndftype', $type);
+else
+        $type = $_GET['type'];
+$SESSION->save('ndftype', $type);
+
+if(!isset($_GET['model']))
+	$SESSION->restore('ndfmodel', $model);
+else
+	$model = $_GET['model'];
+$SESSION->save('ndfmodel', $model);
+
+if (empty($model))
+	$model = -1;
+if (empty($producer))
+	$producer = -1;
+if (empty($type))
+	$type = -1;
+
+
+if (!preg_match('/^-[0-9]+$/', $model) && !in_array($model, $models)) {
+	$SESSION->save('ndfmodel', '-1');
+	$SESSION->redirect('?' . preg_replace('/&model=[^&]+/', '', $_SERVER['QUERY_STRING']));
+}
+if (!preg_match('/^-[0-9]+$/', $producer) && !in_array($producer, $producers)) {
+	$SESSION->save('ndfproducer', '-1');
+	$SESSION->redirect('?' . preg_replace('/&producer=[^&]+/', '', $_SERVER['QUERY_STRING']));
+}
+
+$search = array(
+	'status' => $s,
+	'project' => $p,
+	'netnode' => $n,
+	'producer' => $producer,
+	'type' => $type,
+	'model' => $model,
+);
+$netobjlist = $LMS->GetNetObjList($o, $search);
+$listdata['total'] = $netobjlist['total'];
+$listdata['order'] = $netobjlist['order'];
+$listdata['direction'] = $netobjlist['direction'];
 $listdata['status'] = $s;
 $listdata['invprojectid'] = $p;
 $listdata['netnode'] = $n;
+$listdata['type'] = $type;
 $listdata['producer'] = $producer;
 $listdata['model'] = $model;
-unset($netdevlist['total']);
-unset($netdevlist['order']);
-unset($netdevlist['direction']);
+unset($netobjlist['total']);
+unset($netobjlist['order']);
+unset($netobjlist['direction']);
 
 if(!isset($_GET['page']))
         $SESSION->restore('ndlp', $_GET['page']);
@@ -77,7 +121,7 @@ $SESSION->save('backto', $_SERVER['QUERY_STRING']);
 $SMARTY->assign('page',$page);
 $SMARTY->assign('pagelimit',$pagelimit);
 $SMARTY->assign('start',$start);
-$SMARTY->assign('netdevlist',$netdevlist);
+$SMARTY->assign('netobjlist',$netobjlist);
 $SMARTY->assign('listdata',$listdata);
 $SMARTY->assign('netnodes', $DB->GetAll("SELECT id, name FROM netnodes ORDER BY name"));
 $SMARTY->assign('NNprojects', $DB->GetAll("SELECT * FROM invprojects WHERE type<>? ORDER BY name",

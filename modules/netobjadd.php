@@ -39,6 +39,24 @@ if (isset($_POST['netobj'])) {
 	elseif (strlen($netobjdata['name'])>32)
 		$error['name'] = trans('Device name is too long (max.32 characters)!');
 
+
+	switch ($netobjdata['type']) {
+		case 0:
+			$netobjdata['parameter']=$netobjdata['reserve_quantity'];
+			break;
+		case 1:
+			$netobjdata['parameter']=$netobjdata['closure_capacity'];
+			break;
+		case 2:
+			$netobjdata['parameter']=$netobjdata['box_adaptors'];
+			break;
+		case 3:
+			$netobjdata['parameter']=$netobjdata['splitter_in'].':'.$netobjdata['splitter_out'];
+			break;
+		default:
+			$netobjdata['parameter']='';
+	}
+
 	$netobjdata['purchasetime'] = 0;
 	if ($netobjdata['purchasedate'] != '') {
 		// date format 'yyyy/mm/dd'
@@ -75,11 +93,6 @@ if (isset($_POST['netobj'])) {
 	if (!$error) {
 		if ($netobjdata['guaranteeperiod'] == -1)
 			$netobjdata['guaranteeperiod'] = NULL;
-
-		if (!isset($netobjdata['shortname'])) $netobjdata['shortname'] = '';
-		if (!isset($netobjdata['secret'])) $netobjdata['secret'] = '';
-		if (!isset($netobjdata['community'])) $netobjdata['community'] = '';
-		if (!isset($netobjdata['nastype'])) $netobjdata['nastype'] = 0;
 
 		if (empty($netobjdata['teryt'])) {
 			$netobjdata['location_city'] = null;
@@ -121,8 +134,8 @@ if (isset($_POST['netobj'])) {
 
 		#echo '<PRE>';print_r($netobjdata);echo '</PRE>';
 	
-		#$netobjid = $LMS->NetObjAdd($netobjdata);
-		#$SESSION->redirect('?m=netobjinfo&id='.$netobjid);
+		$netobjid = $LMS->NetObjAdd($netobjdata);
+		$SESSION->redirect('?m=netobjinfo&id='.$netobjid);
 	}
 
 	$SMARTY->assign('error', $error);

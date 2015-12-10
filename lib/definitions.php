@@ -424,24 +424,32 @@ $NETELEMENTOWNERSHIPS = array(
 
 $NETOBJECTTYPES = array(
 	0 	=> array(
-		'label' => 'Zapas',
-		'tip' => 'Zapas kabla światłowodowego',
-		'table' => 'netobjreserve'
+		'id' 		=> 'reserve',
+		'label' 	=> trans('Zapas'),
+		'tip' 		=> trans('Zapas kabla światłowodowego'),
+		'parameter' 	=> trans('Ilość'),
+		'table' 	=> 'netobjreserve'
 	),
 	1	=> array(
-		'label' => 'Mufa',
-		'tip' => 'Mufa światłowodowa',
-		'table' => 'netobjspliceclosure'
+		'id' 		=> 'closure',
+		'label' 	=> trans('Mufa'),
+		'tip' 		=> trans('Mufa światłowodowa'),
+		'parameter' 	=> trans('Pojemność'),
+		'table' 	=> 'netobjspliceclosure'
 	),
 	2	=> array(
-		'label' => 'Przełącznica',
-		'tip' => 'Przełącznica światłowodowa',
-		'table' => 'netobjsplicebox'
+		'id' 		=> 'box',
+		'label' 	=> trans('Przełącznica'),
+		'tip' 		=> trans('Przełącznica światłowodowa'),
+		'parameter' 	=> trans('Porty'),
+		'table' 	=> 'netobjsplicebox'
 	),
 	3	=> array(
-		'label' => 'Splitter',
-		'tip' => 'Splitter optyczny',
-		'table' => 'netobjsplitter'
+		'id' 		=> 'splitter',
+		'label'		=> trans('Splitter'),
+		'tip'		=> trans('Splitter optyczny'),
+		'parameter'	=> trans('Podział'),
+		'table'		=> 'netobjsplitter'
 	),
 );
 
