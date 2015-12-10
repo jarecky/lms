@@ -25,9 +25,7 @@
  */
 
 function invoice_body($document, $invoice) {
-	$document->SetInvoice($invoice);
-	$document->invoice_body();
-
+	$document->Draw($invoice);
 	if (!isset($invoice['last']))
 		$document->NewPage();
 }
@@ -39,7 +37,7 @@ if ($invoice_type == 'pdf') {
 	$pdf_type = ConfigHelper::getConfig('invoices.pdf_type', 'tcpdf');
 	$pdf_type = ucwords($pdf_type);
 	$classname = 'LMS' . $pdf_type . 'Invoice';
-	$document = new $classname('A4', 'portrait', trans('Invoices'));
+	$document = new $classname(trans('Invoices'));
 } else
 	$document = new LMSHtmlInvoice($SMARTY);
 

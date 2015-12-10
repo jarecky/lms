@@ -5,8 +5,6 @@
  *
  *  (C) Copyright 2001-2015 LMS Developers
  *
- *  Please, see the doc/AUTHORS for more information about authors!
- *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License Version 2 as
  *  published by the Free Software Foundation.
@@ -21,29 +19,14 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
  *  USA.
  *
- *  $Id$
+ */
+/**
+ * @author Maciej_Wawryk
  */
 
-abstract class LMSInvoice extends LMSDocument {
-	abstract function invoice_body_standard();
-
-	abstract function invoice_body_ft0100();
-
-	public function Draw($data) {
-		parent::Draw($data);
-		if (isset($this->data['invoice']))
-			$template = ConfigHelper::getConfig('invoices.cnote_template_file');
-		else
-			$template = ConfigHelper::getConfig('invoices.template_file');
-		switch ($template) {
-			case "standard":
-				$this->invoice_body_standard();
-				break;
-			case "FT-0100":
-				$this->invoice_body_ft0100();
-				break;
-		}
-	}
-}
+$this->BeginTrans();
+$this->Execute("ALTER TABLE documents ADD COLUMN cancelled smallint NOT NULL DEFAULT 0");
+$this->Execute("UPDATE dbinfo SET keyvalue = ? WHERE keytype = ?", array('2015120901', 'dbversion'));
+$this->CommitTrans();
 
 ?>
