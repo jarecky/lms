@@ -251,6 +251,18 @@ $menu = array(
                                         'tip' => trans('Add new network object'),
                                         'prio' => 61,
                                 ),
+                                array(
+                                        'name' => trans('Cables list'),
+                                        'link' => '?m=netcablist',
+                                        'tip' => trans('Network cables list'),
+                                        'prio' => 62,
+                                ),
+                                array(
+                                        'name' => trans('New cable'),
+                                        'link' => '?m=netcabadd',
+                                        'tip' => trans('Add new network cable'),
+                                        'prio' => 63,
+                                ),
 				array(
 					'name' => trans('Producers and models'),
 					'link' => '?m=netdevmodels',

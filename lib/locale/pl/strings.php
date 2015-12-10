@@ -3074,5 +3074,10 @@ $_LANG['New object'] = 'Nowy obiekt';
 $_LANG['Add new network object'] = 'Dodaj nowy obiekt sieciowy';
 $_LANG['New object'] = 'Nowy obiekt';
 $_LANG['Network Object'] = 'Obiekty sieciowe';
+$_LANG['Cables list'] = 'Lista okablowania';
+$_LANG['Network cables list'] = 'Lista okablowania sieciowego';
+$_LANG['New cable'] = 'Nowe okablowanie';
+$_LANG['Add new network cable'] = 'Dodaj nowe okablowanie sieciowe';
+#$_LANG[''] = '';
 
 ?>
