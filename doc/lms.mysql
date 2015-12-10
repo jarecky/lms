@@ -708,6 +708,31 @@ CREATE TABLE netobjects (
 
 # --------------------------------------------------------
 #
+# Structure of table  netcables
+#
+CREATE TABLE netcables (
+  id            int(11)         NOT NULL auto_increment,
+  name          varchar(32)     NOT NULL DEFAULT '',
+  fibers	int(5)		NOT NULL,
+  length	int(11)		NOT NULL default '0',
+  begin		int(11)		DEFAULT NULL,
+  end		int(11)		DEFAULT NULL,
+  description   text            NOT NULL DEFAULT '',
+  producer      varchar(64)     NOT NULL DEFAULT '',
+  model         varchar(32)     NOT NULL DEFAULT '',
+  purchasetime  int(11)         NOT NULL DEFAULT '0',
+  guaranteeperiod tinyint unsigned DEFAULT '0',
+  invprojectid  int(11)         DEFAULT NULL,
+  status        tinyint         DEFAULT '0',
+  PRIMARY KEY (id),
+  FOREIGN KEY (begin) REFERENCES netobjects (id) ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY (end) REFERENCES netobjects (id) ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY (invprojectid) REFERENCES invprojects (id) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+# --------------------------------------------------------
+#
 # Structure of table netradiosectors
 #
 CREATE TABLE netradiosectors (

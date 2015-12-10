@@ -24,7 +24,7 @@
  *  $Id$
  */
 
-$layout['pagetitle'] = trans('Network Objects');
+$layout['pagetitle'] = trans('Network Cables');
 
 if(!isset($_GET['o']))
 	$SESSION->restore('ndlo', $o);
@@ -56,12 +56,6 @@ else
 	$producer = $_GET['producer'];
 $SESSION->save('ndfproducer', $producer);
 
-if(!isset($_GET['type']))
-        $SESSION->restore('ndftype', $type);
-else
-        $type = $_GET['type'];
-$SESSION->save('ndftype', $type);
-
 if(!isset($_GET['model']))
 	$SESSION->restore('ndfmodel', $model);
 else
@@ -72,12 +66,10 @@ if (empty($model))
 	$model = -1;
 if (empty($producer))
 	$producer = -1;
-if (empty($type))
-	$type = -1;
 
-$producers = $DB->GetCol("SELECT DISTINCT UPPER(TRIM(producer)) AS producer FROM netobjects WHERE producer <> '' ORDER BY producer");
-$models = $DB->GetCol("SELECT DISTINCT UPPER(TRIM(model)) AS model FROM netobject WHERE model <> ''"
-        . ($producer != '-1' ? " AND UPPER(TRIM(producer)) = " . $DB->Escape($producer == '-2' ? '' : $producer) : '') . " ORDER BY model");
+$producers = $DB->GetCol("SELECT DISTINCT UPPER(TRIM(producer)) AS producer FROM netcables WHERE producer <> '' ORDER BY producer");
+$models = $DB->GetCol("SELECT DISTINCT UPPER(TRIM(model)) AS model FROM netcables WHERE model <> ''"
+	. ($producer != '-1' ? " AND UPPER(TRIM(producer)) = " . $DB->Escape($producer == '-2' ? '' : $producer) : '') . " ORDER BY model");
 if (!preg_match('/^-[0-9]+$/', $model) && !in_array($model, $models)) {
 	$SESSION->save('ndfmodel', '-1');
 	$SESSION->redirect('?' . preg_replace('/&model=[^&]+/', '', $_SERVER['QUERY_STRING']));
@@ -90,24 +82,20 @@ if (!preg_match('/^-[0-9]+$/', $producer) && !in_array($producer, $producers)) {
 $search = array(
 	'status' => $s,
 	'project' => $p,
-	'netnode' => $n,
 	'producer' => $producer,
-	'type' => $type,
 	'model' => $model,
 );
-$netobjlist = $LMS->GetNetObjList($o, $search);
-$listdata['total'] = $netobjlist['total'];
-$listdata['order'] = $netobjlist['order'];
-$listdata['direction'] = $netobjlist['direction'];
+$netcablist = $LMS->GetNetCabList($o, $search);
+$listdata['total'] = $netcablist['total'];
+$listdata['order'] = $netcablist['order'];
+$listdata['direction'] = $netcablist['direction'];
 $listdata['status'] = $s;
 $listdata['invprojectid'] = $p;
-$listdata['netnode'] = $n;
-$listdata['type'] = $type;
 $listdata['producer'] = $producer;
 $listdata['model'] = $model;
-unset($netobjlist['total']);
-unset($netobjlist['order']);
-unset($netobjlist['direction']);
+unset($netcablist['total']);
+unset($netcablist['order']);
+unset($netcablist['direction']);
 
 if(!isset($_GET['page']))
         $SESSION->restore('ndlp', $_GET['page']);
@@ -123,13 +111,12 @@ $SESSION->save('backto', $_SERVER['QUERY_STRING']);
 $SMARTY->assign('page',$page);
 $SMARTY->assign('pagelimit',$pagelimit);
 $SMARTY->assign('start',$start);
-$SMARTY->assign('netobjlist',$netobjlist);
+$SMARTY->assign('netcablist',$netcablist);
 $SMARTY->assign('listdata',$listdata);
-$SMARTY->assign('netnodes', $DB->GetAll("SELECT id, name FROM netnodes ORDER BY name"));
 $SMARTY->assign('NNprojects', $DB->GetAll("SELECT * FROM invprojects WHERE type<>? ORDER BY name",
 	array(INV_PROJECT_SYSTEM)));
 $SMARTY->assign('producers', $producers);
 $SMARTY->assign('models', $models);
-$SMARTY->display('netobj/netobjlist.html');
+$SMARTY->display('netcab/netcablist.html');
 
 ?>

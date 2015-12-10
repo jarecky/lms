@@ -1276,6 +1276,23 @@ class LMS
     }
 
     /*
+     *   Network Objects
+     */
+
+    public function NetCabAdd($data)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->NetCabAdd($data);
+    }
+
+    public function GetNetCabList($order,$search)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->GetNetCabList($order,$search);
+    }
+    
+
+    /*
      *   Request Tracker (Helpdesk)
      */
 
@@ -2327,9 +2344,9 @@ class LMS
     }
 
     /**
-     * Returns net dev manager
+     * Returns net obj manager
      *
-     * @return LMSNetObjManagerInterface Net dev manager
+     * @return LMSNetObjManagerInterface Net obj manager
      */
     protected function getNetObjManager()
     {
@@ -2339,6 +2356,18 @@ class LMS
         return $this->net_obj_manager;
     }
     
+    /**
+     * Returns net cab manager
+     *
+     * @return LMSNetCabManagerInterface Net cab manager
+     */
+    protected function getNetCabManager()
+    {
+        if (!isset($this->net_cab_manager)) {
+            $this->net_cab_manager = new LMSNetCabManager($this->DB, $this->AUTH, $this->cache, $this->SYSLOG);
+        }
+        return $this->net_cab_manager;
+    }
 
     /**
      * Returns helpdesk manager
@@ -2568,6 +2597,15 @@ class LMS
         $this->net_obj_manager = $manager;
     }
 
+    /**
+     * Sets net cab manager
+     *
+     * @param LMSNetCabManagerInterface $manager Manager
+     */
+    public function setNetCabManager(LMSNetCabManagerInterface $manager)
+    {
+        $this->net_cab_manager = $manager;
+    }
 
     /**
      * Sets helpdesk manager

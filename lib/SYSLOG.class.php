@@ -49,6 +49,7 @@ define('SYSLOG_RES_MGMTURL', 46);
 define('SYSLOG_RES_TMPL', 47);
 define('SYSLOG_RES_RADIOSECTOR', 48);
 define('SYSLOG_RES_NETOBJ', 49);
+define('SYSLOG_RES_NETCAB', 50);
 
 $SYSLOG_RESOURCES = array(
 	SYSLOG_RES_USER => trans('user<!syslog>'),
@@ -100,6 +101,7 @@ $SYSLOG_RESOURCES = array(
 	SYSLOG_RES_TMPL => trans('template<!syslog>'),
 	SYSLOG_RES_RADIOSECTOR => trans('radio sector<!syslog>'),
 	SYSLOG_RES_NETOBJ => trans('network object<!syslog>'),
+	SYSLOG_RES_NETCAB => trans('network cable<!syslog>'),
 );
 
 $SYSLOG_RESOURCE_KEYS = array(
@@ -152,6 +154,7 @@ $SYSLOG_RESOURCE_KEYS = array(
 	SYSLOG_RES_TMPL => 'templateid',
 	SYSLOG_RES_RADIOSECTOR => 'radiosectorid',
 	SYSLOG_RES_NETOBJ => 'networkobjectid',
+	SYSLOG_RES_NETCAB => 'networkcableid',
 );
 
 define('SYSLOG_OPER_ADD', 1);
