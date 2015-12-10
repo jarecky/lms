@@ -453,6 +453,20 @@ $NETOBJECTTYPES = array(
 	),
 );
 
+$FIBEROPTICCOLORCODES = array(
+	1	=>	trans('blue'),
+	2	=>	trans('orange'),
+	3	=>	trans('green'),
+	4	=>	trans('brown'),
+	5	=>	trans('slate'),
+	6	=>	trans('white'),
+	7	=>	trans('red'),
+	8	=>	trans('black'),
+	9	=>	trans('yellow'),
+	10	=>	trans('violet'),
+	11	=>	trans('pink'),
+	12	=>	trans('aqua')
+);
 $USERPANEL_ID_TYPES = array(
 	1	=> array(
 		'label' => trans('Customer ID:'),
