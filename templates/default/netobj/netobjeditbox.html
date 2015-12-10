@@ -1,0 +1,273 @@
+<!-- $Id$ -->
+{include file="calendar_js.html"}
+<script type="text/javascript" src="img/netobjecthelper.js"></script>
+<TABLE class="lmsbox">
+	<FORM NAME="netobjedit" METHOD="POST" ACTION="?m=netobjedit&id={$netobjinfo.id}">
+	<INPUT type="submit" class="hiddenbtn">
+        <THEAD>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netobj.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netobj[name]" VALUE="{$netobjinfo.name}" MAXLENGTH="32" {tip trigger="name" text="Enter device name" bold=1}>
+		</TD>
+	</TR>
+        </THEAD>
+        <TBODY>
+	<TR>
+        <TD WIDTH="100%" COLSPAN="3" CLASS="container">
+		    <TABLE WIDTH="100%" CELLPADDING="0">
+		                <TR>
+		                        <TD WIDTH="50%" style="vertical-align:top;">
+		                                <TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Status:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT NAME="netobj[status]"  {tip text="Select device status"}>
+				{foreach $_NETELEMENTSTATUSES as $idx => $status}
+				<OPTION VALUE="{$idx}"{if $netobjinfo.status == $idx} selected{/if}>{$status}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/producer.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Type:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+			{$_NETOBJECTTYPES[$netobjinfo.type].label}
+			<INPUT ID="type" type="hidden" name="netobj[type]" value="{$netobjinfo.type}">
+                </TD>
+        </TR>
+	<TR ID="producer">
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Producer:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netobj[producer]" VALUE="{$netobjinfo.producer}" {tip text="Enter device producer (optional)"}>
+		</TD>
+	</TR>
+	<TR ID="model">
+		<TD WIDTH="1%">
+			<IMG SRC="img/netobj_model.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Model:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netobj[model]" VALUE="{$netobjinfo.model}" {tip text="Enter model name (optional)" }>
+		</TD>
+	</TR>
+	<TR ID="serial">
+		<TD WIDTH="1%">
+			<IMG SRC="img/serialnumber.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Serial number:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netobj[serialnumber]" VALUE="{$netobjinfo.serialnumber}" {tip text="Enter serial number (optional)"}>
+		</TD>
+	</TR>
+        <TR ID="reserve">
+                <TD WIDTH="1%">
+                        <IMG SRC="img/port.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("{$_NETOBJECTTYPES[0].parameter}:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netobj[reserve_quantity]" VALUE="{if $netobjinfo.reserve_quantity}{$netobjinfo.reserve_quantity}{/if}" {tip trigger="reserve_quantity" text="Enter quantity of fiberoptic cable"}>
+                </TD>
+        </TR>
+        <TR ID="closure">
+                <TD WIDTH="1%">
+                        <IMG SRC="img/port.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("{$_NETOBJECTTYPES[1].parameter}:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netobj[closure_capacity]" VALUE="{if $netobjinfo.closure_capacity}{$netobjinfo.closure_capacity}{/if}" {tip trigger="closure_capacity" text="Enter the splice tray capacity"}>
+                </TD>
+        </TR>
+        <TR ID="box">
+                <TD WIDTH="1%">
+                        <IMG SRC="img/port.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("{$_NETOBJECTTYPES[2].parameter}:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netobj[box_adaptors]" VALUE="{if $netobjinfo.box_adaptors}{$netobjinfo.box_adaptors}{/if}" {tip trigger="box_adaptors" text="Enter number of adaptors in splice box"}>
+                </TD>
+        </TR>
+        <TR ID="splitter">
+                <TD WIDTH="1%">
+                        <IMG SRC="img/port.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("{$_NETOBJECTTYPES[3].parameter}:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netobj[splitter_in]" VALUE="{if $netobjinfo.splitter_in}{$netobjinfo.splitter_in}{/if}" {tip trigger=" splitter_in" text="Enter number of input channels"} SIZE="2"> :
+                        <INPUT TYPE="TEXT" NAME="netobj[splitter_out]" VALUE="{if $netobjinfo.splitter_out}{$netobjinfo.splitter_out}{/if}" {tip trigger=" splitter_out" text="Enter number of output channels"} SIZE="6">
+                </TD>
+        </TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Location:")}</B>
+		</TD>
+		<TD WIDTH="98%" NOWRAP>
+		    <INPUT TYPE="TEXT" SIZE="30" VALUE="{$netobjinfo.location}" id="location" NAME="netobj[location]"  {tip text="Enter location (optional)" trigger="location"}>
+			<A href="javascript: void(0);" onclick="if (check_teryt()) return locationchoosewin('netobj', 'netobjedit', document.forms['netobjedit'].elements['netobj[location_city]'].value,  document.forms['netobjedit'].elements['netobj[location_street]'].value)" {tip text="Click to select location"}>&raquo;&raquo;&raquo;</A>
+			<BR>
+		    <INPUT type="hidden" name="netobj[location_city]" value="{$netobjinfo.location_city}">
+		    <INPUT type="hidden" name="netobj[location_street]" value="{$netobjinfo.location_street}">
+		    <INPUT type="hidden" name="netobj[location_house]" value="{$netobjinfo.location_house}">
+		    <INPUT type="hidden" name="netobj[location_flat]" value="{$netobjinfo.location_flat}">
+			<INPUT TYPE="checkbox" name="netobj[teryt]" id="teryt" onchange="check_teryt('location')"{if $netobjinfo.teryt} checked{/if}><label for="teryt">{trans("TERRIT-DB")}</label>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("GPS longitude:")}</B>
+		</TD>
+		<TD WIDTH="98%" NOWRAP>
+			<INPUT ID="longitude" TYPE="text" NAME="netobj[longitude]" VALUE="{$netobjinfo.longitude}" {tip text="Enter device longitude (optional)" trigger="longitude"}>
+			<a href="javascript: void(0);" onClick="return gpscoordschoosewin(document.netobjedit.elements['netobj[longitude]'], document.netobjedit.elements['netobj[latitude]']);" {tip text="Click to select gps coordinates from map"}>&raquo;&raquo;&raquo;</A>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("GPS latitude:")}</B>
+		</TD>
+		<TD WIDTH="98%" NOWRAP>
+			<INPUT ID="latitude" TYPE="text" NAME="netobj[latitude]" VALUE="{$netobjinfo.latitude}" {tip text="Enter device latitude (optional)" trigger="latitude"}>
+			<a href="javascript: void(0);" onClick="return gpscoordschoosewin(document.netobjedit.elements['netobj[longitude]'], document.netobjedit.elements['netobj[latitude]']);" {tip text="Click to select gps coordinates from map"}>&raquo;&raquo;&raquo;</A>
+		</TD>
+	</TR>
+                                        </TABLE>
+				</TD>
+			        <TD WIDTH="50%" style="vertical-align:top;">
+			                <TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/calendar.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Purchase date:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<div class="calendar">
+			<INPUT TYPE="TEXT" NAME="netobj[purchasedate]" VALUE="{if $netobjinfo.purchasedate}{$netobjinfo.purchasedate}{/if}" SIZE="10" MAXSIZE="10" {tip trigger="purchasedate" text="Enter device purchase date in 'yyyy/mm/dd' format or click to choose date from calendar (optional)"}>
+			</div>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/guarantee.png" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Guarantee period:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT SIZE="1" NAME="netobj[guaranteeperiod]" {tip text="Select device guarantee period (optional)"}>
+				{foreach from=$_GUARANTEEPERIODS key=key item=period}
+				<OPTION VALUE="{$key}"{if $netobjinfo.guaranteeperiod == $key} SELECTED{/if}>{$period}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/desc.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Description:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<TEXTAREA NAME="netobj[description]" COLS="40" ROWS="5" COLS="40" ROWS="5" {tip text="Enter additional information (optional)"}>{$netobjinfo.description}</TEXTAREA>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<img src="img/money.gif" alt="">
+		</td>
+		<TD WIDTH="1%" class="bold nobr">
+			{trans("Investment project:")}
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT NAME="netobj[invprojectid]" ID="NNproject" VALUE="{$netobjinfo.invprojectid}" {tip text="Select project for this node"} onchange="setNNProject();">
+				<OPTION value="-2" {if ($netobjinfo.invprojectid == '-2' ) } selected="selected" {/if} >- {trans("none")} -</OPTION>
+				<OPTION value="-1" {if ($netobjinfo.invprojectid == '-1' ) } selected="selected" {/if}>{trans("New project")}</OPTION>
+				<OPTION value="1" {if ($netobjinfo.invprojectid == '1' ) } selected="selected" {/if}>{trans("From root device")}</OPTION>
+				{section name=project loop=$NNprojects}
+				<OPTION VALUE="{$NNprojects[project].id}" {if ($netobjinfo.invprojectid == $NNprojects[project].id ) } selected="selected" {/if} >{$NNprojects[project].name}</OPTION>
+				{/section}
+			</SELECT>
+			<INPUT TYPE="TEXT" NAME="netobj[projectname]" VALUE="{$netobjinfo.projectname}" {tip text="Enter new project name" trigger="projectname" } ID="NNprojectname">
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<img src="img/netobj.gif" alt="">
+		</td>
+		<TD WIDTH="1%" class="bold nobr">
+			{trans("Net node:")}
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT NAME="netobj[netnodeid]" VALUE="{$netobjinfo.netnodeid}" {tip text="Select node"} >
+				<OPTION VALUE="-1">{trans("None")}</OPTION>
+				{section name=nd loop=$NNnodes}
+				<OPTION VALUE="{$NNnodes[nd].id}" {if ($netobjinfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+				{/section}
+			</SELECT>
+		</TD>
+	</TR>
+	</TABLE>
+                            		</TD>
+                    		</TR>
+            		</TABLE>
+        	</TD>
+	</TR>
+	</FORM>
+	<TR>
+		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
+			<A HREF="javascript:document.netobjedit.submit();" ACCESSKEY="S">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
+			<A HREF="?m=netobjinfo&id={$netobjinfo.id}">{trans("Cancel")} <IMG SRC="img/cancel.gif" alt=""></A>
+		</TD>
+	</TR>
+        </TBODY>
+</TABLE>
+<SCRIPT type="text/javascript">
+<!--
+check_teryt('location', true);
+setNNProject();
+changeObjectType();
+//-->
+</SCRIPT>

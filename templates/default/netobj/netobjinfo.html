@@ -1,0 +1,12 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+{block name=netobjinfobox}
+	{include file="netobj/netobjinfobox.html"}
+{/block}
+{block name=netobjconnbox}
+	{include file="netobj/netobjconnbox.html"}
+{/block}
+{/block}
