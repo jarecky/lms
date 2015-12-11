@@ -36,30 +36,23 @@ public function NetCabUpdate($data) {
 	global $SYSLOG_RESOURCE_KEYS;
 
 	$args = array(
-		'name' => $data['name'],
-		'description' => $data['description'],
-		'producer' => $data['producer'],
-		'location' => trim($data['location']),
-		'location_city' => $data['location_city'] ? trim($data['location_city']) : null,
-		'location_street' => $data['location_street'] ? trim($data['location_street']) : null,
-		'location_house' => $data['location_house'] ? trim($data['location_house']) : null,
-		'location_flat' => $data['location_flat'] ? trim($data['location_flat']) : null,
-		'model' => $data['model'],
-		'serialnumber' => $data['serialnumber'],
-		'parameter' => $data['parameter'],
-		'purchasetime' => $data['purchasetime'],
-		'guaranteeperiod' => $data['guaranteeperiod'],
-		'longitude' => !empty($data['longitude']) ? str_replace(',', '.', $data['longitude']) : null,
-		'latitude' => !empty($data['latitude']) ? str_replace(',', '.', $data['latitude']) : null,
-		'invprojectid' => $data['invprojectid'],
-		'netnodeid' => $data['netnodeid'],
-		'status' => $data['status'],
+                'name' => $data['name'],
+                'fibers' => $data['fibers'],
+                'length' => $data['length'],
+                'begin' => $data['begin'],
+                'end' => $data['end'],
+                'description' => $data['description'],
+                'producer' => $data['producer'],
+                'model' => $data['model'],
+                'purchasetime' => $data['purchasetime'],
+                'guaranteeperiod' => $data['guaranteeperiod'],
+                'status' => $data['status'],
+                'invprojectid' => $data['invprojectid'],
 		$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB] => $data['id'],
 	);
-	$res = $this->db->Execute('UPDATE netcables SET name=?, description=?, producer=?, location=?,
-				location_city=?, location_street=?, location_house=?, location_flat=?,
-				model=?, serialnumber=?, parameter=?, purchasetime=?, guaranteeperiod=?,
-				longitude=?, latitude=?, invprojectid=?, netnodeid=?, status=?
+	$res = $this->db->Execute('UPDATE netcables SET name=?, fibers=?, length=?, 
+				begin=?, end=?, description=?, producer=?, model=?, 
+				purchasetime=?, guaranteeperiod=?, invprojectid=?, status=?
 				WHERE id=?', array_values($args));
 	if ($this->syslog && $res)
 		$this->syslog->AddMessage(SYSLOG_RES_NETCAB, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB]));
@@ -183,22 +176,7 @@ public function GetNetCabNames() {
 }
 
 public function GetNetCab($id) {
-	$result = $this->db->GetRow('SELECT c.*, 
-			(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
-				lt.name AS street_type,
-				lc.name AS city_name,
-				lb.name AS borough_name, lb.type AS borough_type,
-				ld.name AS district_name, ls.name AS state_name
-			FROM netcables c
-			LEFT JOIN location_cities lc ON (lc.id = c.location_city)
-			LEFT JOIN location_streets lst ON (lst.id = c.location_street)
-			LEFT JOIN location_street_types lt ON (lt.id = lst.typeid)
-			LEFT JOIN location_boroughs lb ON (lb.id = lc.boroughid)
-			LEFT JOIN location_districts ld ON (ld.id = lb.districtid)
-			LEFT JOIN location_states ls ON (ls.id = ld.stateid)
-			WHERE c.id = ?', array($id));
-
-	#$result['takenports'] = $this->CountNetCabLinks($id);
+	$result = $this->db->GetRow('SELECT * FROM netcables WHERE id = ?', array($id));
 
 	if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
 		$result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
@@ -262,4 +240,27 @@ public function DeleteNetCab($id) {
 	$this->db->CommitTrans();
 }
 
+public function GetNetCabInObj($id) {
+	$result=$this->db->GetAll('SELECT * FROM netcables WHERE begin=? OR end=?',array($id, $id));
+
+	foreach ($result AS $id => $cable) {
+		$splice=array();
+		for ($tube=1;$tube<=ceil($cable['fibers']/12);$tube++) {
+			for ($fiber=1;$fiber<=12;$fiber++) {
+				if ((($tube-1)*12+$fiber)<=$cable['fibers'])
+					$splice[$tube][$fiber]=-1;
+			}
+		}
+		$splices=$this->db->GetAll('SELECT * FROM netsplices WHERE objecid=? AND cableid=?',array($id,$result['id']));
+	
+		$result[$id]['splices']=$splice;
+	}
+
+	echo '<PRE>';print_r($result);echo '</PRE>';
+
+	return $result;
 }
+
+}
+
+?>

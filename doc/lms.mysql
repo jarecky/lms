@@ -730,6 +730,23 @@ CREATE TABLE netcables (
   FOREIGN KEY (invprojectid) REFERENCES invprojects (id) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+# --------------------------------------------------------
+#
+# Structure of table  netsplices
+#
+CREATE TABLE netsplices (
+  id            int(11)         NOT NULL auto_increment,
+  objectid	int(11)         DEFAULT NULL,
+  cableid	int(11)         DEFAULT NULL,
+  tube		tinyint		UNSIGNED NOT NULL DEFAULT '0',
+  fiber		tinyint		UNSIGNED NOT NULL DEFAULT '0',
+  position	smallint	UNSIGNED DEFAULT NULL,
+  description   text            NOT NULL DEFAULT '',
+  PRIMARY KEY (id),
+  FOREIGN KEY (objectid) REFERENCES netobjects (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (cableid) REFERENCES netcables (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 
 # --------------------------------------------------------
 #

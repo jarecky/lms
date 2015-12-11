@@ -42,4 +42,7 @@ interface LMSNetCabManagerInterface
     public function NetCabExists($id);
 
     public function GetNetCabList($order = 'name,asc', $search = array());
+
+    public function GetNetCabInObj($id);
+
 }

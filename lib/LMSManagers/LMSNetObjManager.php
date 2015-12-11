@@ -112,10 +112,6 @@ public function NetObjExists($id) {
 	return ($this->db->GetOne('SELECT * FROM netobjects WHERE id=?', array($id)) ? TRUE : FALSE);
 }
 
-public function GetNetObjIDByNode($id) {
-	return $this->db->GetOne('SELECT netobj FROM nodes WHERE id=?', array($id));
-}
-
 public function GetNetObjList($order = 'name,asc', $search = array()) {
 	list($order, $direction) = sscanf($order, '%[^,],%s');
 
@@ -230,7 +226,23 @@ public function GetNetObj($id) {
 			LEFT JOIN location_states ls ON (ls.id = ld.stateid)
 			WHERE o.id = ?', array($id));
 
-	#$result['takenports'] = $this->CountNetObjLinks($id);
+	switch ($result['type']) {
+		case 0:	
+			$result['splices']=0; 
+			break;
+		case 1:	
+		case 2:
+			$result['splices']=$result['parameter']; 
+			break;
+		case 3:
+			$data=preg_split('/:/',$result['parameter']);
+			$result['splices']=$data[0]+$data[1];
+			break;
+		default:
+			$result['splices']=0;
+			break;
+	}
+	$result['takensplices'] = 0; #$this->CountNetObjLinks($id);
 
 	if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
 		$result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
@@ -238,6 +250,7 @@ public function GetNetObj($id) {
 	elseif ($result['guaranteeperiod'] == NULL)
 		$result['guaranteeperiod'] = -1;
 
+	#echo '<PRE>';print_r($result);echo '</PRE>';
 	return $result;
 }
 
@@ -292,6 +305,10 @@ public function DeleteNetObj($id) {
 	$this->db->Execute('UPDATE nodes SET netobj=0 WHERE netobj=?', array($id));
 	$this->db->Execute('DELETE FROM netobjects WHERE id=?', array($id));
 	$this->db->CommitTrans();
+}
+
+public function GetNetObjSplices($id) {
+	$splices=$this->db->GetAll("SELECT * FROM netsplices WHERE id=?",array($id));	
 }
 
 }

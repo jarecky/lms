@@ -42,4 +42,7 @@ interface LMSNetObjManagerInterface
     public function NetObjExists($id);
 
     public function GetNetObjList($order = 'name,asc', $search = array());
+
+    public function GetNetObjSplices($id);
+
 }

@@ -194,45 +194,9 @@ switch ($action) {
 
 	case 'connect':
 
-		$linktype = !empty($_GET['linktype']) ? intval($_GET['linktype']) : '0';
-		$srcradiosector = ($linktype == 1 ? intval($_GET['srcradiosector']) : null);
-		$dstradiosector = ($linktype == 1 ? intval($_GET['dstradiosector']) : null);
-		$linktechnology = !empty($_GET['linktechnology']) ? intval($_GET['linktechnology']) : '0';
-		$linkspeed = !empty($_GET['linkspeed']) ? intval($_GET['linkspeed']) : '100000';
-		$dev['srcport'] = !empty($_GET['srcport']) ? intval($_GET['srcport']) : '0';
-		$dev['dstport'] = !empty($_GET['dstport']) ? intval($_GET['dstport']) : '0';
-		$dev['id'] = !empty($_GET['netobj']) ? intval($_GET['netobj']) : '0';
-
-		$ports1 = $DB->GetOne('SELECT ports FROM netobjices WHERE id = ?', array($_GET['id']));
-		$takenports1 = $LMS->CountNetObjLinks($_GET['id']);
-
-		$ports2 = $DB->GetOne('SELECT ports FROM netobjices WHERE id = ?', array($dev['id']));
-		$takenports2 = $LMS->CountNetObjLinks($dev['id']);
-
-		if ($ports1 <= $takenports1 || $ports2 <= $takenports2)
-			$error['linknode'] = trans('No free ports on device!');
-		else {
-			if ($dev['srcport']) {
-				if (!preg_match('/^[0-9]+$/', $dev['srcport']) || $dev['srcport'] > $ports2) {
-					$error['srcport'] = trans('Incorrect port number!');
-				} elseif ($DB->GetOne('SELECT id FROM nodes WHERE netobj=? AND port=? AND ownerid>0', array($dev['id'], $dev['srcport']))
-						|| $DB->GetOne('SELECT 1 FROM netlinks WHERE (src = ? OR dst = ?)
-					AND (CASE src WHEN ? THEN srcport ELSE dstport END) = ?', array($dev['id'], $dev['id'], $dev['id'], $dev['srcport']))) {
-					$error['srcport'] = trans('Selected port number is taken by other device or node!');
-				}
-			}
-
-			if ($dev['dstport']) {
-				if (!preg_match('/^[0-9]+$/', $dev['dstport']) || $dev['dstport'] > $ports1) {
-					$error['dstport'] = trans('Incorrect port number!');
-				} elseif ($DB->GetOne('SELECT id FROM nodes WHERE netobj=? AND port=? AND ownerid>0', array($_GET['id'], $dev['dstport']))
-						|| $DB->GetOne('SELECT 1 FROM netlinks WHERE (src = ? OR dst = ?)
-					AND (CASE src WHEN ? THEN srcport ELSE dstport END) = ?', array($_GET['id'], $_GET['id'], $_GET['id'], $dev['dstport']))) {
-					$error['dstport'] = trans('Selected port number is taken by other device or node!');
-				}
-			}
-		}
-
+		echo '<PRE>';print_r($_GET);echo '</PRE>';
+		
+		$error['position']='test';
 		if (!$error) {
 			$LMS->NetObjLink($dev['id'], $_GET['id'], array(
 				'type' => $linktype,
@@ -246,7 +210,6 @@ switch ($action) {
 			$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
 		}
 
-		$SMARTY->assign('connect', $dev);
 		break;
 
 	default:

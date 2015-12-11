@@ -24,37 +24,36 @@
  *  $Id$
  */
 
-if (!$LMS->NetDevExists($_GET['id'])) {
-	$SESSION->redirect('?m=netdevlist');
+if (!$LMS->NetObjExists($_GET['id'])) {
+	$SESSION->redirect('?m=netobjlist');
 }
 
-include(MODULES_DIR . '/netdevxajax.inc.php');
+include(MODULES_DIR . '/netobjxajax.inc.php');
 
-if (! array_key_exists('xjxfun', $_POST)) {                  // xajax was called and handled by netdevxajax.inc.php
-	$netdevinfo = $LMS->GetNetDev($_GET['id']);
-	$netdevconnected = $LMS->GetNetDevConnectedNames($_GET['id']);
+if (! array_key_exists('xjxfun', $_POST)) {                  // xajax was called and handled by netobjxajax.inc.php
+	$netobjinfo = $LMS->GetNetObj($_GET['id']);
+	$netobjconnected = $LMS->GetNetObjConnectedNames($_GET['id']);
 	$netcomplist = $LMS->GetNetdevLinkedNodes($_GET['id']);
-	$netdevlist = $LMS->GetNotConnectedDevices($_GET['id']);
+	$netobjlist = $LMS->GetNotConnectedDevices($_GET['id']);
 
-	$nodelist = $LMS->GetUnlinkedNodes();
-	$netdevips = $LMS->GetNetDevIPs($_GET['id']);
+	$netobjips = $LMS->GetNetObjIPs($_GET['id']);
 
 	$SESSION->save('backto', $_SERVER['QUERY_STRING']);
 
-	$layout['pagetitle'] = trans('Device Info: $a $b $c', $netdevinfo['name'], $netdevinfo['producer'], $netdevinfo['model']);
+	$layout['pagetitle'] = trans('Device Info: $a $b $c', $netobjinfo['name'], $netobjinfo['producer'], $netobjinfo['model']);
 
-	$netdevinfo['id'] = $_GET['id'];
+	$netobjinfo['id'] = $_GET['id'];
 
-	if ($netdevinfo['netnodeid']) {
-		$netnode = $DB->GetRow("SELECT * FROM netnodes WHERE id=".$netdevinfo['netnodeid']);
+	if ($netobjinfo['netnodeid']) {
+		$netnode = $DB->GetRow("SELECT * FROM netnodes WHERE id=".$netobjinfo['netnodeid']);
 		if ($netnode) {
-			$netdevinfo['nodename'] = $netnode['name'];
+			$netobjinfo['nodename'] = $netnode['name'];
 		}
 	}
 
-	$netdevinfo['projectname'] = trans('none');
-	if ($netdevinfo['invprojectid']) {
-		$prj = $DB->GetRow("SELECT * FROM invprojects WHERE id = ?", array($netdevinfo['invprojectid']));
+	$netobjinfo['projectname'] = trans('none');
+	if ($netobjinfo['invprojectid']) {
+		$prj = $DB->GetRow("SELECT * FROM invprojects WHERE id = ?", array($netobjinfo['invprojectid']));
 		if ($prj) {
 			if ($prj['type'] == INV_PROJECT_SYSTEM && intval($prj['id'])==1) {
 				/* inherited */
@@ -62,16 +61,16 @@ if (! array_key_exists('xjxfun', $_POST)) {                  // xajax was called
 					$prj = $DB->GetRow("SELECT * FROM invprojects WHERE id=?",
 						array($netnode['invprojectid']));
 					if ($prj)
-						$netdevinfo['projectname'] = trans('$a (from network node $b)', $prj['name'], $netnode['name']);
+						$netobjinfo['projectname'] = trans('$a (from network node $b)', $prj['name'], $netnode['name']);
 				}
 			} else
-				$netdevinfo['projectname'] = $prj['name'];
+				$netobjinfo['projectname'] = $prj['name'];
 		}
 	}
-	$SMARTY->assign('netdevinfo', $netdevinfo);
-	$SMARTY->assign('objectid', $netdevinfo['id']);
-	$SMARTY->assign('restnetdevlist', $netdevlist);
-	$SMARTY->assign('netdevips', $netdevips);
+	$SMARTY->assign('netobjinfo', $netobjinfo);
+	$SMARTY->assign('objectid', $netobjinfo['id']);
+	$SMARTY->assign('restnetobjlist', $netobjlist);
+	$SMARTY->assign('netobjips', $netobjips);
 	$SMARTY->assign('nodelist', $nodelist);
 	$SMARTY->assign('devlinktype', $SESSION->get('devlinktype'));
 	$SMARTY->assign('devlinktechnology', $SESSION->get('devlinktechnology'));
@@ -80,32 +79,32 @@ if (! array_key_exists('xjxfun', $_POST)) {                  // xajax was called
 	$SMARTY->assign('nodelinktechnology', $SESSION->get('nodelinktechnology'));
 	$SMARTY->assign('nodelinkspeed', $SESSION->get('nodelinkspeed'));
 
-	$hook_data = $LMS->executeHook('netdevinfo_before_display',
+	$hook_data = $LMS->executeHook('netobjinfo_before_display',
 		array(
-			'netdevconnected' => $netdevconnected,
+			'netobjconnected' => $netobjconnected,
 			'netcomplist' => $netcomplist,
 			'smarty' => $SMARTY,
 		)
 	);
-	$netdevconnected = $hook_data['netdevconnected'];
+	$netobjconnected = $hook_data['netobjconnected'];
 	$netcomplist = $hook_data['netcomplist'];
-	$SMARTY->assign('netdevlist', $netdevconnected);
+	$SMARTY->assign('netobjlist', $netobjconnected);
 	$SMARTY->assign('netcomplist', $netcomplist);
 
 
 	if (isset($_GET['ip'])) {
 		$nodeipdata = $LMS->GetNodeConnType($_GET['ip']);
-		$netdevauthtype = array();
+		$netobjauthtype = array();
 		$authtype = $nodeipdata;
 		if ($authtype != 0) {
-			$netdevauthtype['dhcp'] = ($authtype & 2);
-			$netdevauthtype['eap'] = ($authtype & 4);
+			$netobjauthtype['dhcp'] = ($authtype & 2);
+			$netobjauthtype['eap'] = ($authtype & 4);
 		}
 		$SMARTY->assign('nodeipdata', $LMS->GetNode($_GET['ip']));
-		$SMARTY->assign('netdevauthtype', $netdevauthtype);
-		$SMARTY->display('netdev/netdevipinfo.html');
+		$SMARTY->assign('netobjauthtype', $netobjauthtype);
+		$SMARTY->display('netobj/netobjipinfo.html');
 	} else {
-		$SMARTY->display('netdev/netdevinfo.html');
+		$SMARTY->display('netobj/netobjinfo.html');
 	}
 }
 ?>

@@ -3078,6 +3078,9 @@ $_LANG['Cables list'] = 'Lista okablowania';
 $_LANG['Network cables list'] = 'Lista okablowania sieciowego';
 $_LANG['New cable'] = 'Nowe okablowanie';
 $_LANG['Add new network cable'] = 'Dodaj nowe okablowanie sieciowe';
+$_LANG['tube'] = 'tuba';
+$_LANG['fiber<!singular>'] = 'włókno';
+#$_LANG[''] = '';
 
 $_LANG['blue'] = 'niebieski';
 $_LANG['orange'] = 'pomarańczowy';
@@ -3092,6 +3095,5 @@ $_LANG['violet'] = 'fioletowy';
 $_LANG['pink'] = 'różowy';
 $_LANG['aqua'] = 'morski';
 
-#$_LANG[''] = '';
 
 ?>

@@ -1290,7 +1290,13 @@ class LMS
         $manager = $this->getNetCabManager();
         return $manager->GetNetCabList($order,$search);
     }
-    
+
+    public function GetNetCabInObj($id)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->GetNetCabInObj($id);
+    }
+	    
 
     /*
      *   Request Tracker (Helpdesk)
