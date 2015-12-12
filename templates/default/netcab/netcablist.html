@@ -1,4 +1,4 @@
-{extends file="layout.html"}
+{extdsts file="layout.html"}
 {block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
 {block name=module_content}
 <!--// $Id$ //-->
@@ -83,8 +83,8 @@
     <TBODY>
 	{cycle values="light,lucid" print=false}
 	{section name=netcablist loop=$netcablist start=$start max=$pagelimit}
-	{$begin=$netcablist[netcablist].begin}
-	{$end=$netcablist[netcablist].end}
+	{$src=$netcablist[netcablist].src}
+	{$dst=$netcablist[netcablist].dst}
 	<TR class="highlight {cycle}">
 		<TD VALIGN="TOP">
 			<IMG src="img/netdev.gif" ALT=""> <a name="{$netcablist[netcablist].id}"><B>{$netcablist[netcablist].name}</B></A><BR>
@@ -96,13 +96,13 @@
 		<TD VALIGN="TOP">
 			{$netcablist[netcablist].length}m
 		</TD>
-		<TD onClick="return self.location.href='?m=netobjinfo&id={$begin.id}';" class="nobr valign-top">
-			{$_NETOBJECTTYPES[$begin.type].label} {$begin.name}<BR> 
-			{$begin.location}
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$src.id}';" class="nobr valign-top">
+			{$_NETOBJECTTYPES[$src.type].label} {$src.name}<BR> 
+			{$src.location}
 		</TD>
-		<TD onClick="return self.location.href='?m=netobjinfo&id={$end.id}';" class="nobr valign-top">
-			{$_NETOBJECTTYPES[$end.type].label} {$end.name}<BR>
-			{$end.location}
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$dst.id}';" class="nobr valign-top">
+			{$_NETOBJECTTYPES[$dst.type].label} {$dst.name}<BR>
+			{$dst.location}
 		</TD>
 		<TD align="left" VALIGN="TOP">
 			{$netcablist[netcablist].description}

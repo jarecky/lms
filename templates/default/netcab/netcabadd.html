@@ -1,8 +1,8 @@
-{extends file="layout.html"}
+{extdsts file="layout.html"}
 {block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
 {block name=module_content}
 <!--// $Id$ //-->
-{include file="calendar_js.html"}
+{include file="caldstar_js.html"}
 <script type="text/javascript" src="img/netcablehelper.js"></script>
 <H1>{$layout.pagetitle}</H1>
 <FORM NAME="netcabadd" METHOD="POST" ACTION="?m=netcabadd">
@@ -94,10 +94,10 @@
 			<B>{trans("Begin:")}</B>
 		</TD>
 		<TD WIDTH="98%" NOWRAP>
-                        <SELECT NAME="netcab[begin]" {tip trigger="begin" text="Select cable beginning object"} VALUE="{$netcab.begin}">
-				<OPTION>{trans("Choose beginning object")}</OPTION>
+                        <SELECT NAME="netcab[src]" {tip trigger="src" text="Select cable srcning object"} VALUE="{$netcab.src}">
+				<OPTION>{trans("Choose srcning object")}</OPTION>
                                 {foreach $objects as $object}
-                                <OPTION VALUE="{$object.id}"{if $netcab.begin == $object.id} selected{/if}>{$object.name}</OPTION>
+                                <OPTION VALUE="{$object.id}"{if $netcab.src == $object.id} selected{/if}>{$object.name}</OPTION>
                                 {/foreach}
                         </SELECT>
 		</TD>
@@ -110,10 +110,10 @@
 			<B>{trans("End:")}</B>
 		</TD>
 		<TD WIDTH="98%" NOWRAP>
-                        <SELECT NAME="netcab[end]" {tip trigger="end" text="Select cable ending object"} VALUE="{$netcab.end}">
-                                <OPTION VALUE="0">{trans("Choose ending object")}</OPTION>
+                        <SELECT NAME="netcab[dst]" {tip trigger="dst" text="Select cable dsting object"} VALUE="{$netcab.dst}">
+                                <OPTION VALUE="0">{trans("Choose dsting object")}</OPTION>
                                 {foreach $objects as $object}
-                                <OPTION VALUE="{$object.id}"{if $netcab.end == $object.id} selected{/if}>{$object.name}</OPTION>
+                                <OPTION VALUE="{$object.id}"{if $netcab.dst == $object.id} selected{/if}>{$object.name}</OPTION>
                                 {/foreach}
                         </SELECT>
 		</TD>
@@ -124,14 +124,14 @@
 					<TABLE WIDTH="100%" CELLPADDING="3">
 	<TR>
 		<TD WIDTH="1%">
-			<IMG SRC="img/calendar.gif" ALT="">
+			<IMG SRC="img/caldstar.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Purchase date:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<div class="calendar">
-			<INPUT TYPE="TEXT" NAME="netcab[purchasedate]" VALUE="{if $netcab.purchasedate}{$netcab.purchasedate}{/if}" SIZE="10" MAXSIZE="10" {tip trigger="purchasedate" text="Enter cable purchase date in 'yyyy/mm/dd' format or click to choose date from calendar (optional)"}>
+			<div class="caldstar">
+			<INPUT TYPE="TEXT" NAME="netcab[purchasedate]" VALUE="{if $netcab.purchasedate}{$netcab.purchasedate}{/if}" SIZE="10" MAXSIZE="10" {tip trigger="purchasedate" text="Enter cable purchase date in 'yyyy/mm/dd' format or click to choose date from caldstar (optional)"}>
 			</div>
 		</TD>
 	</TR>

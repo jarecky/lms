@@ -31,7 +31,8 @@ if (!$LMS->NetObjExists($_GET['id'])) {
 
 $netobjinfo = $LMS->GetNetObj($_GET['id']);
 $cablelist = $LMS->GetNetCabInObj($_GET['id']);
-#echo '<PRE>';print_r($cablelist);echo '</PRE>';
+$othercablelist = $LMS->GetNetCabUnconnected($_GET['id']);
+echo '<PRE>$othercablelist:';print_r($othercablelist);echo '</PRE>';
 $splicelist = $LMS->GetNetObjSplices($_GET['id']);
 
 
@@ -67,6 +68,7 @@ if ($netobjinfo['invprojectid']) {
 $SMARTY->assign('netobjinfo', $netobjinfo);
 $SMARTY->assign('objectid', $netobjinfo['id']);
 $SMARTY->assign('cablelist', $cablelist);
+$SMARTY->assign('othercablelist', $othercablelist);
 $SMARTY->assign('splicelist', $splicelist);
 
 #$hook_data = $LMS->executeHook('netobjinfo_before_display',

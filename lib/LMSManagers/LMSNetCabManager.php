@@ -39,8 +39,8 @@ public function NetCabUpdate($data) {
                 'name' => $data['name'],
                 'fibers' => $data['fibers'],
                 'length' => $data['length'],
-                'begin' => $data['begin'],
-                'end' => $data['end'],
+                'src' => $data['src'],
+                'dst' => $data['dst'],
                 'description' => $data['description'],
                 'producer' => $data['producer'],
                 'model' => $data['model'],
@@ -51,7 +51,7 @@ public function NetCabUpdate($data) {
 		$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB] => $data['id'],
 	);
 	$res = $this->db->Execute('UPDATE netcables SET name=?, fibers=?, length=?, 
-				begin=?, end=?, description=?, producer=?, model=?, 
+				src=?, dst=?, description=?, producer=?, model=?, 
 				purchasetime=?, guaranteeperiod=?, invprojectid=?, status=?
 				WHERE id=?', array_values($args));
 	if ($this->syslog && $res)
@@ -65,8 +65,8 @@ public function NetCabAdd($data) {
 		'name' => $data['name'],
 		'fibers' => $data['fibers'],
 		'length' => $data['length'],
-		'begin' => $data['begin'],
-		'end' => $data['end'],
+		'src' => $data['src'],
+		'dst' => $data['dst'],
 		'description' => $data['description'],
 		'producer' => $data['producer'],
 		'model' => $data['model'],
@@ -76,7 +76,7 @@ public function NetCabAdd($data) {
 		'invprojectid' => $data['invprojectid'],
 	);
 
-	if ($this->db->Execute('INSERT INTO netcables (name, fibers, length, begin, end,
+	if ($this->db->Execute('INSERT INTO netcables (name, fibers, length, src, dst,
 				description, producer, model, purchasetime, 
 				guaranteeperiod, status, invprojectid)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args))) {
@@ -95,10 +95,6 @@ public function NetCabAdd($data) {
 
 public function NetCabExists($id) {
 	return ($this->db->GetOne('SELECT * FROM netcables WHERE id=?', array($id)) ? TRUE : FALSE);
-}
-
-public function GetNetCabIDByNode($id) {
-	return $this->db->GetOne('SELECT netcab FROM nodes WHERE id=?', array($id));
 }
 
 public function GetNetCabList($order = 'name,asc', $search = array()) {
@@ -149,7 +145,7 @@ public function GetNetCabList($order = 'name,asc', $search = array()) {
 		}
 
 	$netcablist = $this->db->GetAll('SELECT c.id, c.name, 
-			c.fibers, c.length, c.begin, c.end,
+			c.fibers, c.length, c.src, c.dst,
 			c.description, c.producer, c.model  
 			FROM netcables c
 			LEFT JOIN invprojects p ON p.id = c.invprojectid '
@@ -157,10 +153,10 @@ public function GetNetCabList($order = 'name,asc', $search = array()) {
 		. ($sqlord != '' ? $sqlord . ' ' . $direction : ''));
 
 	foreach ($netcablist AS $id => $netcable) {
-		if (isset($netcable['begin'])) 
-			$netcablist[$id]['begin'] = $LMS->GetNetObj($netcable['begin']);
-		if (isset($netcable['end'])) 
-			$netcablist[$id]['end'] = $LMS->GetNetObj($netcable['end']);
+		if (isset($netcable['src'])) 
+			$netcablist[$id]['src'] = $LMS->GetNetObj($netcable['src']);
+		if (isset($netcable['dst'])) 
+			$netcablist[$id]['dst'] = $LMS->GetNetObj($netcable['dst']);
 	}
 	$netcablist['total'] = sizeof($netcablist);
 	$netcablist['order'] = $order;
@@ -241,10 +237,16 @@ public function DeleteNetCab($id) {
 }
 
 public function GetNetCabInObj($id) {
-	$result=$this->db->GetAllByKey('SELECT * FROM netcables WHERE begin=? OR end=?','id',array($id, $id));
+	global $LMS;
+	$result=$this->db->GetAllByKey('SELECT * FROM netcables WHERE src=? OR dst=?','id',array($id, $id));
 	$splices=$this->db->GetAll('SELECT * FROM netsplices WHERE objectid=?',array($id));
 
-	foreach ($result AS $cableid => $cable) {
+	if (count($result)) foreach ($result AS $cableid => $cable) {
+		if ($result['src']==$id AND isset($result['dst']))
+			$result['destobj']=$LMS->GetNetObj($result['dst']);
+		elseif ($result['dst']==$id AND isset($result['src']))
+			$result['destobj']=$LMS->GetNetObj($restult['src']);
+
 		$fibers=array();
 		for ($tube=1;$tube<=ceil($cable['fibers']/12);$tube++) {
 			for ($fiber=1;$fiber<=12;$fiber++) {
@@ -268,6 +270,22 @@ public function GetNetCabInObj($id) {
 
 	return $result;
 }
+
+public function GetNetCabUnconnected($id) {
+	return $this->db->GetAll("SELECT * FROM netcables WHERE (src IS NULL AND (dst IS NULL OR dst<>?)) OR ((src IS NULL OR src<>?) AND dst IS NULL)",array($id,$id));
+}
+
+public function AddCabToObj($objectid,$cableid) {
+        global $SYSLOG_RESOURCE_KEYS;
+
+	$object=$this->db->GetOne("SELECT * FROM netcables WHERE id=?",array($cableid));
+	if (!isset($object['src']))
+		$this->db->Execute('UPDATE netcables SET src=? WHERE id=?', array($objectid,$cableid));
+	else 
+		$this->db->Execute('UPDATE netcables SET dst=? WHERE id=?', array($objectid,$cableid));
+	echo '<PRE>';print_r($this->db->GetErrors());echo '</PRE>';	
+}
+
 
 }
 

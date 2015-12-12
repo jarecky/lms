@@ -45,4 +45,8 @@ interface LMSNetCabManagerInterface
 
     public function GetNetCabInObj($id);
 
+    public function GetNetCabUnconnected($id);
+
+    public function AddCabToObj($objectid,$cableid);
+
 }

@@ -48,12 +48,12 @@ if (isset($_POST['netcab'])) {
 	if ($netcabdata['fibers']==0)
 		$error['fibers'] = trans('Musisz podać poprawną ilość włókien!');
 
-	if ($netcabdata['begin']==$netcabdata['end']) {
-		$error['begin'] = trans('Koniec połączenia musi być różny niż początek');
-		$error['end'] = trans('Koniec połączenia musi być różny niż początek');
+	if ($netcabdata['src']==$netcabdata['dst']) {
+		$error['src'] = trans('Koniec połączenia musi być różny niż początek');
+		$error['dst'] = trans('Koniec połączenia musi być różny niż początek');
 	}
-	if ($netcabdata['begin']==0) unset($netcabdata['begin']);
-	if ($netcabdata['end']==0) unset($netcabdata['end']);
+	if ($netcabdata['src']==0) unset($netcabdata['src']);
+	if ($netcabdata['dst']==0) unset($netcabdata['dst']);
 
 	$netcabdata['purchasetime'] = 0;
 	if ($netcabdata['purchasedate'] != '') {

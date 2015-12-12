@@ -1310,6 +1310,17 @@ class LMS
         return $manager->GetNetCabInObj($id);
     }
 	    
+    public function GetNetCabUnconnected($id)
+    {
+	$manager = $this->getNetCabManager();
+	return $manager->GetNetCabUnconnected($id);
+    }
+    
+    public function AddCabToObj($objectid,$cableid)
+    {
+	$manager = $this->getNetCabManager();
+	return $manager->AddCabToObj($objectid,$cableid);
+    }
 
     /*
      *   Request Tracker (Helpdesk)

@@ -33,168 +33,11 @@ $edit = '';
 $subtitle = '';
 
 switch ($action) {
-	case 'replace':
-
-		$dev1 = $LMS->GetNetObj($_GET['id']);
-		$dev2 = $LMS->GetNetObj($_GET['netobj']);
-
-		if ($dev1['ports'] < $dev2['takenports']) {
-			$error['replace'] = trans('It scans for ports in source device!');
-		} elseif ($dev2['ports'] < $dev1['takenports']) {
-			$error['replace'] = trans('It scans for ports in destination device!');
-		}
-
-		if (!$error) {
-			$links1 = $DB->GetAll('(SELECT type, 
-				(CASE src WHEN ? THEN dst ELSE src END) AS id,
-				speed, technology,
-				(CASE src WHEN ? THEN srcport ELSE dstport END) AS srcport,
-				(CASE src WHEN ? THEN dstport ELSE srcport END) AS dstport,
-				(CASE src WHEN ? THEN srcradiosector ELSE dstradiosector END) AS srcradiosector,
-				(CASE src WHEN ? THEN dstradiosector ELSE srcradiosector END) AS dstradiosector
-				FROM netlinks WHERE src = ? OR dst = ?)
-			UNION
-				(SELECT linktype AS type, linkradiosector AS srcradiosector, NULL AS dstradiosector,
-				linktechnology AS technology, linkspeed AS speed, id, port AS srcport, NULL AS dstport
-				FROM nodes WHERE netobj = ? AND ownerid > 0)
-			ORDER BY srcport', array($dev1['id'], $dev1['id'], $dev1['id'], $dev1['id'], $dev1['id'],
-					$dev1['id'], $dev1['id'], $dev1['id']));
-
-			$links2 = $DB->GetAll('(SELECT type, 
-				(CASE src WHEN ? THEN dst ELSE src END) AS id,
-				speed, technology,
-				(CASE src WHEN ? THEN srcport ELSE dstport END) AS srcport,
-				(CASE src WHEN ? THEN dstport ELSE srcport END) AS dstport,
-				(CASE src WHEN ? THEN srcradiosector ELSE dstradiosector END) AS srcradiosector,
-				(CASE src WHEN ? THEN dstradiosector ELSE srcradiosector END) AS dstradiosector
-				FROM netlinks WHERE src = ? OR dst = ?)
-			UNION
-				(SELECT linktype AS type, linkradiosector AS srcradiosector, NULL AS dstradiosector,
-					linktechnology AS technology, linkspeed AS speed, id, port AS srcport, NULL AS dstport
-					FROM nodes WHERE netobj = ? AND ownerid > 0)
-			ORDER BY srcport', array($dev2['id'], $dev2['id'], $dev2['id'], $dev2['id'], $dev2['id'],
-					$dev2['id'], $dev2['id'], $dev2['id']));
-
-			$DB->BeginTrans();
-
-			$DB->Execute('UPDATE netobjices SET location = ?, latitude = ?, longitude = ?
-				WHERE id = ?', array($dev1['location'], $dev1['latitude'], $dev1['longitude'], $dev2['id']));
-			$DB->Execute('UPDATE netobjices SET location = ?, latitude = ?, longitude = ?
-				WHERE id = ?', array($dev2['location'], $dev2['latitude'], $dev2['longitude'], $dev1['id']));
-
-			if ($SYSLOG) {
-				$args = array(
-					$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev2['id'],
-					'location' => $dev1['location'],
-					'latitude' => $dev1['latitude'],
-					'longitude' => $dev1['longitude'],
-				);
-				$SYSLOG->AddMessage(SYSLOG_RES_NETDEV, SYSLOG_OPER_UPDATE, $args,
-					array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV]));
-				$args = array(
-					$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev1['id'],
-					'location' => $dev2['location'],
-					'latitude' => $dev2['latitude'],
-					'longitude' => $dev2['longitude'],
-				);
-				$SYSLOG->AddMessage(SYSLOG_RES_NETDEV, SYSLOG_OPER_UPDATE, $args,
-					array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV]));
-			}
-
-			$LMS->NetObjDelLinks($dev1['id']);
-			$LMS->NetObjDelLinks($dev2['id']);
-
-			$ports = array();
-			// przypisujemy urzadzenia/komputer, probujac zachowac numeracje portow
-			if ($links1)
-				foreach ($links1 as $row) {
-					$sport = $row['srcport'];
-					if ($sport) {
-						if ($sport > $dev2['ports'])
-							for ($i = 1; $i <= $dev2['ports']; $i++)
-								if (!isset($ports[$sport])) {
-									$sport = $i;
-									break;
-								}
-
-						$ports[$sport] = $sport;
-					}
-
-					if (isset($row['dstport'])) // device
-						$LMS->NetObjLink($dev2['id'], $row['id'], array(
-							'type' => $row['type'],
-							'srcradiosector' => $row['srcradiosector'],
-							'dstradiosector' => $row['dstradiosector'],
-							'technology' => $row['technology'],
-							'speed' => $row['speed'],
-							'srcport' => $sport,
-							'dstport' => $row['dstport'],
-						));
-					else // node
-						$LMS->NetObjLinkNode($row['id'], $dev2['id'], array(
-							'type' => $row['type'],
-							'radiosector' => $row['srcradiosector'],
-							'technology' => $row['technology'],
-							'speed' => $row['speed'],
-							'port' => $sport,
-						));
-				}
-
-			$ports = array();
-			if ($links2)
-				foreach ($links2 as $row) {
-					$sport = $row['srcport'];
-					if ($sport) {
-						if ($sport > $dev1['ports'])
-							for ($i = 1; $i <= $dev1['ports']; $i++)
-								if (!isset($ports[$sport])) {
-									$sport = $i;
-									break;
-								}
-
-						$ports[$sport] = $sport;
-					}
-
-					if (isset($row['dstport'])) // device
-						$LMS->NetObjLink($dev1['id'], $row['id'], array(
-							'type' => $row['type'],
-							'srcradiosector' => $row['srcradiosector'],
-							'dstradiosector' => $row['dstradiosector'],
-							'technology' => $row['technology'],
-							'speed' => $row['speed'],
-							'srcport' => $sport,
-							'dstport' => $row['dstport']
-						));
-					else // node
-						$LMS->NetObjLinkNode($row['id'], $dev1['id'], array(
-							'type' => $row['type'],
-							'radiosector' => $row['srcradiosector'],
-							'technology' => $row['technology'],
-							'speed' => $row['speed'],
-							'port' => $sport,
-						));
-				}
-
-			$DB->CommitTrans();
-
-			$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
-		}
-
-		break;
-
-	case 'disconnect':
-
-		$LMS->NetObjUnLink($_GET['id'], $_GET['devid']);
-		$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
-
-	case 'disconnectnode':
-
-		$LMS->NetObjLinkNode($_GET['nodeid'], 0);
+	case 'cableconnect':
+		$LMS->AddCabToObj($_GET['id'], $_GET['cable']);
 		$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
 
 	case 'connect':
-
-		echo '<PRE>';print_r($_GET);echo '</PRE>';
 	  	list($srccableid,$srctube,$srcfiber)=preg_split('/,/',$_GET['srccable']);	
 	  	list($dstcableid,$dsttube,$dstfiber)=preg_split('/,/',$_GET['dstcable']);	
 		if ($srccableid==$dstcableid)
@@ -203,7 +46,6 @@ switch ($action) {
 			$LMS->NetObjSplice($_GET['id'],$_GET['srccable'], $_GET['dstcable'], $_GET['position'], $_GET['description']);
 			$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
 		}
-
 		break;
 
 	default:
