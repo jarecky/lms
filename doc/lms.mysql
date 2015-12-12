@@ -737,14 +737,18 @@ CREATE TABLE netcables (
 CREATE TABLE netsplices (
   id            int(11)         NOT NULL auto_increment,
   objectid	int(11)         DEFAULT NULL,
-  cableid	int(11)         DEFAULT NULL,
-  tube		tinyint		UNSIGNED NOT NULL DEFAULT '0',
-  fiber		tinyint		UNSIGNED NOT NULL DEFAULT '0',
+  srccableid	int(11)         DEFAULT NULL,
+  srctube	tinyint		UNSIGNED NOT NULL DEFAULT '0',
+  srcfiber	tinyint		UNSIGNED NOT NULL DEFAULT '0',
+  dstcableid    int(11)         DEFAULT NULL,
+  dsttube       tinyint         UNSIGNED NOT NULL DEFAULT '0',
+  dstfiber      tinyint         UNSIGNED NOT NULL DEFAULT '0',
   position	smallint	UNSIGNED DEFAULT NULL,
   description   text            NOT NULL DEFAULT '',
   PRIMARY KEY (id),
   FOREIGN KEY (objectid) REFERENCES netobjects (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (cableid) REFERENCES netcables (id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (srccableid) REFERENCES netcables (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (dstcableid) REFERENCES netcables (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 

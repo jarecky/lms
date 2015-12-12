@@ -45,4 +45,7 @@ interface LMSNetObjManagerInterface
 
     public function GetNetObjSplices($id);
 
+    public function NetObjSplice($objectid,$srccable,$dstcable,$position,$description);
+
+
 }

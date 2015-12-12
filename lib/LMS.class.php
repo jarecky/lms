@@ -1275,8 +1275,21 @@ class LMS
         return $manager->GetNetObjList($order,$search);
     }
 
+    public function GetNetObjSplices($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->GetNetObjSplices($id);
+    }
+    
+    public function NetObjSplice($objectid,$srccable,$dstcable,$position,$description)
+    {
+	$manager = $this->getNetObjManager();
+	return $manager->NetObjSplice($objectid,$srccable,$dstcable,$position,$description);
+    }
+
+
     /*
-     *   Network Objects
+     *   Network Cables
      */
 
     public function NetCabAdd($data)

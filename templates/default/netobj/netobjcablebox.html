@@ -1,0 +1,125 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 100%;" class="hand nobr" onClick="showOrHide('objectcables');">
+			<IMG SRC="img/mac.gif" alt="">
+			<span class="bold">{t a=$cablelist|@count}Cables connected ($a):{/t}</span>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR id="objectcables" style="display:none;">
+		<TD style="width: 100%;">
+			<TABLE class="lmsbox-inner">
+        <THEAD>
+	<TR>
+		<TD style="width: 96%;">
+			<IMG src="img/netobj.gif" ALT="">
+		       	<span class="bold">{trans("Name")} / {trans("Producer")}:</span><BR>
+		</TD>
+		<TD style="width: 1%;" class="nobr">
+			{trans("Link technology:")}<BR>
+			{trans("Link speed:")}
+		</TD>
+		<TD style="width: 1%;" class="text-right nobr">
+			{trans("Port")}:<BR>
+			{trans("ID:")}
+		</TD>
+		<TD style="width: 1%;" class="nobr">
+			<IMG src="img/netobj_takenposrts.gif" ALT=""> {trans("Dest. port")}:<BR>
+			<IMG src="img/port.gif" ALT=""> {trans("Ports (used):")}
+		</TD>
+		<TD style="width: 1%;">
+			&nbsp;
+		</TD>
+	</TR>
+        </THEAD>
+        <TBODY>
+	{cycle values="light,lucid" print=false}
+	{section name=cablelist loop=$cablelist start=$start}
+	{$srccableid=$cablelist[cablelist].srccableid}
+	{$dstcableid=$cablelist[cablelist].dstcableid}
+	<TR class="highlight {cycle}">
+		<TD>
+			{$cablelist[srccableid].name}
+		</TD>
+		<TD>
+			{$cablelist[dstcableid].name}
+		</TD>
+		</TD>
+		<TD class="text-right">
+			<A HREF="?m=netobjedit&action=disconnect&id={$netobjinfo.id}&devid={$netobjlist[netobjlist].id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
+		</TD>
+	</TR>
+	{sectionelse}
+	<TR>
+		<TD colspan="6" class="empty-table">
+			<P>&nbsp;</P>
+			<P>{trans("No such cables.")}</P>
+			<P>&nbsp;</P>
+		</TD>
+	</TR>
+	{/section}
+	<TR>
+		<TD class="ftop dark text-center nobr" COLSPAN="6">
+			{if $netobjinfo.cables == $netobjinfo.takencables}
+			<span class="bold">{trans("All cables in that object are in use.")}</span>
+			{elseif !$cablelist}
+			<span class="bold">{trans("No cables for connection.")}</span>
+			{else}
+			<FORM METHOD="GET" ACTION="?m=netobjedit" NAME="connect">
+			<INPUT type="submit" class="hiddenbtn">
+			<INPUT TYPE="HIDDEN" NAME="m" VALUE="netobjedit">
+			<INPUT TYPE="HIDDEN" NAME="id" VALUE="{$netobjinfo.id}">
+			<INPUT TYPE="HIDDEN" NAME="action" VALUE="connect">
+			<TABLE style="width: 100%;">
+				<TR>
+					<TD style="width: 99%; white-space: nowrap;">
+						<span class="bold">{trans("Connect")}:</span>
+						{trans("Source Cable:")}<SELECT NAME="srccable" id="srccable" style="width: 300px" {tip trigger="link" text="Select from cable list for connection"}>
+						{foreach key=cableid item=cable from=$cablelist}
+						<OPTGROUP LABEL="{$cable.name}">
+						{foreach key=tube item=tubelist from=$cable.fiber}
+						<OPTGROUP LABEL="{trans("tube")} #{$tube} ({$_FIBEROPTICCOLORCODES[$tube]})">
+						{foreach key=fiber item=fiberlist from=$tubelist}
+						#{if $fiberlist<0}
+							<OPTION VALUE="{$cableid},{$tube},{$fiber}">{trans("fiber<!singular>")} #{$fiber} ({$_FIBEROPTICCOLORCODES[$fiber]})</OPTION>
+						#{/if}
+						{/foreach}
+						{/foreach}
+						</OPTGROUP>
+						{/foreach}
+						</SELECT>
+                                                {trans("Destination Cable:")}<SELECT NAME="dstcable" id="dstcable" style="width: 300px" {tip trigger="link" text="Select from cable list for connection"}>
+                                                {foreach key=cableid item=cable from=$cablelist}
+                                                <OPTGROUP LABEL="{$cable.name}">
+                                                {foreach key=tube item=tubelist from=$cable.fiber}
+                                                <OPTGROUP LABEL="{trans("tube")} #{$tube} ({$_FIBEROPTICCOLORCODES[$tube]})">
+                                                {foreach key=fiber item=fiberlist from=$tubelist}
+                                                #{if $fiberlist<0}
+                                                        <OPTION VALUE="{$cableid},{$tube},{$fiber}">{trans("fiber<!singular>")} #{$fiber} ({$_FIBEROPTICCOLORCODES[$fiber]})</OPTION>
+                                                #{/if}
+                                                {/foreach}
+                                                {/foreach}
+                                                </OPTGROUP>
+                                                {/foreach}
+						</SELECT>
+						<label for="position">{trans("Position")}:</label><INPUT name="position" id="position" value="{if $connect.position}{$connect.position}{/if}" size="2" {tip text="Enter position in object for cable (optional)" trigger="position"}>
+						<label for="description">{trans("Description")}:</label><INPUT name="description" id="description" value="{if $connect.description}{$connect.description}{/if}" size="20" {tip text="Enter description for cable (optional)" trigger="position"}>
+					</TD>
+					<TD style="width: 1%; white-space: nowrap;">
+						<A HREF="javascript:document.connect.submit(); ">{trans("Connect")}</A> <IMG src="img/save.gif" alt="">
+					</TD>
+				</TR>
+			</TABLE>
+			</FORM>
+			{/if}
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+               </TD>
+       </TR>
+    </TBODY>
+</TABLE>

@@ -242,7 +242,7 @@ public function GetNetObj($id) {
 			$result['splices']=0;
 			break;
 	}
-	$result['takensplices'] = 0; #$this->CountNetObjLinks($id);
+	$result['takensplices'] = $this->CountNetObjSplices($id);
 
 	if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
 		$result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
@@ -308,7 +308,47 @@ public function DeleteNetObj($id) {
 }
 
 public function GetNetObjSplices($id) {
-	$splices=$this->db->GetAll("SELECT * FROM netsplices WHERE id=?",array($id));	
+	return $this->db->GetAll("SELECT * FROM netsplices WHERE objectid=?",array($id));	
+}
+
+public function CountNetObjSplices($id) {
+	return $this->db->GetOne("SELECT count(*) FROM netsplices WHERE objectid=?",array($id));
+}
+
+public function NetObjSplice($objectid,$srccable,$dstcable,$position,$description) {
+	global $SYSLOG_RESOURCE_KEYS;
+
+	list($srccableid,$srctube,$srcfiber)=preg_split('/,/',$srccable);
+	list($dstcableid,$dsttube,$dstfiber)=preg_split('/,/',$dstcable);
+
+        $args = array(
+		'objectid' => $objectid,
+		'srccableid'=> $srccableid,
+		'srctube' => $srctube,
+		'srcfiber' => $srcfiber,
+		'dstcableid' => $dstcableid,
+		'dsttube' => $dsttube,
+		'dstfiber' => $dstfiber,
+		'position' => $position,
+		'description' => $description,
+        );
+
+	if ($this->db->Execute('INSERT INTO netsplices (objectid, 
+				srccableid, srctube, srcfiber,
+				dstcableid, dsttube, dstfiber,
+				position, description)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args))) {
+                $id = $this->db->GetLastInsertID('netsplices');
+
+                if ($this->syslog) {
+                        $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETSPL]] = $id;
+                        $this->syslog->AddMessage(SYSLOG_RES_NETSPL, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETSPL]));
+                }
+                return $id;
+        } else {
+		echo '<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
+                return FALSE;
+        }
 }
 
 }

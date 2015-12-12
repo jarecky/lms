@@ -241,19 +241,27 @@ public function DeleteNetCab($id) {
 }
 
 public function GetNetCabInObj($id) {
-	$result=$this->db->GetAll('SELECT * FROM netcables WHERE begin=? OR end=?',array($id, $id));
+	$result=$this->db->GetAllByKey('SELECT * FROM netcables WHERE begin=? OR end=?','id',array($id, $id));
+	$splices=$this->db->GetAll('SELECT * FROM netsplices WHERE objectid=?',array($id));
 
-	foreach ($result AS $id => $cable) {
-		$splice=array();
+	foreach ($result AS $cableid => $cable) {
+		$fibers=array();
 		for ($tube=1;$tube<=ceil($cable['fibers']/12);$tube++) {
 			for ($fiber=1;$fiber<=12;$fiber++) {
 				if ((($tube-1)*12+$fiber)<=$cable['fibers'])
-					$splice[$tube][$fiber]=-1;
+					$fibers[$tube][$fiber]=-1;
 			}
 		}
-		$splices=$this->db->GetAll('SELECT * FROM netsplices WHERE objecid=? AND cableid=?',array($id,$result['id']));
-	
-		$result[$id]['splices']=$splice;
+		#print_r($this->db->GetErrors());
+		if (count($splices)) foreach ($splices AS $splice) {
+			if ($splice['srccableid']==$cable['id']) {
+				unset($fibers[$splice['srctube']][$splice['srcfiber']]);
+			} elseif ($splice['dstcableid']==$cable['id']) {
+				unset($fibers[$splice['dsttube']][$splice['dstfiber']]);
+			}	
+		}
+		#echo '<pre>';print_r($fibers);echo '</pre>';
+		$result[$cable['id']]['fiber']=$fibers;
 	}
 
 	echo '<PRE>';print_r($result);echo '</PRE>';
