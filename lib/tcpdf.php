@@ -92,44 +92,4 @@ class LMSTCPDF extends TCPDF {
 	}
 }
 
-function new_page() {
-	global $pdf;
-	$pdf->AddPage();
-}
-
-function init_pdf($pagesize, $orientation, $title) {
-	global $layout;
-
-	$pdf = new LMSTCPDF($orientation, PDF_UNIT, $pagesize, true, 'UTF-8', false, false);
-
-	$pdf->SetProducer('LMS Developers');
-	$pdf->SetSubject($title);
-	$pdf->SetCreator('LMS ' . $layout['lmsv']);
-	$pdf->SetDisplayMode('fullwidth', 'SinglePage', 'UseNone');
-
-	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-	$pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);
-	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-
-	$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-	$pdf->setLanguageArray($l);
-
-	/* disable font subsetting to improve performance */
-	$pdf->setFontSubsetting(false);
-
-	$pdf->AddPage();
-	return $pdf;
-}
-
-function close_pdf(&$pdf, $name = false) {
-	ob_clean();
-	header('Pragma: private');
-	header('Cache-control: private, must-revalidate');
-	if (!empty($name))
-		$pdf->Output($name, 'D');
-	else
-		$pdf->Output();
-}
-
 ?>
