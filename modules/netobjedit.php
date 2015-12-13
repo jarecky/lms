@@ -52,6 +52,10 @@ switch ($action) {
 		}
 		break;
 
+	case 'disconnect':
+		$LMS->DelNetSplice($_GET['spliceid']);
+		$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
+
 	default:
 		$edit = 'data';
 		break;

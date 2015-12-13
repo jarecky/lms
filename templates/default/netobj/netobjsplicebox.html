@@ -14,21 +14,18 @@
 			<TABLE class="lmsbox-inner">
         <THEAD>
 	<TR>
-		<TD style="width: 30%;">
-			<IMG src="img/netobj.gif" ALT=""> <span class="bold">{trans("Name")} / {trans("Producer")}:</span><BR>
-			<IMG src="img/home.gif" ALT=""> {trans("Location:")}
+		<TD colspan="3" style="text-align:right; width: 40%;">
+			{trans("Source cable")}:
 		</TD>
-		<TD style="width: 30%;" class="nobr">
-			{trans("Link technology:")}<BR>
-			{trans("Link speed:")}
+		<TD style="width:1%;">&nbsp;</TD>
+		<TD colspan="3" style="text-align:left; width: 40%;">
+			{trans("Destination cable")}:
 		</TD>
-		<TD style="width: 30%;" class="text-right nobr">
-			{trans("Port")}:<BR>
-			{trans("ID:")}
+		<TD style="text-align:left; width: 1%;" class="nobr">
+			{trans("Position")}:
 		</TD>
-		<TD style="width: 1%;" class="nobr">
-			<IMG src="img/netobj_takenposrts.gif" ALT=""> {trans("Dest. port")}:<BR>
-			<IMG src="img/port.gif" ALT=""> {trans("Ports (used):")}
+		<TD style="text-align:left; width: 18%;" class="nobr">
+			{trans("Description")}:
 		</TD>
 		<TD style="width: 1%;">
 			&nbsp;
@@ -39,25 +36,20 @@
 	{cycle values="light,lucid" print=false}
 	{foreach key=key item=splice from=$splicelist}
 	<TR class="highlight {cycle}">
-		<TD> <PRE>{$cablelist|@print_r}</PRE> {$splice.srccableid} => {$splice.dstcableid} </TD>
-		<TD class="text-right nobr"> 
-			{$cablelist[$splice.srccableid]} | 
-			{trans("tube")} {$splice.srctube} = 
-			{trans("fiber<!singular>")} {$splice.srcfiber} -
-		</TD>
-		<TD class="text-left nobr">
-			 - {trans("fiber<!singular>")} {$splice.dstfiber} 
-			 = {trans("tube")} {$splice.dsttube} 
-			 | {$cablelist[splice.dstcableid].name}
-		</TD>
-		</TD>
-		<TD class="text-right">
-			<A HREF="?m=netobjedit&action=disconnect&id={$netobjinfo.id}&devid={$netobjlist[netobjlist].id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
-		</TD>
+		<TD style="text-align:right">{$cablelist[$splice.srccableid].name}</TD> 
+		<TD style="width:1%; white-space: nowrap;">{trans("tube")} {$splice.srctube} ({$_FIBEROPTICCOLORCODES[$splice.srctube]})</TD> 
+		<TD style="width:1%; white-space: nowrap;">{trans("fiber<!singular>")} {$splice.srcfiber} ({$_FIBEROPTICCOLORCODES[$splice.srcfiber]})</TD>
+		<TD class="text-center"><=></TD>
+		<TD style="width:1%; white-space: nowrap;">{trans("fiber<!singular>")} {$splice.dstfiber} ({$_FIBEROPTICCOLORCODES[$splice.dstfiber]})</TD>
+		<TD style="width:1%; white-space: nowrap;">{trans("tube")} {$splice.dsttube} ({$_FIBEROPTICCOLORCODES[$splice.dsttube]})</TD>
+		<TD style="text-align:left;">{$cablelist[$splice.dstcableid].name}</TD>
+		<TD class="text-center">{$splice.position}</TD>
+		<TD>{$splice.description}</TD>
+		<TD class="text-right"><A HREF="?m=netobjedit&action=disconnect&id={$netobjinfo.id}&spliceid={$splice.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
 	</TR>
 	{foreachelse}
 	<TR>
-		<TD colspan="6" class="empty-table">
+		<TD colspan="10" class="empty-table">
 			<P>&nbsp;</P>
 			<P>{trans("No such splices.")}</P>
 			<P>&nbsp;</P>
@@ -65,7 +57,7 @@
 	</TR>
 	{/foreach}
 	<TR>
-		<TD class="ftop dark text-center nobr" COLSPAN="6">
+		<TD class="ftop dark text-center nobr" COLSPAN="10">
 			{if $netobjinfo.splices == $netobjinfo.takensplices}
 			<span class="bold">{trans("All splices in that object are in use.")}</span>
 			{elseif cablelist|@count<1}

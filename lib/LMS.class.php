@@ -1292,6 +1292,12 @@ class LMS
         $manager = $this->getNetObjManager();
         return $manager->GetNetObjInNode($id);
     }    
+    public function DelNetSplice($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->DelNetSplice($id);
+    }
+	    
 
     /*
      *   Network Cables

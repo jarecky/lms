@@ -370,4 +370,7 @@ public function GetNetObjInNode($id) {
 	return $result;
 }
 
+public function DelNetSplice($id) {
+	$this->db->Execute("DELETE FROM netsplices WHERE id=?",array($id));
+}
 }
