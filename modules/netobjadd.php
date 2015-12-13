@@ -116,24 +116,22 @@ if (isset($_POST['netobj'])) {
 			$netobjdata['netnodeid']=NULL;
 		} else {
 			/* dziedziczenie lokalizacji */
-			$dev = $DB->GetRow("SELECT * FROM netnodes WHERE id = ?", array($netobjdata['netnodeid']));
-			if ($dev) {
+			$node = $DB->GetRow("SELECT * FROM netnodes WHERE id = ?", array($netobjdata['netnodeid']));
+			if ($node) {
 				if (!strlen($netobjdata['location'])) {
-					$netobjdata['location'] = $dev['location'];
-					$netobjdata['location_city'] = $dev['location_city'];
-					$netobjdata['location_street'] = $dev['location_street'];
-					$netobjdata['location_house'] = $dev['location_house'];
-					$netobjdata['location_flat'] = $dev['location_flat'];
+					$netobjdata['location'] = $node['location'];
+					$netobjdata['location_city'] = $node['location_city'];
+					$netobjdata['location_street'] = $node['location_street'];
+					$netobjdata['location_house'] = $node['location_house'];
+					$netobjdata['location_flat'] = $node['location_flat'];
 				}
 				if (!strlen($netobjdata['longitude']) || !strlen($netobjdata['longitude'])) {
-					$netobjdata['longitude'] = $dev['longitude'];
-					$netobjdata['latitude'] = $dev['latitude'];
+					$netobjdata['longitude'] = $node['longitude'];
+					$netobjdata['latitude'] = $node['latitude'];
 				}
 			}
 		}
 
-		#echo '<PRE>';print_r($netobjdata);echo '</PRE>';
-	
 		$netobjid = $LMS->NetObjAdd($netobjdata);
 		$SESSION->redirect('?m=netobjinfo&id='.$netobjid);
 	}

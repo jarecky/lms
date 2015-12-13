@@ -34,9 +34,13 @@ $subtitle = '';
 
 switch ($action) {
 	case 'cableconnect':
-		$LMS->AddCabToObj($_GET['id'], $_GET['cable']);
+		$LMS->AddCabToObj($_GET['id'], $_GET['cableid']);
 		$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
 
+	case 'cabledisconnect':
+		$LMS->DelCabFromObj($_GET['id'], $_GET['cableid']);
+		$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
+		
 	case 'connect':
 	  	list($srccableid,$srctube,$srcfiber)=preg_split('/,/',$_GET['srccable']);	
 	  	list($dstcableid,$dsttube,$dstfiber)=preg_split('/,/',$_GET['dstcable']);	

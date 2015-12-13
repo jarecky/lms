@@ -30,8 +30,7 @@
 			<A href="?m=netobjlist&o=id{if $listdata.direction == "asc" && $listdata.order == "id"},desc{/if}">ID:</A> {if $listdata.order == "id"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
 		</TD>
 		<TD width="1%" NOWRAP>
-			<IMG src="img/port.gif" ALT="">&nbsp;<A href="?m=netobjlist&o=ports{if $listdata.direction == "asc" && $listdata.order == "ports"},desc{/if}">{trans("Number of ports:")}</A> {if $listdata.order == "ports"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
-			(<A href="?m=netobjlist&o=takenports{if $listdata.direction == "asc" && $listdata.order == "takenports"},desc{/if}">{trans("Ports used:")}</A>{if $listdata.order == "takenports"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if})<BR>
+			<IMG src="img/port.gif" ALT="">{trans("Conn. cables:")} ({trans("Splices used:")})<BR>
 			<IMG src="img/serialnumber.gif" ALT="">&nbsp;<A href="?m=netobjlist&o=serialnumber{if $listdata.direction == "asc" && $listdata.order == "serialnumber"},desc{/if}">{trans("Serial number:")}</A> {if $listdata.order == "serialnumber"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
 		</TD>
 		<TD width="1%" align="right" nowrap>
@@ -121,7 +120,7 @@
 			({$netobjlist[netobjlist].id|string_format:"%04d"})
 		</TD>
 		<TD onClick="return self.location.href='?m=netobjinfo&id={$netobjlist[netobjlist].id}';" NOWRAP>
-			<IMG src="img/port.gif" ALT=""> {$netobjlist[netobjlist].ports} ({$netobjlist[netobjlist].takenports})<BR>
+			<IMG src="img/port.gif" ALT="">{$netobjlist[netobjlist].cables} ({$netobjlist[netobjlist].splices})<BR>
 			<IMG src="img/serialnumber.gif" ALT=""> {$netobjlist[netobjlist].serialnumber}
 		</TD>
 		<TD align="right">

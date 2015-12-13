@@ -36,26 +36,28 @@ public function NetObjUpdate($data) {
 	global $SYSLOG_RESOURCE_KEYS;
 
 	$args = array(
-		'name' => $data['name'],
-		'description' => $data['description'],
-		'producer' => $data['producer'],
-		'location' => trim($data['location']),
-		'location_city' => $data['location_city'] ? trim($data['location_city']) : null,
-		'location_street' => $data['location_street'] ? trim($data['location_street']) : null,
-		'location_house' => $data['location_house'] ? trim($data['location_house']) : null,
-		'location_flat' => $data['location_flat'] ? trim($data['location_flat']) : null,
-		'model' => $data['model'],
-		'serialnumber' => $data['serialnumber'],
-		'parameter' => $data['parameter'],
-		'purchasetime' => $data['purchasetime'],
-		'guaranteeperiod' => $data['guaranteeperiod'],
-		'longitude' => !empty($data['longitude']) ? str_replace(',', '.', $data['longitude']) : null,
-		'latitude' => !empty($data['latitude']) ? str_replace(',', '.', $data['latitude']) : null,
-		'invprojectid' => $data['invprojectid'],
-		'netnodeid' => $data['netnodeid'],
-		'status' => $data['status'],
+                'name' => $data['name'],
+                'type' => $data['type'],
+                'location' => trim($data['location']),
+                'location_city' => $data['location_city'] ? trim($data['location_city']) : null,
+                'location_street' => $data['location_street'] ? trim($data['location_street']) : null,
+                'location_house' => $data['location_house'] ? trim($data['location_house']) : null,
+                'location_flat' => $data['location_flat'] ? trim($data['location_flat']) : null,
+                'description' => $data['description'],
+                'producer' => $data['producer'],
+                'model' => $data['model'],
+                'serialnumber' => $data['serialnumber'],
+                'parameter' => $data['parameter'],
+                'purchasetime' => $data['purchasetime'],
+                'guaranteeperiod' => $data['guaranteeperiod'],
+                'longitude' => !empty($data['longitude']) ? str_replace(',', '.', $data['longitude']) : NULL,
+                'latitude' => !empty($data['latitude']) ? str_replace(',', '.', $data['latitude']) : NULL,
+                'netnodeid' => $data['netnodeid'],
+                'invprojectid' => $data['invprojectid'],
+                'status' => $data['status'],
 		$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETOBJ] => $data['id'],
 	);
+
 	$res = $this->db->Execute('UPDATE netobjects SET name=?, description=?, producer=?, location=?,
 				location_city=?, location_street=?, location_house=?, location_flat=?,
 				model=?, serialnumber=?, parameter=?, purchasetime=?, guaranteeperiod=?,
@@ -85,16 +87,16 @@ public function NetObjAdd($data) {
 		'guaranteeperiod' => $data['guaranteeperiod'],
 		'longitude' => !empty($data['longitude']) ? str_replace(',', '.', $data['longitude']) : NULL,
 		'latitude' => !empty($data['latitude']) ? str_replace(',', '.', $data['latitude']) : NULL,
-		'status' => $data['status'],
+		'netnodeid' => $data['netnodeid'],
 		'invprojectid' => $data['invprojectid'],
-		'netnodeid' => $data['netnodeid']
+		'status' => $data['status'],
 	);
 
 	if ($this->db->Execute('INSERT INTO netobjects (name, type, location,
 				location_city, location_street, location_house, location_flat,
 				description, producer, model, serialnumber,
-				parameter, purchasetime, guaranteeperiod, status,
-				longitude, latitude, invprojectid, netnodeid)
+				parameter, purchasetime, guaranteeperiod, 
+				longitude, latitude, netnodeid, invprojectid, status)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args))) {
 		$id = $this->db->GetLastInsertID('netobjects');
 
@@ -198,6 +200,10 @@ public function GetNetObjList($order = 'name,asc', $search = array()) {
 			. (!empty($where) ? ' WHERE ' . implode(' AND ', $where) : '')
 		. ($sqlord != '' ? $sqlord . ' ' . $direction : ''));
 
+	foreach ($netobjlist AS $id => $netobj) {
+		$netobjlist[$id]['splices']=$this->db->GetOne("SELECT count(*) FROM netsplices WHERE objectid=?",array($netobj['id']));
+		$netobjlist[$id]['cables']=$this->db->GetOne("SELECT count(*) FROM netcables WHERE src=? OR dst=?",array($netobj['id'],$netobj['id']));
+	}
 	$netobjlist['total'] = sizeof($netobjlist);
 	$netobjlist['order'] = $order;
 	$netobjlist['direction'] = $direction;
@@ -321,7 +327,7 @@ public function NetObjSplice($objectid,$srccable,$dstcable,$position,$descriptio
 	list($srccableid,$srctube,$srcfiber)=preg_split('/,/',$srccable);
 	list($dstcableid,$dsttube,$dstfiber)=preg_split('/,/',$dstcable);
 
-        $args = array(
+	$args = array(
 		'objectid' => $objectid,
 		'srccableid'=> $srccableid,
 		'srctube' => $srctube,
@@ -331,24 +337,37 @@ public function NetObjSplice($objectid,$srccable,$dstcable,$position,$descriptio
 		'dstfiber' => $dstfiber,
 		'position' => $position,
 		'description' => $description,
-        );
+	);
 
 	if ($this->db->Execute('INSERT INTO netsplices (objectid, 
 				srccableid, srctube, srcfiber,
 				dstcableid, dsttube, dstfiber,
 				position, description)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args))) {
-                $id = $this->db->GetLastInsertID('netsplices');
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args))) {
+		$id = $this->db->GetLastInsertID('netsplices');
 
-                if ($this->syslog) {
-                        $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETSPL]] = $id;
-                        $this->syslog->AddMessage(SYSLOG_RES_NETSPL, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETSPL]));
-                }
-                return $id;
-        } else {
+		if ($this->syslog) {
+			$args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETSPL]] = $id;
+			$this->syslog->AddMessage(SYSLOG_RES_NETSPL, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETSPL]));
+		}
+		return $id;
+	} else {
 		echo '<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
-                return FALSE;
-        }
+		return FALSE;
+	}
+}
+
+public function GetNetObjInNode($id) {
+	global $LMS;
+	$result = $this->db->GetAll('SELECT * FROM netobjects WHERE netnodeid=?',array($id));
+	foreach ($result AS $objectid => $object) {
+		$cable=$LMS->GetNetCabInObj($object['id']);
+		foreach ($cable AS $cableid => $cbl) {
+			$cable[$cableid]['destobj']=$LMS->GetOtherEnd($cbl['id'],$object['id']);
+		}
+		$result[$objectid]['cables']=$cable;
+	}
+	return $result;
 }
 
 }

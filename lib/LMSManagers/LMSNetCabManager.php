@@ -46,8 +46,8 @@ public function NetCabUpdate($data) {
                 'model' => $data['model'],
                 'purchasetime' => $data['purchasetime'],
                 'guaranteeperiod' => $data['guaranteeperiod'],
-                'status' => $data['status'],
                 'invprojectid' => $data['invprojectid'],
+                'status' => $data['status'],
 		$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB] => $data['id'],
 	);
 	$res = $this->db->Execute('UPDATE netcables SET name=?, fibers=?, length=?, 
@@ -185,55 +185,8 @@ public function GetNetCab($id) {
 
 public function DeleteNetCab($id) {
 	global $SYSLOG_RESOURCE_KEYS;
-
-	$this->db->BeginTrans();
-	if ($this->syslog) {
-		$netlinks = $this->db->GetAll('SELECT id, src, dst FROM netlinks WHERE src = ? OR dst = ?', array($id, $id));
-		if (!empty($netlinks))
-		foreach ($netlinks as $netlink) {
-			$args = array(
-			$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK] => $netlink['id'],
-			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB] => $netlink['src'],
-			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB] => $netlink['dst'],
-			);
-			$this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_DELETE, $args, array_keys($args));
-		}
-		$nodes = $this->db->GetCol('SELECT id FROM nodes WHERE ownerid = 0 AND netcab = ?', array($id));
-		if (!empty($nodes))
-		foreach ($nodes as $node) {
-			$macs = $this->db->GetCol('SELECT id FROM macs WHERE nodeid = ?', array($node));
-			if (!empty($macs))
-			foreach ($macs as $mac) {
-				$args = array(
-				$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_MAC] => $mac,
-				$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE] => $node,
-				);
-				$this->syslog->AddMessage(SYSLOG_RES_MAC, SYSLOG_OPER_DELETE, $args, array_keys($args));
-			}
-			$args = array(
-			$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE] => $node,
-			$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB] => $id,
-			);
-			$this->syslog->AddMessage(SYSLOG_RES_NODE, SYSLOG_OPER_DELETE, $args, array_keys($args));
-		}
-		$nodes = $this->db->GetAll('SELECT id, ownerid FROM nodes WHERE ownerid <> 0 AND netcab = ?', array($id));
-		if (!empty($nodes))
-		foreach ($nodes as $node) {
-			$args = array(
-			$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE] => $node['id'],
-			$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $node['ownerid'],
-			$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB] => 0,
-			);
-			$this->syslog->AddMessage(SYSLOG_RES_NODE, SYSLOG_OPER_UPDATE, $args, array_keys($args));
-		}
-		$args = array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETCAB] => $id);
-		$this->syslog->AddMessage(SYSLOG_RES_NETCAB, SYSLOG_OPER_DELETE, $args, array_keys($args));
-	}
-	$this->db->Execute('DELETE FROM netlinks WHERE src=? OR dst=?', array($id, $id));
-	$this->db->Execute('DELETE FROM nodes WHERE ownerid=0 AND netcab=?', array($id));
-	$this->db->Execute('UPDATE nodes SET netcab=0 WHERE netcab=?', array($id));
+	// Dorobić syslog
 	$this->db->Execute('DELETE FROM netcables WHERE id=?', array($id));
-	$this->db->CommitTrans();
 }
 
 public function GetNetCabInObj($id) {
@@ -242,11 +195,6 @@ public function GetNetCabInObj($id) {
 	$splices=$this->db->GetAll('SELECT * FROM netsplices WHERE objectid=?',array($id));
 
 	if (count($result)) foreach ($result AS $cableid => $cable) {
-		if ($result['src']==$id AND isset($result['dst']))
-			$result['destobj']=$LMS->GetNetObj($result['dst']);
-		elseif ($result['dst']==$id AND isset($result['src']))
-			$result['destobj']=$LMS->GetNetObj($restult['src']);
-
 		$fibers=array();
 		for ($tube=1;$tube<=ceil($cable['fibers']/12);$tube++) {
 			for ($fiber=1;$fiber<=12;$fiber++) {
@@ -266,7 +214,7 @@ public function GetNetCabInObj($id) {
 		$result[$cable['id']]['fiber']=$fibers;
 	}
 
-	echo '<PRE>';print_r($result);echo '</PRE>';
+	#echo '<PRE>';print_r($result);echo '</PRE>';
 
 	return $result;
 }
@@ -278,14 +226,36 @@ public function GetNetCabUnconnected($id) {
 public function AddCabToObj($objectid,$cableid) {
         global $SYSLOG_RESOURCE_KEYS;
 
-	$object=$this->db->GetOne("SELECT * FROM netcables WHERE id=?",array($cableid));
-	if (!isset($object['src']))
+	$cable=$this->db->GetRow("SELECT * FROM netcables WHERE id=?",array($cableid));
+	if (!isset($cable['src'])) {
 		$this->db->Execute('UPDATE netcables SET src=? WHERE id=?', array($objectid,$cableid));
-	else 
+	} else { 
 		$this->db->Execute('UPDATE netcables SET dst=? WHERE id=?', array($objectid,$cableid));
-	echo '<PRE>';print_r($this->db->GetErrors());echo '</PRE>';	
+	}
 }
 
+public function DelCabFromObj($objectid,$cableid) {
+        global $SYSLOG_RESOURCE_KEYS;
+
+        $cable=$this->db->GetRow("SELECT * FROM netcables WHERE id=?",array($cableid));
+        if ($cable['src'] == $objectid) {
+                $this->db->Execute('UPDATE netcables SET src=NULL WHERE id=?', array($cableid));
+        } elseif ($cable['dst'] == $objectid) {
+                $this->db->Execute('UPDATE netcables SET dst=NULL WHERE id=?', array($cableid));
+        }
+}
+
+
+public function GetOtherEnd($cableid,$objectid) {
+	global $LMS;
+	$cable=$this->db->GetRow("SELECT * FROM netcables WHERE id=?",array($cableid));
+        if ($cable['src']==$objectid AND isset($cable['dst'])) {
+                return $LMS->GetNetObj($cable['dst']);
+        } elseif ($cable['dst']==$objectid AND isset($cable['src'])) {
+                return $LMS->GetNetObj($cable['src']);
+        }
+	
+}
 
 }
 

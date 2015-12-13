@@ -1,9 +1,9 @@
 <?php
 
 /*
- *  LMS version 1.11-git
+ * LMS version 1.11-git
  *
- *  Copyright (C) 2001-2013 LMS Cabelopers
+ *  (C) Copyright 2001-2015 LMS Developers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -24,33 +24,11 @@
  *  $Id$
  */
 
-/**
- * LMSNetCabManagerInterface
- * 
- * @author Jaroslaw Dziubek <jaroslaw.dziubek@perfect.net.pl>
- */
-interface LMSNetCabManagerInterface
-{
-    public function NetCabUpdate($data);
-    
-    public function NetCabAdd($data);
-    
-    public function DeleteNetCab($id);
-    
-    public function GetNetCab($id);
-    
-    public function NetCabExists($id);
+$layout['pagetitle'] = trans('Select net objects');
+$list = $DB->GetAll("SELECT n.name,n.id,n.producer,n.model,n.location FROM netobjects n WHERE (n.netnodeid IS NULL) OR (n.netnodeid<>".$_GET['id'].") ORDER BY NAME");
+$list['total'] = count($list);
+$SMARTY->assign('netobjlist',$list);
+$SMARTY->assign('objectid',$_GET['id']);
+$SMARTY->display('choose/choosenetobj.html');
 
-    public function GetNetCabList($order = 'name,asc', $search = array());
-
-    public function GetNetCabInObj($id);
-
-    public function GetNetCabUnconnected($id);
-
-    public function AddCabToObj($objectid,$cableid);
-
-    public function DelCabFromObj($objectid,$cableid);
-
-    public function GetOtherEnd($cableid,$objectid);
-
-}
+?>

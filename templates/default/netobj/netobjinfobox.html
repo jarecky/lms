@@ -89,6 +89,7 @@
 		        {$netobjinfo.parameter}
 		</TD>
 	</TR>
+	{if $netobjinfo.type==1 or $netobjinfo.type==2}
 	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/netobj_takenports.gif" ALT="">
@@ -100,6 +101,7 @@
 		        {$netobjinfo.takensplices}
 		</TD>
 	</TR>
+	{/if}
 	{if $netobjinfo.location}
 	<TR>
 		<TD WIDTH="1%">

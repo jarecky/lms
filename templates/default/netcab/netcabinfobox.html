@@ -1,0 +1,171 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netcab.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+			<B>{trans("Name:")}</B>
+		<TD WIDTH="98%">
+			{$netcabinfo.name}
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+        <TD WIDTH="100%" COLSPAN="3" CLASS="container">
+		    <TABLE WIDTH="100%" CELLPADDING="0">
+				<TR>
+					<TD WIDTH="50%" style="vertical-align:top;">
+					        <TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Status:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			{$_NETELEMENTSTATUSES[$netcabinfo.status]}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Manufacturer:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			{$netcabinfo.producer}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netcab_model.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Model:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			{$netcabinfo.model}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/port.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Number of fibers:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			{$netcabinfo.fibers}J
+		</TD>
+	</TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/long.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Length:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        {$netcabinfo.length}m
+                </TD>
+        </TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Source:")}</B>
+		</TD>
+		<TD WIDTH="98%" NOWRAP>
+			<A HREF="?m=netobjinfo&id={$src.id}">{$_NETOBJECTTYPES[$src.type].label} {$src.name} / {$src.location}</A>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Destination:")}</B>
+		</TD>
+		<TD WIDTH="98%" NOWRAP>
+			<A HREF="?m=netobjinfo&id={$dst.id}">{$_NETOBJECTTYPES[$dst.type].label} {$dst.name} / {$dst.location}</A>
+		</TD>
+	</TR>
+                                        </TABLE>
+				</TD>
+				<TD WIDTH="50%" style="vertical-align:top;">
+					<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/calendar.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Purchase date:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			{$netcabinfo.purchasedate}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/guarantee.png" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Guarantee period:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+                        {if !$netcabinfo.guaranteeperiod}
+                                {trans("no guarantee")}
+                        {elseif $netcabinfo.guaranteeperiod == -1}
+                                {trans("lifetime")}
+                        {else}
+                                {assign var=periodid value=$netcabinfo.guaranteeperiod}
+                                {$_GUARANTEEPERIODS.$periodid}
+                                ({if $netcabinfo.guaranteetime-$smarty.now < 0}{trans("expired<!guarantee>")}{else}{$netcabinfo.guaranteetime|date_format:"%Y/%m/%d"}{/if})
+                        {/if}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/desc.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Description:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			{$netcabinfo.description}
+		</TD>
+	</TR>
+	<TR>
+		<TD width="1%">
+			<img src="img/money.gif" alt="">
+		</TD>
+		<TD WIDTH="1%" class="bold nobr">
+			{trans("Investment project:")}
+		</TD>
+		<TD WIDTH="98%">
+			 {$netcabinfo.projectname}
+		</TD>
+	</TR>
+	
+	                                        </TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
+                        <A href="?m=netcabedit&id={$netcabinfo.id}" ACCESSKEY="E">{trans("Edit")} <IMG src="img/edit.gif" ALT="[ {trans("Edit")} ]
+"></A>
+                        <A href="?m=netcabdel&id={$netcabinfo.id}" OnClick="return confirmLink(this, '{t a=$netcabinfo.name}Are you sure, you want
+ to remove device \'$a\' from database?{/t}');">{trans("Delete")} <img src="img/delete.gif" ALT=""></A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>

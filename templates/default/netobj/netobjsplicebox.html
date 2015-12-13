@@ -14,15 +14,15 @@
 			<TABLE class="lmsbox-inner">
         <THEAD>
 	<TR>
-		<TD style="width: 96%;">
+		<TD style="width: 30%;">
 			<IMG src="img/netobj.gif" ALT=""> <span class="bold">{trans("Name")} / {trans("Producer")}:</span><BR>
 			<IMG src="img/home.gif" ALT=""> {trans("Location:")}
 		</TD>
-		<TD style="width: 1%;" class="nobr">
+		<TD style="width: 30%;" class="nobr">
 			{trans("Link technology:")}<BR>
 			{trans("Link speed:")}
 		</TD>
-		<TD style="width: 1%;" class="text-right nobr">
+		<TD style="width: 30%;" class="text-right nobr">
 			{trans("Port")}:<BR>
 			{trans("ID:")}
 		</TD>
@@ -37,22 +37,25 @@
         </THEAD>
         <TBODY>
 	{cycle values="light,lucid" print=false}
-	{section name=splicelist loop=$splicelist start=$start}
-	{$srccableid=$splicelist[splicelist].srccableid}
-	{$dstcableid=$splicelist[splicelist].dstcableid}
+	{foreach key=key item=splice from=$splicelist}
 	<TR class="highlight {cycle}">
-		<TD>
-			{$cablelist[srccableid].name}
+		<TD> <PRE>{$cablelist|@print_r}</PRE> {$splice.srccableid} => {$splice.dstcableid} </TD>
+		<TD class="text-right nobr"> 
+			{$cablelist[$splice.srccableid]} | 
+			{trans("tube")} {$splice.srctube} = 
+			{trans("fiber<!singular>")} {$splice.srcfiber} -
 		</TD>
-		<TD>
-			{$cablelist[dstcableid].name}
+		<TD class="text-left nobr">
+			 - {trans("fiber<!singular>")} {$splice.dstfiber} 
+			 = {trans("tube")} {$splice.dsttube} 
+			 | {$cablelist[splice.dstcableid].name}
 		</TD>
 		</TD>
 		<TD class="text-right">
 			<A HREF="?m=netobjedit&action=disconnect&id={$netobjinfo.id}&devid={$netobjlist[netobjlist].id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
 		</TD>
 	</TR>
-	{sectionelse}
+	{foreachelse}
 	<TR>
 		<TD colspan="6" class="empty-table">
 			<P>&nbsp;</P>
@@ -60,13 +63,13 @@
 			<P>&nbsp;</P>
 		</TD>
 	</TR>
-	{/section}
+	{/foreach}
 	<TR>
 		<TD class="ftop dark text-center nobr" COLSPAN="6">
 			{if $netobjinfo.splices == $netobjinfo.takensplices}
 			<span class="bold">{trans("All splices in that object are in use.")}</span>
-			{elseif !$cablelist}
-			<span class="bold">{trans("No cables for connection.")}</span>
+			{elseif cablelist|@count<1}
+			<span class="bold">{trans("Unsufficient cables count for making splices.")}</span>
 			{else}
 			<FORM METHOD="GET" ACTION="?m=netobjedit" NAME="connect">
 			<INPUT type="submit" class="hiddenbtn">
@@ -123,3 +126,12 @@
        </TR>
     </TBODY>
 </TABLE>
+<SCRIPT type="text/javascript">
+<!--
+if (getCookie('objectsplices') == '1')
+{
+        document.getElementById('objectsplices').style.display = '';
+}
+//-->
+</SCRIPT>
+

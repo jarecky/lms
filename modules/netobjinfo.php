@@ -31,8 +31,11 @@ if (!$LMS->NetObjExists($_GET['id'])) {
 
 $netobjinfo = $LMS->GetNetObj($_GET['id']);
 $cablelist = $LMS->GetNetCabInObj($_GET['id']);
+foreach ($cablelist AS $id => $cable)
+	$cablelist[$id]['destobj']=$LMS->GetOtherEnd($cable['id'],$_GET['id']);
+
 $othercablelist = $LMS->GetNetCabUnconnected($_GET['id']);
-echo '<PRE>$othercablelist:';print_r($othercablelist);echo '</PRE>';
+#echo '<PRE>$othercablelist:';print_r($othercablelist);echo '</PRE>';
 $splicelist = $LMS->GetNetObjSplices($_GET['id']);
 
 

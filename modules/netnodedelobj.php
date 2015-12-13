@@ -1,9 +1,9 @@
 <?php
 
 /*
- *  LMS version 1.11-git
+ * LMS version 1.11-git
  *
- *  Copyright (C) 2001-2013 LMS Cabelopers
+ *  (C) Copyright 2001-2013 LMS Developers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -23,34 +23,16 @@
  *
  *  $Id$
  */
+$id = intval($_GET['id']);
+$did = intval($_GET['did']);
 
-/**
- * LMSNetCabManagerInterface
- * 
- * @author Jaroslaw Dziubek <jaroslaw.dziubek@perfect.net.pl>
- */
-interface LMSNetCabManagerInterface
-{
-    public function NetCabUpdate($data);
-    
-    public function NetCabAdd($data);
-    
-    public function DeleteNetCab($id);
-    
-    public function GetNetCab($id);
-    
-    public function NetCabExists($id);
 
-    public function GetNetCabList($order = 'name,asc', $search = array());
-
-    public function GetNetCabInObj($id);
-
-    public function GetNetCabUnconnected($id);
-
-    public function AddCabToObj($objectid,$cableid);
-
-    public function DelCabFromObj($objectid,$cableid);
-
-    public function GetOtherEnd($cableid,$objectid);
-
+if (!empty($id)) {
+	$DB->Execute("UPDATE netobjects SET netnodeid=NULL,location='',location_city=NULL,
+			location_street=NULL,location_house=NULL,location_flat=NULL,longitude=NULL,latitude=NULL WHERE id=".$did);
+	header('Location: ?m=netnodeinfo&id='.$id);	
+} else {
+	header('Location: ?m=netnodelist');
 }
+		
+?>

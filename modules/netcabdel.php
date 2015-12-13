@@ -1,9 +1,9 @@
 <?php
 
 /*
- *  LMS version 1.11-git
+ * LMS version 1.11-git
  *
- *  Copyright (C) 2001-2013 LMS Cabelopers
+ *  (C) Copyright 2001-2013 LMS Cabelopers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -24,33 +24,23 @@
  *  $Id$
  */
 
-/**
- * LMSNetCabManagerInterface
- * 
- * @author Jaroslaw Dziubek <jaroslaw.dziubek@perfect.net.pl>
- */
-interface LMSNetCabManagerInterface
-{
-    public function NetCabUpdate($data);
-    
-    public function NetCabAdd($data);
-    
-    public function DeleteNetCab($id);
-    
-    public function GetNetCab($id);
-    
-    public function NetCabExists($id);
+if (!$LMS->NetCabExists($_GET['id']))
+	$SESSION->redirect('?m=netcablist');
 
-    public function GetNetCabList($order = 'name,asc', $search = array());
+$layout['pagetitle'] = trans('Deletion of Cable with ID: $a', sprintf('%04d', $_GET['id']));
+$SMARTY->assign('netcabid', $_GET['id']);
 
-    public function GetNetCabInObj($id);
-
-    public function GetNetCabUnconnected($id);
-
-    public function AddCabToObj($objectid,$cableid);
-
-    public function DelCabFromObj($objectid,$cableid);
-
-    public function GetOtherEnd($cableid,$objectid);
-
+if ($_GET['is_sure'] != 1) {
+	$body = '<P>' . trans('Are you sure, you want to delete that cable?') . '</P>'; 
+	$body .= '<P><A HREF="?m=netcabdel&id=' . $_GET['id'] . '&is_sure=1">' . trans('Yes, I am sure.') . '</A></P>';
+} else {
+	$body = '<P>' . trans('Cable has been deleted.') . '</P>';
+	$LMS->DeleteNetCab($_GET['id']);
+	$LMS->CleanupInvprojects();
+	header('Location: ?m=netcablist');
 }
+
+$SMARTY->assign('body',$body);
+$SMARTY->display('dialog.html');
+
+?>

@@ -1287,6 +1287,11 @@ class LMS
 	return $manager->NetObjSplice($objectid,$srccable,$dstcable,$position,$description);
     }
 
+    public function GetNetObjInNode($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->GetNetObjInNode($id);
+    }    
 
     /*
      *   Network Cables
@@ -1296,6 +1301,30 @@ class LMS
     {
         $manager = $this->getNetCabManager();
         return $manager->NetCabAdd($data);
+    }
+
+    public function DeleteNetCab($id)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->DeleteNetCab($id);
+    }
+    
+    public function GetNetCab($id)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->GetNetCab($id);
+    }
+
+    public function NetCabUpdate($data)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->NetCabUpdate($data);
+    }
+    
+    public function NetCabExists($id)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->NetCabExists($id);
     }
 
     public function GetNetCabList($order,$search)
@@ -1320,6 +1349,18 @@ class LMS
     {
 	$manager = $this->getNetCabManager();
 	return $manager->AddCabToObj($objectid,$cableid);
+    }
+
+    public function DelCabFromObj($objectid,$cableid)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->DelCabFromObj($objectid,$cableid);
+    }
+
+    public function GetOtherEnd($cableid,$objectid)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->GetOtherEnd($cableid,$objectid);
     }
 
     /*
