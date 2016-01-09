@@ -39,8 +39,8 @@
   		<TR class="highlight {cycle}">
 		<TD class="text-left"><A HREF="?m=netobjedit&action=disconnect&id={$netobjinfo.id}&spliceid={$splice.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
 		<TD style="text-align:right">{$cablelist[$splice.srccableid].name}</TD>
-		<TD style="width:1%; white-space: nowrap;">{trans("tube")} {$splice.srctube} ({$_FIBEROPTICCOLORCODES[$splice.srctube]})</TD>
-		<TD style="width:1%; white-space: nowrap;">{trans("fiber<!singular>")} {$splice.srcfiber} ({$_FIBEROPTICCOLORCODES[$splice.srcfiber]})</TD>
+		<TD style="width:1%; white-space: nowrap;" class="fiber{$splice.srctube}">{trans("tube")} {$splice.srctube} ({$_FIBEROPTICCOLORCODES[$splice.srctube]})</TD>
+		<TD style="width:1%; white-space: nowrap;" class="fiber{$splice.srcfiber}">{trans("fiber<!singular>")} {$splice.srcfiber} ({$_FIBEROPTICCOLORCODES[$splice.srcfiber]})</TD>
 		</TR>
 		{foreachelse}
 		<TR>
@@ -57,8 +57,8 @@
 		{cycle values="light,lucid" print=false}
 		{foreach key=key item=splice from=$out}
 		<TR class="highlight {cycle}">
-		<TD style="width:1%; white-space: nowrap;">{trans("fiber<!singular>")} {$splice.dstfiber} ({$_FIBEROPTICCOLORCODES[$splice.dstfiber]})</TD>
-		<TD style="width:1%; white-space: nowrap;">{trans("tube")} {$splice.dsttube} ({$_FIBEROPTICCOLORCODES[$splice.dsttube]})</TD>
+		<TD style="width:1%; white-space: nowrap;" class="fiber{$splice.dstfiber}">{trans("fiber<!singular>")} {$splice.dstfiber} ({$_FIBEROPTICCOLORCODES[$splice.dstfiber]})</TD>
+		<TD style="width:1%; white-space: nowrap;" class="fiber{$splice.dsttube}">{trans("tube")} {$splice.dsttube} ({$_FIBEROPTICCOLORCODES[$splice.dsttube]})</TD>
 		<TD style="text-align:left;">{$cablelist[$splice.dstcableid].name}</TD>
 		<TD class="text-right"><A HREF="?m=netobjedit&action=disconnect&id={$netobjinfo.id}&spliceid={$splice.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
 		</TR>
@@ -93,13 +93,11 @@
 						</SELECT>
 						{trans("Destination Cable:")}<SELECT NAME="dstcable" id="dstcable" style="width: 300px" {tip trigger="link" text="Select from cable list for connection"}>
 						{foreach key=cableid item=cable from=$cablelist}
-						<OPTGROUP LABEL="{$cable.name}">
+						<OPTGROUP CLASS="big" LABEL="{$cable.name}">
 						{foreach key=tube item=tubelist from=$cable.fiber}
-						<OPTGROUP LABEL="{trans("tube")} #{$tube} ({$_FIBEROPTICCOLORCODES[$tube]})">
+						{if $tubelist|@count}<OPTGROUP CLASS="fiber{$tube} medium" LABEL="{trans("tube")} #{$tube} ({$_FIBEROPTICCOLORCODES[$tube]})">{/if}
 						{foreach key=fiber item=fiberlist from=$tubelist}
-						#{if $fiberlist<0}
-							<OPTION VALUE="{$cableid},{$tube},{$fiber}">{trans("fiber<!singular>")} #{$fiber} ({$_FIBEROPTICCOLORCODES[$fiber]})</OPTION>
-						#{/if}
+						<OPTION CLASS="fiber{$fiber}" VALUE="{$cableid},{$tube},{$fiber}">{trans("fiber<!singular>")} #{$fiber} ({$_FIBEROPTICCOLORCODES[$fiber]})</OPTION>
 						{/foreach}
 						{/foreach}
 						</OPTGROUP>

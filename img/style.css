@@ -309,3 +309,19 @@ td.empty-table { text-align: center; font-weight: bold; padding: 2em; background
 .wq { width: 25%; }
 
 .cancel { background: #ff6c6c; }
+
+.big { font-size: 14pt; }
+.medium { font-size: 12pt; }
+
+.fiber1  { color: black; background-color: red; }
+.fiber2  { color: black; background-color: green; }
+.fiber3  { color: white; background-color: blue; }
+.fiber4  { color: black; background-color: yellow; }
+.fiber5  { color: black; background-color: white; }
+.fiber6  { color: black; background-color: grey; }
+.fiber7  { color: white; background-color: brown; }
+.fiber8  { color: black; background-color: violet; }
+.fiber9  { color: black; background-color: turquoise; }
+.fiber10 { color: white; background-color: black; }
+.fiber11 { color: black; background-color: orange; }
+.fiber12 { color: black; background-color: pink; }

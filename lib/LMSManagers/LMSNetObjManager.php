@@ -314,7 +314,7 @@ public function DeleteNetObj($id) {
 }
 
 public function GetNetObjSplices($id) {
-	return $this->db->GetAll("SELECT * FROM netsplices WHERE objectid=?",array($id));	
+	return $this->db->GetAll("SELECT * FROM netsplices WHERE objectid=? ORDER BY srccableid ASC, srctube ASC, srcfiber ASC",array($id));	
 }
 
 public function CountNetObjSplices($id) {

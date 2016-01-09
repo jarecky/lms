@@ -40,9 +40,9 @@ if ($netobjinfo['type']==1 or $netobjinfo['type']==2) {
 	$splicelist = $LMS->GetNetObjSplices($_GET['id']);
 	$SMARTY->assign('splicelist', $splicelist);
 } elseif ($netobjinfo['type']==3) {
-	$in=$DB->GetAll("SELECT * FROM netsplices WHERE dstcableid IS NULL AND objectid=?",array($netobjinfo['id']));
+	$in=$DB->GetAll("SELECT * FROM netsplices WHERE dstcableid IS NULL AND objectid=? ORDER BY srccableid ASC,srctube ASC,srcfiber ASC",array($netobjinfo['id']));
 	$SMARTY->assign('in',$in);
-	$out=$DB->GetAll("SELECT * FROM netsplices WHERE srccableid IS NULL AND objectid=?",array($netobjinfo['id']));
+	$out=$DB->GetAll("SELECT * FROM netsplices WHERE srccableid IS NULL AND objectid=? ORDER BY dstcableid ASC,dsttube ASC,dstfiber ASC",array($netobjinfo['id']));
 	$SMARTY->assign('out',$out);
 	$data=preg_split('/:/',$netobjinfo['parameter']);
 	if (count($in)<$data[0]) $SMARTY->assign('splitter_in',1);
