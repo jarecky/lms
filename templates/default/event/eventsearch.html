@@ -97,12 +97,7 @@
 			<B>{trans("Customer:")}</B>
 		</TD>
 		<TD width="98%" nowrap>
-			<SELECT name="event[customerid]">
-				<OPTION value="0" SELECTED>{trans("- select customer -")}</OPTION>
-				{foreach from=$customerlist item=customer}	
-				<OPTION value="{$customer.id}">{$customer.customername|truncate:"40":"...":true} ({$customer.id|string_format:"%04d"})</OPTION>
-				{/foreach}
-			</SELECT>
+			{customerlist form="event" customers=$customerlist selected=$event.customerid selectname="event[customerid]" inputname="event[custid]" customOnChange="change_customer(this);"}
 		</TD>
 	</TR>
 	<TR>

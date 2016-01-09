@@ -66,7 +66,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
      */
     public function customerExists($id)
     {
-        $customer_deleted = $this->db->GetOne('SELECT deleted FROM customersview WHERE id=?', array($id));
+        $customer_deleted = $this->db->GetOne('SELECT deleted FROM customerview WHERE id=?', array($id));
         switch ($customer_deleted) {
             case '0':
                 return true;
@@ -129,7 +129,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
     {
         return $this->db->GetAllByKey(
             'SELECT id, ' . $this->db->Concat('lastname', "' '", 'name')  . ' AS customername 
-            FROM customersview 
+            FROM customerview 
             WHERE status <> ? AND deleted = 0 
             ORDER BY lastname, name', 
             'id', array(CSTATUS_INTERESTED)
@@ -145,7 +145,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
     {
         return $this->db->GetAllByKey(
             'SELECT id, ' . $this->db->Concat('lastname', "' '", 'name') . ' AS customername 
-            FROM customersview 
+            FROM customerview 
             WHERE deleted = 0
             ORDER BY lastname, name', 
             'id'
@@ -262,7 +262,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
 			$sql .= ' COUNT(CASE WHEN status = ' . $statusidx . ' THEN 1 END) AS ' . $status['alias'] . ',';
         $result = $this->db->GetRow(
             'SELECT ' . $sql . ' COUNT(id) AS total
-            FROM customersview 
+            FROM customerview 
             WHERE deleted=0'
         );
 
@@ -271,7 +271,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
             FROM (
                 SELECT SUM(value) AS value 
                 FROM cash 
-                LEFT JOIN customersview ON (customerid = customersview.id) 
+                LEFT JOIN customerview ON (customerid = customerview.id) 
                 WHERE deleted = 0 
                 GROUP BY customerid 
                 HAVING SUM(value) < 0
@@ -296,10 +296,13 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
     {
         global $SYSLOG_RESOURCE_KEYS;
         $args = array(
+			'extid' => $customeradd['extid'],
             'name' => $customeradd['name'],
             'lastname' => $customeradd['lastname'],
             'type' => empty($customeradd['type']) ? 0 : 1,
-            'address' => $customeradd['address'],
+            'street' => $customeradd['street'],
+            'building' => strlen($customeradd['building']) ? $customeradd['building'] : null,
+            'apartment' => strlen($customeradd['apartment']) ? $customeradd['apartment'] : null,
             'zip' => $customeradd['zip'],
             'city' => $customeradd['city'],
             $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_COUNTRY] => $customeradd['countryid'],
@@ -307,7 +310,9 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
             'ssn' => $customeradd['ssn'],
             'status' => $customeradd['status'],
             'post_name' => $customeradd['post_name'],
-            'post_address' => $customeradd['post_address'],
+            'post_street' => strlen($customeradd['post_street']) ? $customeradd['post_street'] : null,
+            'post_building' => strlen($customeradd['post_building']) ? $customeradd['post_building'] : null,
+            'post_apartment' => strlen($customeradd['post_apartment']) ? $customeradd['post_apartment'] : null,
             'post_zip' => $customeradd['post_zip'],
             'post_city' => $customeradd['post_city'],
             'post_countryid' => $customeradd['post_countryid'],
@@ -328,14 +333,14 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
             'invoicenotice' => $customeradd['invoicenotice'],
             'mailingnotice' => $customeradd['mailingnotice'],
         );
-        if ($this->db->Execute('INSERT INTO customers (name, lastname, type,
-				    address, zip, city, countryid, ten, ssn, status, creationdate,
-				    post_name, post_address, post_zip, post_city, post_countryid,
+        if ($this->db->Execute('INSERT INTO customers (extid, name, lastname, type,
+				    street, building, apartment, zip, city, countryid, ten, ssn, status, creationdate,
+				    post_name, post_street, post_building, post_apartment, post_zip, post_city, post_countryid,
 				    creatorid, info, notes, message, pin, regon, rbe,
 				    icn, cutoffstop, consentdate, einvoice, divisionid, paytime, paytype,
 				    invoicenotice, mailingnotice)
-				    VALUES (?, UPPER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?NOW?,
-				    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args))
+				    VALUES (?, ?, UPPER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?NOW?,
+				    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args))
         ) {
             $location_manager = new LMSLocationManager($this->db, $this->auth, $this->cache, $this->syslog);
             $location_manager->UpdateCountryState($customeradd['zip'], $customeradd['stateid']);
@@ -463,8 +468,8 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
                     switch ($key) {
 			case 'phone':
 				$searchargs[] = 'EXISTS (SELECT 1 FROM customercontacts
-					WHERE customerid = c.id AND (customercontacts.type < ' . CONTACT_EMAIL
-					. ') AND REPLACE(contact, \'-\', \'\') ?LIKE? ' . $this->db->Escape("%$value%") . ')';
+					WHERE customerid = c.id AND (customercontacts.type & ' . (CONTACT_MOBILE | CONTACT_LANDLINE)
+					. ') > 0 AND REPLACE(contact, \'-\', \'\') ?LIKE? ' . $this->db->Escape("%$value%") . ')';
 				break;
 			case 'email':
 				$searchargs[] = 'EXISTS (SELECT 1 FROM customercontacts
@@ -577,7 +582,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
                     WHEN s.warnsum > 0 THEN 2 ELSE 0 END) AS nodewarn ';
         }
         
-        $sql .= 'FROM customersview c
+        $sql .= 'FROM customerview c
             LEFT JOIN (SELECT customerid, (' . $this->db->GroupConcat('contact') . ') AS email
             FROM customercontacts WHERE (type & ' . CONTACT_EMAIL .' = '. CONTACT_EMAIL .') GROUP BY customerid) cc ON cc.customerid = c.id
             LEFT JOIN countries ON (c.countryid = countries.id) '
@@ -804,7 +809,7 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
         if ($result = $this->db->GetRow('SELECT c.*, '
                 . $this->db->Concat('UPPER(c.lastname)', "' '", 'c.name') . ' AS customername,
 			d.shortname AS division, d.account
-			FROM customers' . (defined('LMS-UI') ? 'view' : '') . ' c 
+			FROM customer' . (defined('LMS-UI') ? '' : 'address') . 'view c 
 			LEFT JOIN divisions d ON (d.id = c.divisionid)
 			WHERE c.id = ?', array($id))) {
             if (!$short) {
@@ -895,9 +900,12 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
     {
         global $SYSLOG_RESOURCE_KEYS;
         $args = array(
+			'extid' => $customerdata['extid'],
             'status' => $customerdata['status'],
             'type' => empty($customerdata['type']) ? 0 : 1,
-            'address' => $customerdata['address'],
+            'street' => $customerdata['street'],
+            'building' => strlen($customerdata['building']) ? $customerdata['building'] : null,
+            'apartment' => strlen($customerdata['apartment']) ? $customerdata['apartment'] : null,
             'zip' => $customerdata['zip'],
             'city' => $customerdata['city'],
             $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_COUNTRY] => $customerdata['countryid'],
@@ -905,7 +913,9 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
             'ssn' => $customerdata['ssn'],
             $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_USER] => isset($this->auth->id) ? $this->auth->id : 0,
             'post_name' => $customerdata['post_name'],
-            'post_address' => $customerdata['post_address'],
+            'post_street' => strlen($customerdata['post_street']) ? $customerdata['post_street'] : null,
+            'post_building' => strlen($customerdata['post_building']) ? $customerdata['post_building'] : null,
+            'post_apartment' => strlen($customerdata['post_apartment']) ? $customerdata['post_apartment'] : null,
             'post_zip' => $customerdata['post_zip'],
             'post_city' => $customerdata['post_city'],
             'post_countryid' => $customerdata['post_countryid'],
@@ -928,9 +938,10 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
             'paytype' => $customerdata['paytype'] ? $customerdata['paytype'] : null,
             $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $customerdata['id']
         );
-        $res = $this->db->Execute('UPDATE customers SET status=?, type=?, address=?,
+        $res = $this->db->Execute('UPDATE customers SET extid=?, status=?, type=?, street=?, building=?, apartment=?,
                                zip=?, city=?, countryid=?, ten=?, ssn=?, moddate=?NOW?, modid=?,
-                               post_name=?, post_address=?, post_zip=?, post_city=?, post_countryid=?,
+                               post_name=?, post_street=?, post_building=?, post_apartment=?,
+                               post_zip=?, post_city=?, post_countryid=?,
                                info=?, notes=?, lastname=UPPER(?), name=?,
                                deleted=0, message=?, pin=?, regon=?, icn=?, rbe=?,
                                cutoffstop=?, consentdate=?, einvoice=?, invoicenotice=?, mailingnotice=?,
@@ -961,23 +972,20 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
      * @global array $SYSLOG_RESOURCE_KEYS
      * @global type $LMS
      * @param int $id Customer id
-     * @param bool $permanent permanent customer removal?
      */
-    public function deleteCustomer($id, $permanent = false)
+    public function deleteCustomer($id)
     {
         
         global $SYSLOG_RESOURCE_KEYS, $LMS;
         $this->db->BeginTrans();
 
-		if (!$permanent)
-			$this->db->Execute('UPDATE customers SET deleted=1, moddate=?NOW?, modid=?
-				WHERE id=?', array($this->auth->id, $id));
+        $this->db->Execute('UPDATE customers SET deleted=1, moddate=?NOW?, modid=?
+                WHERE id=?', array($this->auth->id, $id));
 
         if ($this->syslog) {
-            if (!$permanent)
-                $this->syslog->AddMessage(SYSLOG_RES_CUST, SYSLOG_OPER_UPDATE,
-                    array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $id, 'deleted' => 1),
-                    array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
+            $this->syslog->AddMessage(SYSLOG_RES_CUST, SYSLOG_OPER_UPDATE,
+                array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $id, 'deleted' => 1),
+                array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
             $assigns = $this->db->GetAll('SELECT id, customergroupid FROM customerassignments WHERE customerid = ?', array($id));
             if (!empty($assigns))
                 foreach ($assigns as $assign) {
@@ -1063,14 +1071,28 @@ class LMSCustomerManager extends LMSManager implements LMSCustomerManagerInterfa
         if (!empty($userpanel_dir))
             $this->db->Execute('DELETE FROM up_rights_assignments WHERE customerid=?', array($id));
 
-		if ($permanent) {
-			$this->db->Execute('DELETE FROM customers WHERE id = ?', array($id));
+        $this->db->CommitTrans();
+    }
+    
+    /**
+     * Deletes customer permanently
+     * 
+     * @global array $SYSLOG_RESOURCE_KEYS
+     * @param int $id Customer id
+     */
+    public function deleteCustomerPermanent($id)
+    {
+        global $SYSLOG_RESOURCE_KEYS;
+        
+        $this->db->BeginTrans();
 
-			if ($this->syslog)
-				$this->syslog->AddMessage(SYSLOG_RES_CUST, SYSLOG_OPER_DELETE, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $id),
-					array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
-		}
+        $this->deleteCustomer($id);
+        
+        $this->db->Execute('DELETE FROM customers WHERE id = ?', array($id));
 
+        if ($this->syslog) {
+            $this->syslog->AddMessage(SYSLOG_RES_CUST, SYSLOG_OPER_DELETE, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $id), array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
+        }
 
         $this->db->CommitTrans();
     }

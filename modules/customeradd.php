@@ -50,7 +50,7 @@ if(isset($_GET['ajax']))
 	if (!isset($mode)) { print 'false;'; exit; }
 
 	$candidates = $DB->GetAll('SELECT '.$mode.' as item, count(id) as entries
-	    FROM customers
+	    FROM customeraddressview
 	    WHERE '.$mode.' != \'\' AND lower('.$mode.') ?LIKE? lower(' . $DB->Escape('%'.$search.'%') . ')
 	    GROUP BY item
 	    ORDER BY entries desc, item asc
@@ -98,9 +98,21 @@ if (isset($_POST['customeradd']))
 			$error['group'] = trans('Group name required!');
 	}
 	
-	if($customeradd['address'] == '')
-		$error['address'] = trans('Address required!');
-	
+	if ($customeradd['street'] == '')
+		$error['street'] = trans('Street name required!');
+
+	if ($customeradd['building'] != '' && $customeradd['street'] == '')
+		$error['street'] = trans('Street name required!');
+
+	if ($customeradd['apartment'] != '' && $customeradd['building'] == '')
+		$error['building'] = trans('Building number required!');
+
+	if ($customeradd['post_building'] != '' && $customeradd['post_street'] == '')
+		$error['post_street'] = trans('Street name required!');
+
+	if ($customeradd['post_apartment'] != '' && $customeradd['post_building'] == '')
+		$error['post_building'] = trans('Building number required!');
+
 	if($customeradd['ten'] !='' && !check_ten($customeradd['ten']) && !isset($customeradd['tenwarning']))
 	{
 		$error['ten'] = trans('Incorrect Tax Exempt Number! If you are sure you want to accept it, then click "Submit" again.');

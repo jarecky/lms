@@ -119,22 +119,17 @@
 			</SELECT>
 		</TD>
 	</TR>
-	<TR>
-		<TD width="1%">
-			<IMG src="img/customer.gif" alt="">
-		</TD>
-		<TD width="1%">
-			<B>{trans("Customer:")}</B>
-		</TD>
-		<TD width="98%" nowrap>
-			<SELECT name="event[customerid]" {tip text="Select customer (optional)"} onChange="change_customer(this);">
-				<OPTION value="0"{if !$event.customerid} SELECTED{/if}>{trans("- select customer -")}</OPTION>
-				{foreach from=$customerlist item=customer}	
-				<OPTION value="{$customer.id}"{if $customer.id == $event.customerid} SELECTED{/if}>{$customer.customername}</OPTION>
-				{/foreach}
-			</SELECT>
-		</TD>
-	</TR>
+        <TR>
+                <TD width="1%">
+                        <IMG src="img/customer.gif" alt="">
+                </TD>
+                <TD width="1%">
+                        <B>{trans("Customer:")}</B>
+                </TD>
+                <TD width="98%" nowrap>
+			{customerlist form="event" customers=$customerlist selected=$event.customerid selectname="event[customerid]" inputname="event[custid]" customOnChange="change_customer(this);"}
+                </TD>
+        </TR>
 	<TR>
 	<TD width="1%">
 	    <IMG src="img/node.gif" alt="">

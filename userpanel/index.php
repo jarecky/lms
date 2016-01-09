@@ -206,6 +206,7 @@ $layout['dberrors'] =& $DB->GetErrors();
 
 $SMARTY->assignByRef('modules', $USERPANEL->MODULES);
 $SMARTY->assignByRef('layout', $layout);
+$SMARTY->assign('page_header', ConfigHelper::getConfig('userpanel.page_header'));
 
 header('X-Powered-By: LMS/'.$layout['lmsv']);
 

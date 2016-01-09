@@ -57,6 +57,7 @@ class LMS
     protected $document_manager;
     protected $massage_manager;
     protected $config_manager;
+    protected $user_group_manager;
 
     public function __construct(&$DB, &$AUTH, &$SYSLOG)
     { // class variables setting
@@ -368,6 +369,12 @@ class LMS
         return $manager->getUserRights($id);
     }
 
+    public function PasswdExistsInHistory($id, $passwd) 
+    {
+        $manager = $this->getUserManager();
+        return $manager->PasswdExistsInHistory($id, $passwd);
+    }
+
     /*
      *  Customers functions
      */
@@ -396,10 +403,16 @@ class LMS
         return $manager->CustomerAdd($customeradd);
     }
 
-    public function DeleteCustomer($id, $permanent = false)
+    public function DeleteCustomer($id)
     {
         $manager = $this->getCustomerManager();
-        return $manager->DeleteCustomer($id, $permanent);
+        return $manager->DeleteCustomer($id);
+    }
+    
+    public function DeleteCustomerPermanent($id)
+    {
+        $manager = $this->getCustomerManager();
+        return $manager->deleteCustomerPermanent($id);
     }
 
     public function CustomerUpdate($customerdata)
@@ -2783,5 +2796,91 @@ class LMS
     {
         $this->SYSLOG = $syslog;
     }
+    
+    
+    /**
+     * Returns user group manager
+     * 
+     * @return LMSUserGroupManagerInterface User group manager
+     */
+    protected function getUserGroupManager()
+    {
+        if (!isset($this->user_group_manager)) {
+            $this->user_group_manager = new LMSUserGroupManager($this->DB, $this->AUTH, $this->cache, $this->SYSLOG);
+        }
+        return $this->user_group_manager;
+    }
+    
+    public function UsergroupGetId($name)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UsergroupGetId($name);
+    }
+    
+    public function UsergroupAdd($usergroupdata)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UsergroupAdd($usergroupdata);
+    }
+    
+    public function UsergroupGetList()
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UsergroupGetList();
+    }
 
+    public function UsergroupGet($id)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UsergroupGet($id);
+    }
+    
+    public function UsergroupExists($id)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UsergroupExists($id);
+    }
+    
+    public function GetUserWithoutGroupNames($groupid)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->GetUserWithoutGroupNames($groupid);
+    }
+    
+    public function UserassignmentDelete($userassignmentdata)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UserassignmentDelete($userassignmentdata);
+    }
+    
+    public function UserassignmentExist($groupid, $userid)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UserassignmentExist($groupid, $userid);
+    }
+    
+    public function UserassignmentAdd($userassignmentdata)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UserassignmentAdd($userassignmentdata);
+    }
+    
+    public function UsergroupDelete($id)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UsergroupDelete($id);
+    }
+    
+    public function UsergroupUpdate($usergroupdata)
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UsergroupUpdate($usergroupdata);
+    }
+    
+    public function UsergroupGetAll()
+    {
+        $manager = $this->getUserGroupManager();
+        return $manager->UsergroupGetAll();
+    }
+    
 }

@@ -84,7 +84,6 @@ $_LANG['Network/Address:'] = 'Sieć/Adres:';
 $_LANG['Addresses (total/busy/online):'] = 'Adresy (wszystkie/zajęte/włączone):';
 $_LANG['Address field is required!'] = 'Nazwa adresu jest wymagana!';
 $_LANG['Address/prefix:'] = 'Adres/prefiks:';
-$_LANG['Address required!'] = 'Wymagany adres!';
 $_LANG['Administration'] = 'Administracja';
 $_LANG['After'] = 'Po';
 $_LANG['After:'] = 'Po:';
@@ -356,7 +355,6 @@ $_LANG['No free ports on device!'] = 'Urządzenie nie posiada wolnych portów!';
 $_LANG['No IP addresses on device.'] = 'Urządzenie nie posiada adresu IP.';
 $_LANG['Device Info: $a $b $c'] = 'Informacje o urządzeniu: $a $b $c';
 $_LANG['Device name is required!'] = 'Nazwa urządzenia jest wymagana!';
-$_LANG['Device name is too long (max.32 characters)!'] = 'Nazwa urządzenia jest za długa (maksymalnie 32 znaki)!';
 $_LANG['IP addresses ($a):'] = 'Adresy IP ($a):';
 $_LANG['Device has been deleted.'] = 'Urządzenie zostało usunięte.';
 $_LANG['DHCP range:'] = 'Zakres DHCP:';
@@ -431,8 +429,6 @@ $_LANG['Enter account quota in MB'] = 'Wprowadź quotę dla konta w MB';
 $_LANG['Enter account name'] = 'Wprowadź nazwę konta';
 $_LANG['Enter additional information'] = 'Wprowadź dodatkowe informacje';
 $_LANG['Enter additional information (optional)'] = 'Wprowadź dodatkowe informacje (opcjonalnie)';
-$_LANG['Enter address'] = 'Wprowadź adres';
-$_LANG['Enter address name'] = 'Wprowadź adres';
 $_LANG['Enter alias name'] = 'Wprowadź alias';
 $_LANG['Enter beginning of DHCP range (optional)'] = 'Wprowadź początek zakresu DHCP (opcjonalnie)';
 $_LANG['Enter/change your registration info'] = 'Wprowadź/zmień swoje dane rejestracyjne';
@@ -442,8 +438,13 @@ $_LANG['Enter comment'] = 'Wprowadź komentarz';
 $_LANG['Enter contact phone'] = 'Wprowadź telefon kontaktowy';
 $_LANG['Enter country'] = 'Wprowadź kraj';
 $_LANG['Enter creditor name'] = 'Wprowadź nazwę wierzyciela';
-$_LANG['Enter customer address'] = 'Wprowadź adres klienta';
-$_LANG['Enter customer city'] = 'Wprowadź miasto klienta';
+$_LANG['Enter street name'] = 'Wprowadź nazwę ulicy';
+$_LANG['Enter building number'] = 'Wprowadź numer budynku';
+$_LANG['Enter apartment number'] = 'Wprowadź numer lokalu';
+$_LANG['Enter city'] = 'Wprowadź miasto';
+$_LANG['Enter street name (optional)'] = 'Wprowadź nazwę ulicy (opcjonalnie)';
+$_LANG['Enter building number (optional)'] = 'Wprowadź numer budynku (opcjonalnie)';
+$_LANG['Enter apartment number (optional)'] = 'Wprowadź numer lokalu (opcjonalnie)';
 $_LANG['Enter customer e-mail address (optional)'] = 'Wprowadź adres e-mail klienta (opcjonalnie)';
 $_LANG['Enter customer name'] = 'Wprowadź imię klienta';
 $_LANG['Enter customer Social Security Number (optional)'] = 'Wprowadź numer PESEL klienta (opcjonalnie)';
@@ -501,6 +502,7 @@ $_LANG['Enter minimal warranted upload value (optional)'] = 'Wprowadź minimaln�
 $_LANG['Enter model name (optional)'] = 'Wprowadź nazwę modelu (opcjonalnie)';
 $_LANG['Enter module name and location'] = 'Wprowadź lokalizację i nazwę (ścieżkę do) modułu';
 $_LANG['Enter name'] = 'Wprowadź nazwę';
+$_LANG['Enter name (optional)'] = 'Wprowadź nazwę (opcjonalnie)';
 $_LANG['Enter first/lastname of customer'] = 'Wprowadź nazwę/nazwisko klienta';
 $_LANG['Enter network domain (optional)'] = 'Wprowadź domenę sieci (opcjonalnie)';
 $_LANG['Enter network interface (optional)'] = 'Wprowadź interfejs sieci (opcjonalnie)';
@@ -532,8 +534,8 @@ $_LANG['Enter secondary DNS address (optional)'] = 'Wprowadź zapasowy adres DNS
 $_LANG['Enter sender e-mail address'] = 'Wprowadź adres e-mail nadawcy';
 $_LANG['Enter sender name'] = 'Wprowadź nazwę nadawcy';
 $_LANG['Enter serial number (optional)'] = 'Wprowadź numer seryjny (opcjonalnie)';
-$_LANG['Enter service name (optional)'] = 'Wprowadź nazwę odbiorcy (opcjonalnie)';
-$_LANG['Enter service address (optional)'] = 'Wprowadź adres do doręczeń (opcjonalnie)';
+$_LANG['Enter postall address name (optional)'] = 'Wprowadź nazwę dla adresu korespondencyjnego (opcjonalnie)';
+$_LANG['Enter postall address street name (optional)'] = 'Wprowadź nazwę ulicy dla adresu korespondencyjnego (opcjonalnie)';
 $_LANG['Enter short description of transaction'] = 'Wprowadź krótki opis operacji';
 $_LANG['Enter Social Security Number (optional)'] = 'Wprowadź PESEL (opcjonalnie)';
 $_LANG['Enter standing payment name'] = 'Wprowadź nazwę opłaty stałej';
@@ -1241,7 +1243,7 @@ $_LANG['Specified IP address overlaps with other network!'] = 'Wybrany adres IP 
 $_LANG['Specified MAC address is in use!'] = 'Wybrany adres MAC jest już w użyciu!';
 $_LANG['Specified name contains forbidden characters!'] = 'Wybrana nazwa zawiera zabronione znaki!';
 $_LANG['Specified name is in use!'] = 'Wybrana nazwa jest już w użyciu!';
-$_LANG['Specified name is too long (max.$a characters)!'] = 'Wybrana nazwa jest za długa (maksymalnie $a znaków)!';
+$_LANG['Specified name is too long (max. $a characters)!'] = 'Podana nazwa jest za długa (maksymalnie $a znaków)!';
 $_LANG['Specify format of verbal amounts representation (on invoices). e.g. for value "1" verbal expand of 123,15 will be "one two thr 15/100". Default: 0.'] = 'Określ typ reprezentacji słownej liczb (na fakturach). np dla wartości "1" słowne określenie sumy 123,15 wędzie wyglądało "jed dwa trz 15/100". Domyślnie: 0.';
 $_LANG['Specify time (in seconds), after which node will be marked offline. It should match with frequency of running nodes activity script (i.e. lms-fping). Default: 600.'] = 'Określ czas (w sekundach) po jakim komputer będzie uważany za wyłączony. Powinno się to pokrywać z częstotliwością uruchamiania skryptu dokonującego sprawdzenia aktywności komputerów (np lms-fping). Domyślnie: 600.';
 $_LANG['SQL query executed while reload, if reload_type = sql. Default: empty. You can use \'%TIME%\' as replacement to current unix timestamp. WARNING! Semicolon is handled as query separator, which means that you can enter couple of SQL queries separated by semicolon sign.'] = 'Zapytanie SQL wykonywane pod czas przeładownia jeżeli reload_type = sql. Domyślnie: pusta. W zapytaniu może być użyta zmienna \'%TIME%\' jako zastępstwo właściwego czasu zapisanego w formacie UNIX_TIMESTAMP. UWAGA! Średnik jest interpretowany jako znak rozdzielający zapytania. Oznacza to, że możesz wpisać kilka zapytań SQL oddzielonych średnikami.';
@@ -2409,8 +2411,8 @@ $_LANG['mobile'] = 'tel.kom.';
 $_LANG['phone<!plural>'] = 'telefon';
 $_LANG['fax'] = 'fax';
 $_LANG['Select domain type'] = 'Wybierz typ domeny';
-$_LANG['Enter city of service address (optional)'] = 'Wprowadź nazwę miasta dla adresu dodoręczeń (opcjonalnie)';
-$_LANG['Enter zip code of service address (optional)'] = 'Wprowadź kod pocztowy dla adresu do doręczeń (opcjonalnie)';
+$_LANG['Enter city (optional)'] = 'Wprowadź nazwę miasta (opcjonalnie)';
+$_LANG['Enter zip code (optional)'] = 'Wprowadź kod pocztowy (opcjonalnie)';
 $_LANG['All cash operations from that package will be lost.'] = 'Wszystkie operacje kasowe z tego pakietu zostaną usunięte.';
 $_LANG['Are you sure, you want to delete this package and related operations?'] = 'Czy na pewno chcesz usunąć tą paczkę i powiązane operacje?';
 $_LANG['Do you want to remove package "$a"?'] = 'Czy chesz usunąć paczkę "$a"?';
@@ -3032,7 +3034,7 @@ $_LANG['Payment for liabilities'] = 'Wpłata na poczet należności';
 $_LANG['Check if sent electronic invoices on this email'] = 'Zaznacz jeśli na ten adres e-mail mają być wysyłane elektroniczne faktury';
 $_LANG['Not visible by the customer in electronic Customer Service Representative'] = 'Niewidoczny dla klienta w elektronicznym biurze obsługi klienta';
 $_LANG['If the customer wants to receive an electronic invoice must be checked e-mail address to which to send e-invoices'] = 'Jeśli klient chce otrzymywać fakturę elektroniczną musi zostać zaznaczony adres e-mail na który mają być wysyłane e-faktury';
-$_LANG['Cancellation of a traditional invoice (agreement on an electronic invoice):'] = 'Rezygnazja z faktury tradycyjnej (zgoda na fakturę elektroniczną):';
+$_LANG['Cancellation of a traditional invoice (agreement on an electronic invoice):'] = 'Rezygnacja z faktury tradycyjnej (zgoda na fakturę elektroniczną):';
 $_LANG['Check if send notification'] = 'Zaznacz, jeżeli chcesz wysyłać powiadomienia';
 $_LANG['Notification'] = 'Powiadomienia';
 
@@ -3068,6 +3070,29 @@ $_LANG['Automatically adjusts the size of the selection list to the number of us
 $_LANG['Are you sure, you want to cancel invoice \\\'$a\\\' from database?'] = 'Jesteś pewien, że chcesz anulować fakturę \\\'$a\\\' z bazy danych?';
 $_LANG['Are you sure, you want to recover cancelled invoice \\\'$a\\\' from database?'] = 'Jesteś pewien, że chcesz przywrócić anulowaną fakturę \\\'$a\\\' z bazy danych?';
 
+$_LANG['User groups'] = 'Grupy użytkowników';
+$_LANG['user group<!syslog>'] = 'grupa użytkowników';
+$_LANG['User Groups List'] = 'Lista grup użytkowników';
+$_LANG['All users are members of this group.'] = 'Wszyscy użytkownicy są członkami tej grupy.';
+$_LANG['user assignment<!syslog>'] = 'powiązanie użytkownika z grupą';
+
+$_LANG['Street:'] = 'Ulica:';
+$_LANG['Building:'] = 'Budynek:';
+$_LANG['Apartment:'] = 'Lokal:';
+$_LANG['Postal address'] = 'Adres korespondencyjny';
+
+$_LANG['Street name required!'] = 'Wymagana nazwa ulicy!';
+$_LANG['Building number required!'] = 'Wymagany numer budynku!';
+
+$_LANG['External system identifier:'] = 'Identyfikator w systemie zewnętrznym:';
+$_LANG['Enter customer identifier in external system (optional)'] = 'Wprowadź identyfikator klienta w systemie zewnętrznym (opcjonalnie)';
+
+$_LANG['You already used this password!'] = 'Takie hasło było już używane!';
+
+$_LANG['Credit Note for Invoice Edit: $a'] = 'Edycja faktury korygującej: $a';
+
+$_LANG['$a (clone)'] = '$a (klon)';
+
 $_LANG['Objects list'] = 'Lista obiektów';
 $_LANG['Network objects list'] = 'Lista obiektów sieciowych';
 $_LANG['New object'] = 'Nowy obiekt';
@@ -3094,6 +3119,5 @@ $_LANG['yellow'] = 'żółty';
 $_LANG['violet'] = 'fioletowy';
 $_LANG['pink'] = 'różowy';
 $_LANG['aqua'] = 'morski';
-
 
 ?>

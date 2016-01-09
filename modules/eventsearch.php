@@ -43,7 +43,10 @@ if(isset($_POST['event']))
 		list($year, $month, $day) = explode('/', $event['dateto']);
 		$event['dateto'] = mktime(0,0,0, $month, $day, $year);
 	}
-	
+
+	if($event['custid'])
+		$event['customerid'] = $event['custid'];
+		
 	$eventlist = $LMS->EventSearch($event);
 	$daylist = array();
 
@@ -60,7 +63,8 @@ if(isset($_POST['event']))
 }
 
 $SMARTY->assign('userlist',$LMS->GetUserNames());
-$SMARTY->assign('customerlist',$LMS->GetCustomerNames());
+if (!ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.big_networks', false)))
+	$SMARTY->assign('customerlist',$LMS->GetCustomerNames());
 $SMARTY->display('event/eventsearch.html');
 
 ?>

@@ -48,9 +48,11 @@ define('SYSLOG_RES_NETLINK', 45);
 define('SYSLOG_RES_MGMTURL', 46);
 define('SYSLOG_RES_TMPL', 47);
 define('SYSLOG_RES_RADIOSECTOR', 48);
-define('SYSLOG_RES_NETOBJ', 49);
-define('SYSLOG_RES_NETCAB', 50);
-define('SYSLOG_RES_NETSPL', 51);
+define('SYSLOG_RES_USERGROUP', 49);
+define('SYSLOG_RES_USERASSIGN', 50);
+define('SYSLOG_RES_NETOBJ', 51);
+define('SYSLOG_RES_NETCAB', 52);
+define('SYSLOG_RES_NETSPL', 53);
 
 
 $SYSLOG_RESOURCES = array(
@@ -105,6 +107,8 @@ $SYSLOG_RESOURCES = array(
 	SYSLOG_RES_NETOBJ => trans('network object<!syslog>'),
 	SYSLOG_RES_NETCAB => trans('network cable<!syslog>'),
 	SYSLOG_RES_NETSPL => trans('splice<!syslog>'),
+	SYSLOG_RES_USERGROUP => trans('user group<!syslog>'),
+	SYSLOG_RES_USERASSIGN => trans('user assignment<!syslog>'),
 );
 
 $SYSLOG_RESOURCE_KEYS = array(
@@ -159,6 +163,8 @@ $SYSLOG_RESOURCE_KEYS = array(
 	SYSLOG_RES_NETOBJ => 'networkobjectid',
 	SYSLOG_RES_NETCAB => 'networkcableid',
 	SYSLOG_RES_NETSPL => 'networkspliceid',
+	SYSLOG_RES_USERGROUP => 'usergroupid',
+	SYSLOG_RES_USERASSIGN => 'userassignmentid',
 );
 
 define('SYSLOG_OPER_ADD', 1);

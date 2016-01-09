@@ -40,16 +40,21 @@ CREATE SEQUENCE customers_id_seq;
 DROP TABLE IF EXISTS customers CASCADE;
 CREATE TABLE customers (
 	id integer DEFAULT nextval('customers_id_seq'::text) NOT NULL,
+	extid varchar(32) DEFAULT '' NOT NULL,
 	lastname varchar(128)	DEFAULT '' NOT NULL,
 	name varchar(128)	DEFAULT '' NOT NULL,
 	status smallint 	DEFAULT 0 NOT NULL,
 	type smallint		DEFAULT 0 NOT NULL,
-	address varchar(255) 	DEFAULT '' NOT NULL,
+	street varchar(255) DEFAULT '' NOT NULL,
+	building varchar(20) DEFAULT NULL,
+	apartment varchar(20) DEFAULT NULL,
 	zip varchar(10)		DEFAULT '' NOT NULL,
 	city varchar(32) 	DEFAULT '' NOT NULL,
 	countryid integer	DEFAULT NULL,
 	post_name varchar(255) DEFAULT NULL,
-	post_address varchar(255) DEFAULT NULL,
+	post_street varchar(255) DEFAULT NULL,
+	post_building varchar(20) DEFAULT NULL,
+	post_apartment varchar(20) DEFAULT NULL,
 	post_zip varchar(10)	DEFAULT NULL,
 	post_city varchar(32) 	DEFAULT NULL,
 	post_countryid integer	DEFAULT NULL,
@@ -1056,6 +1061,14 @@ SELECT
 	length(replace(ltrim(textin(bit_out($1::bit(32))), '0'), '0', ''))::smallint;
 $$ LANGUAGE SQL IMMUTABLE;
 
+CREATE VIEW vnetworks AS
+	SELECT h.name AS hostname, ne.*, no.ownerid, no.location, no.location_city, no.location_street, no.location_house, no.location_flat, no.chkmac,
+		inet_ntoa(ne.address) || '/' || mask2prefix(inet_aton(ne.mask)) AS ip, no.id AS nodeid
+	FROM nodes no
+	LEFT JOIN networks ne ON (ne.id = no.netid)
+	LEFT JOIN hosts h ON (h.id = ne.hostid)
+	WHERE no.ipaddr = 0 AND no.ipaddr_pub = 0;
+
 CREATE OR REPLACE FUNCTION broadcast(bigint, bigint) RETURNS bigint AS $$
 SELECT
 	($1::bit(32) |  ~($2::bit(32)))::bigint;
@@ -1895,6 +1908,37 @@ CREATE TABLE templates (
 );
 
 /* ---------------------------------------------------
+ Structure of table usergroups
+------------------------------------------------------*/
+DROP SEQUENCE IF EXISTS usergroups_id_seq;
+CREATE SEQUENCE usergroups_id_seq;
+DROP TABLE IF EXISTS usergroups CASCADE;
+CREATE TABLE usergroups (
+	id integer DEFAULT nextval('usergroups_id_seq'::text) NOT NULL,
+	name varchar(255) DEFAULT '' NOT NULL,
+	description text DEFAULT '' NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE (name)
+);
+
+/* ---------------------------------------------------
+ Structure of table userassignments
+------------------------------------------------------*/
+DROP SEQUENCE IF EXISTS userassignments_id_seq;
+CREATE SEQUENCE userassignments_id_seq;
+DROP TABLE IF EXISTS userassignments CASCADE;
+CREATE TABLE userassignments (
+	id integer DEFAULT nextval('userassignments_id_seq'::text) NOT NULL,
+	usergroupid integer NOT NULL
+		REFERENCES usergroups (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	userid integer NOT NULL
+		REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (id),
+	UNIQUE (usergroupid, userid)
+);
+CREATE INDEX userassignments_userid_idx ON userassignments (userid);
+
+/* ---------------------------------------------------
  Structure of table "up_rights" (Userpanel)
 ------------------------------------------------------*/
 DROP SEQUENCE IF EXISTS up_rights_id_seq;
@@ -1980,17 +2024,45 @@ CASE
 END
 ' LANGUAGE SQL;
 
-CREATE VIEW customersview AS
-SELECT c.* FROM customers c
-        WHERE NOT EXISTS (
-	        SELECT 1 FROM customerassignments a 
-	        JOIN excludedgroups e ON (a.customergroupid = e.customergroupid) 
-	        WHERE e.userid = lms_current_user() AND a.customerid = c.id) 
-	        AND c.type < 2;
+CREATE VIEW customerview AS
+	SELECT c.*,
+		(CASE WHEN building IS NULL THEN street ELSE (CASE WHEN apartment IS NULL THEN street || ' ' || building
+			ELSE street || ' ' || building || '/' || apartment END) END) AS address,
+		(CASE WHEN post_street IS NULL THEN '' ELSE
+			(CASE WHEN post_building IS NULL THEN post_street ELSE (CASE WHEN post_apartment IS NULL THEN post_street || ' ' || post_building
+				ELSE post_street || ' ' || post_building || '/' || 'post_apartment' END)
+			END)
+		END) AS post_address
+	FROM customers c
+	WHERE NOT EXISTS (
+			SELECT 1 FROM customerassignments a 
+			JOIN excludedgroups e ON (a.customergroupid = e.customergroupid) 
+			WHERE e.userid = lms_current_user() AND a.customerid = c.id) 
+		AND c.type < 2;
 
 CREATE VIEW contractorview AS
-SELECT c.* FROM customers c
-        WHERE c.type = '2' ;
+	SELECT c.*,
+		(CASE WHEN building IS NULL THEN street ELSE (CASE WHEN apartment IS NULL THEN street || ' ' || building
+			ELSE street || ' ' || building || '/' || apartment END) END) AS address,
+		(CASE WHEN post_street IS NULL THEN '' ELSE
+			(CASE WHEN post_building IS NULL THEN post_street ELSE (CASE WHEN post_apartment IS NULL THEN post_street || ' ' || post_building
+				ELSE post_street || ' ' || post_building || '/' || 'post_apartment' END)
+			END)
+		END) AS post_address
+	FROM customers c
+	WHERE c.type = 2;
+
+CREATE VIEW customeraddressview AS
+	SELECT c.*,
+		(CASE WHEN building IS NULL THEN street ELSE (CASE WHEN apartment IS NULL THEN street || ' ' || building
+			ELSE street || ' ' || building || '/' || apartment END) END) AS address,
+		(CASE WHEN post_street IS NULL THEN '' ELSE
+			(CASE WHEN post_building IS NULL THEN post_street ELSE (CASE WHEN post_apartment IS NULL THEN post_street || ' ' || post_building
+				ELSE post_street || ' ' || post_building || '/' || 'post_apartment' END)
+			END)
+		END) AS post_address
+	FROM customers c
+	WHERE c.type < 2;
 
 CREATE OR REPLACE FUNCTION int2txt(bigint) RETURNS text AS $$
 SELECT $1::text;
@@ -2015,14 +2087,6 @@ CREATE VIEW vmacs AS
 	FROM nodes n
 	JOIN macs m ON (n.id = m.nodeid)
 	WHERE n.ipaddr <> 0 OR n.ipaddr_pub <> 0;
-
-CREATE VIEW vnetworks AS
-	SELECT h.name AS hostname, ne.*, no.ownerid, no.location, no.location_city, no.location_street, no.location_house, no.location_flat, no.chkmac,
-		inet_ntoa(ne.address) || '/' || mask2prefix(inet_aton(ne.mask)) AS ip, no.id AS nodeid
-	FROM nodes no
-	LEFT JOIN networks ne ON (ne.id = no.netid)
-	LEFT JOIN hosts h ON (h.id = ne.hostid)
-	WHERE no.ipaddr = 0 AND no.ipaddr_pub = 0;
 
 CREATE VIEW teryt_terc AS
 SELECT ident AS woj, 0::text AS pow, 0::text AS gmi, 0 AS rodz,
@@ -2547,4 +2611,4 @@ INSERT INTO netdevicemodels (name, alternative_name, netdeviceproducerid) VALUES
 ('XR7', 'XR7 MINI PCI PCBA', 2),
 ('XR9', 'MINI PCI 600MW 900MHZ', 2);
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion', '2015120901');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion', '2015122300');
