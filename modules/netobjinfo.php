@@ -36,8 +36,20 @@ foreach ($cablelist AS $id => $cable)
 
 $othercablelist = $LMS->GetNetCabUnconnected($_GET['id']);
 #echo '<PRE>$othercablelist:';print_r($othercablelist);echo '</PRE>';
-$splicelist = $LMS->GetNetObjSplices($_GET['id']);
-
+if ($netobjinfo['type']==1 or $netobjinfo['type']==2) {
+	$splicelist = $LMS->GetNetObjSplices($_GET['id']);
+	$SMARTY->assign('splicelist', $splicelist);
+} elseif ($netobjinfo['type']==3) {
+	$in=$DB->GetAll("SELECT * FROM netsplices WHERE dstcableid IS NULL AND objectid=?",array($netobjinfo['id']));
+	$SMARTY->assign('in',$in);
+	$out=$DB->GetAll("SELECT * FROM netsplices WHERE srccableid IS NULL AND objectid=?",array($netobjinfo['id']));
+	$SMARTY->assign('out',$out);
+	$data=preg_split('/:/',$netobjinfo['parameter']);
+	if (count($in)<$data[0]) $SMARTY->assign('splitter_in',1);
+	else $SMARTY->assign('splitter_in',0);
+        if (count($out)<$data[1]) $SMARTY->assign('splitter_out',1);
+        else $SMARTY->assign('splitter_out',0);
+}
 
 $SESSION->save('backto', $_SERVER['QUERY_STRING']);
 
@@ -72,7 +84,6 @@ $SMARTY->assign('netobjinfo', $netobjinfo);
 $SMARTY->assign('objectid', $netobjinfo['id']);
 $SMARTY->assign('cablelist', $cablelist);
 $SMARTY->assign('othercablelist', $othercablelist);
-$SMARTY->assign('splicelist', $splicelist);
 
 #$hook_data = $LMS->executeHook('netobjinfo_before_display',
 #	array(

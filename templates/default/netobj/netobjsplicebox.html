@@ -63,7 +63,7 @@
 			{elseif cablelist|@count<1}
 			<span class="bold">{trans("Unsufficient cables count for making splices.")}</span>
 			{else}
-			<FORM METHOD="GET" ACTION="?m=netobjedit" NAME="connect">
+			<FORM METHOD="GET" ACTION="?m=netobjedit" NAME="spliceconnect">
 			<INPUT type="submit" class="hiddenbtn">
 			<INPUT TYPE="HIDDEN" NAME="m" VALUE="netobjedit">
 			<INPUT TYPE="HIDDEN" NAME="id" VALUE="{$netobjinfo.id}">
@@ -104,7 +104,7 @@
 						<label for="description">{trans("Description")}:</label><INPUT name="description" id="description" value="{if $connect.description}{$connect.description}{/if}" size="20" {tip text="Enter description for splice (optional)" trigger="position"}>
 					</TD>
 					<TD style="width: 1%; white-space: nowrap;">
-						<A HREF="javascript:document.connect.submit(); ">{trans("Connect")}</A> <IMG src="img/save.gif" alt="">
+						<A HREF="javascript:document.spliceconnect.submit(); ">{trans("Connect")}</A> <IMG src="img/save.gif" alt="">
 					</TD>
 				</TR>
 			</TABLE>

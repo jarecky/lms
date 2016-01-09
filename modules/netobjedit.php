@@ -42,10 +42,22 @@ switch ($action) {
 		$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);
 		
 	case 'connect':
-	  	list($srccableid,$srctube,$srcfiber)=preg_split('/,/',$_GET['srccable']);	
-	  	list($dstcableid,$dsttube,$dstfiber)=preg_split('/,/',$_GET['dstcable']);	
-		if ($srccableid==$dstcableid)
-			$error['cable2']=trans('Cannot connect cable with themself!');
+		echo '<PRE>';print_r($_GET);echo '</PRE>';
+		if (isset($_GET['srccable'])) {
+	  		list($srccableid,$srctube,$srcfiber)=preg_split('/,/',$_GET['srccable']);	
+	  		list($dstcableid,$dsttube,$dstfiber)=preg_split('/,/',$_GET['dstcable']);	
+			if ($srccableid==$dstcableid)
+				$error['cable2']=trans('Cannot connect cable with themself!');
+		} else {
+			$_GET['position']=0;
+			$_GET['description']='';
+			if ($_GET['ѕide']=='in') {
+				$_GET['srccable']=$_GET['dstcable'];
+				$_GET['dstcable']='0,0,0';
+			} else {
+				$_GET['srccable']='0,0,0';
+			}
+		}
 		if (!$error) {
 			$LMS->NetObjSplice($_GET['id'],$_GET['srccable'], $_GET['dstcable'], $_GET['position'], $_GET['description']);
 			$SESSION->redirect('?m=netobjinfo&id=' . $_GET['id']);

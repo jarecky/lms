@@ -324,8 +324,10 @@ public function CountNetObjSplices($id) {
 public function NetObjSplice($objectid,$srccable,$dstcable,$position,$description) {
 	global $SYSLOG_RESOURCE_KEYS;
 
-	list($srccableid,$srctube,$srcfiber)=preg_split('/,/',$srccable);
+        list($srccableid,$srctube,$srcfiber)=preg_split('/,/',$srccable);
+	if ($srccableid==0) $srccableid=null;
 	list($dstcableid,$dsttube,$dstfiber)=preg_split('/,/',$dstcable);
+	if ($dstcableid==0) $dstcableid=null;
 
 	$args = array(
 		'objectid' => $objectid,
