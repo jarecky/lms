@@ -1,0 +1,132 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 100%;" class="hand nobr" onClick="showOrHide('objectsplices');">
+			<IMG SRC="img/mac.gif" alt="">
+			<span class="bold">{t a=$in|@count b=$out|@count}Splices used ($a:$b):{/t}</span>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR id="objectsplices" style="display:none;">
+		<TD style="width: 100%;">
+			<TABLE class="lmsbox-inner">
+	<THEAD>
+	<TR>
+		<TD style="text-align:right; width: 49%;">
+			{trans("Source cable")}:
+		</TD>
+		<TD style="width:1%;">&nbsp;</TD>
+		<TD style="text-align:left; width: 49%;">
+			{trans("Destination cable")}:
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	{if in|@count==0 or out|@count==0}
+	<TR>
+		<TD colspan="3" class="empty-table">
+			<P>&nbsp;</P>
+			<P>{trans("No such splices.")}</P>
+			<P>&nbsp;</P>
+		</TD>
+	</TR>
+	{else}
+	<TR><TD><TABLE>
+		{cycle values="light,lucid" print=false}
+		{foreach key=key item=splice from=$in}
+  		<TR class="highlight {cycle}">
+		<TD class="text-left"><A HREF="?m=netobjedit&action=disconnect&id={$netobjinfo.id}&spliceid={$splice.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
+		<TD style="text-align:right">{$cablelist[$splice.srccableid].name}</TD>
+		<TD style="width:1%; white-space: nowrap;">{trans("tube")} {$splice.srctube} ({$_FIBEROPTICCOLORCODES[$splice.srctube]})</TD>
+		<TD style="width:1%; white-space: nowrap;">{trans("fiber<!singular>")} {$splice.srcfiber} ({$_FIBEROPTICCOLORCODES[$splice.srcfiber]})</TD>
+		</TR>
+		{foreachelse}
+		<TR>
+			<TD class="empty-table">
+				<P>&nbsp;</P>
+				<P>{trans("No such cables.")}</P>
+				<P>&nbsp;</P>
+			</TD>
+		</TR>
+		{/foreach}
+	</TABLE></TD>
+	<TD class="text-center"><=></TD>
+	<TD><TABLE>
+		{cycle values="light,lucid" print=false}
+		{foreach key=key item=splice from=$out}
+		<TR class="highlight {cycle}">
+		<TD style="width:1%; white-space: nowrap;">{trans("fiber<!singular>")} {$splice.dstfiber} ({$_FIBEROPTICCOLORCODES[$splice.dstfiber]})</TD>
+		<TD style="width:1%; white-space: nowrap;">{trans("tube")} {$splice.dsttube} ({$_FIBEROPTICCOLORCODES[$splice.dsttube]})</TD>
+		<TD style="text-align:left;">{$cablelist[$splice.dstcableid].name}</TD>
+		<TD class="text-right"><A HREF="?m=netobjedit&action=disconnect&id={$netobjinfo.id}&spliceid={$splice.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
+		</TR>
+		{foreachelse}
+		<TR>
+			<TD class="empty-table">
+				<P>&nbsp;</P>
+			</TD>
+		</TR>
+		{/foreach}
+	</TABLE></TD></TR>
+	{/if}
+	<TR>
+		<TD class="ftop dark text-center nobr" COLSPAN="3">
+			{if !$splitter_in and !$splitter_out}
+			<span class="bold">{trans("All splices in that object are in use.")}</span>
+			{elseif cablelist|@count<1}
+			<span class="bold">{trans("Unsufficient cables count for making splices.")}</span>
+			{else}
+			<FORM METHOD="GET" ACTION="?m=netobjedit" NAME="spliceconnect">
+			<INPUT type="submit" class="hiddenbtn">
+			<INPUT TYPE="HIDDEN" NAME="m" VALUE="netobjedit">
+			<INPUT TYPE="HIDDEN" NAME="id" VALUE="{$netobjinfo.id}">
+			<INPUT TYPE="HIDDEN" NAME="action" VALUE="connect">
+			<TABLE style="width: 100%;">
+				<TR>
+					<TD style="width: 99%; white-space: nowrap;">
+						<span class="bold">{trans("Connect")}:</span>
+						{trans("Splitter side:")}<SELECT NAME="ѕide" id="side" style="width: 100px" {tip trigger="link" text="Select side for connection"}>
+							{if $splitter_in}<OPTION VALUE="in">{trans("Port IN")}</OPTION>{/if}
+							{if $splitter_out}<OPTION VALUE="out">{trans("Port OUT")}</OPTION>{/if}
+						</SELECT>
+						{trans("Destination Cable:")}<SELECT NAME="dstcable" id="dstcable" style="width: 300px" {tip trigger="link" text="Select from cable list for connection"}>
+						{foreach key=cableid item=cable from=$cablelist}
+						<OPTGROUP LABEL="{$cable.name}">
+						{foreach key=tube item=tubelist from=$cable.fiber}
+						<OPTGROUP LABEL="{trans("tube")} #{$tube} ({$_FIBEROPTICCOLORCODES[$tube]})">
+						{foreach key=fiber item=fiberlist from=$tubelist}
+						#{if $fiberlist<0}
+							<OPTION VALUE="{$cableid},{$tube},{$fiber}">{trans("fiber<!singular>")} #{$fiber} ({$_FIBEROPTICCOLORCODES[$fiber]})</OPTION>
+						#{/if}
+						{/foreach}
+						{/foreach}
+						</OPTGROUP>
+						{/foreach}
+						</SELECT>
+					</TD>
+					<TD style="width: 1%; white-space: nowrap;">
+						<A HREF="javascript:document.spliceconnect.submit(); ">{trans("Connect")}</A> <IMG src="img/save.gif" alt="">
+					</TD>
+				</TR>
+			</TABLE>
+			</FORM>
+			{/if}
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+	       </TD>
+       </TR>
+    </TBODY>
+</TABLE>
+<SCRIPT type="text/javascript">
+<!--
+if (getCookie('objectsplices') == '1')
+{
+	document.getElementById('objectsplices').style.display = '';
+}
+//-->
+</SCRIPT>
+
