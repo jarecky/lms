@@ -1,5 +1,4 @@
 W tej chwili brakuje:
-- definicji bazy dla PostgreSQL
 - obslugi RB z PoE (odczyt pradu, itp z portow)
 - kompaktowanie bazy danych 
 
