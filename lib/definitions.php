@@ -75,6 +75,12 @@ $CSTATUSES = array(
 	),
 );
 
+// Config types
+define('CONFIG_TYPE_NONE', 0);
+define('CONFIG_TYPE_BOOLEAN', 1);
+define('CONFIG_TYPE_POSITIVE_INTEGER', 2);
+define('CONFIG_TYPE_EMAIL', 3);
+
 // Helpdesk ticket status
 define('RT_NEW', 0);
 define('RT_OPEN', 1);
@@ -263,14 +269,15 @@ define('CONTACT_LANDLINE', 4);
 define('CONTACT_EMAIL', 8);
 define('CONTACT_INVOICES', 16);
 define('CONTACT_NOTIFICATIONS', 32);
-define('CONTACT_DISABLED', 64);
+define('CONTACT_BANKACCOUNT', 64);
+define('CONTACT_DISABLED', 16384);
 
 $CONTACTTYPES = array(
     CONTACT_MOBILE          =>	trans('mobile'),
     CONTACT_FAX             =>	trans('fax'),
-    CONTACT_INVOICES        =>	trans('Invoice'),
+    CONTACT_INVOICES        =>	trans('invoices'),
     CONTACT_DISABLED        =>	trans('disabled'),
-    CONTACT_NOTIFICATIONS   =>	trans('Notification'),
+    CONTACT_NOTIFICATIONS   =>	trans('notifications'),
 );
 
 define('DISCOUNT_PERCENTAGE', 1);

@@ -518,14 +518,15 @@ else if (!empty($_GET['customerid']))
 		FROM customerview
 		WHERE id = ?', array($_GET['customerid']));
 
-	$message['phones'] = $DB->GetAll('SELECT contact, name FROM customercontacts
+	$message['phones'] = $DB->GetAll('SELECT contact, name, type FROM customercontacts
 		WHERE customerid = ? AND (type & ?) = 0 AND (type & ?) > 0',
 		array($_GET['customerid'], CONTACT_DISABLED, CONTACT_MOBILE | CONTACT_FAX | CONTACT_LANDLINE));
 	if (is_null($message['phones']))
 		$message['phones'] = array();
 	$message['customerphones'] = array();
 	foreach ($message['phones'] as $idx => $phone)
-		$message['customerphones'][$idx] = $phone['contact'];
+		if ($phone['type'] & CONTACT_MOBILE)
+			$message['customerphones'][$idx] = $phone['contact'];
 
 	$message['emails'] = $DB->GetAll('SELECT contact, name FROM customercontacts
 		WHERE customerid = ? AND (type & ?) = ?',
