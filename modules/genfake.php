@@ -1881,6 +1881,7 @@ if(isset($_GET['l']) && sprintf('%d',$_GET['l']) > 0 && sprintf('%d',$_GET['l'])
 	}
 
 	$DB->Execute('INSERT INTO divisions (name, shortname) VALUES(?,?)', array('default', 'default'));
+	$divisionid = $DB->GetLastInsertID('divisions');
 
 	$DB->Execute('INSERT INTO taxes (label, value, taxed) VALUES(?,?,?)',array('tax-free', 0, 0));
 	$DB->Execute('INSERT INTO taxes (label, value, taxed) VALUES(?,?,?)',array('7%', 7, 1));
@@ -2080,20 +2081,29 @@ if(isset($_GET['l']) && sprintf('%d',$_GET['l']) > 0 && sprintf('%d',$_GET['l'])
 		$startip++;
 */
 		if($i>1)
-			$LMS->NetDevLink($i,$i-1);
+			$LMS->NetDevLink($i, $i-1, array(
+				'type' => 0,
+				'technology' => 8,
+				'speed' => 1000000,
+			));
 	}
 	echo ' [OK]<BR>';
-	
-	if($_GET['i'])
-	{
+
+	if ($_GET['i']) {
+		$DB->Execute('INSERT INTO numberplans (template, period, doctype, isdefault) VALUES (?, ?, ?, ?)',
+			array(DEFAULT_NUMBER_TEMPLATE, YEARLY, DOC_INVOICE, 1));
+		$numberplanid = $DB->GetLastInsertID('numberplans');
+		$DB->Execute('INSERT INTO numberplanassignments (planid, divisionid) VALUES (?, ?)',
+			array($numberplanid, $divisionid));
+
 		echo '<B>'.trans('Generating invoices...').'</B>'; flush();
-		
+
 		if($_GET['i'] > 100) $_GET['i'] = 100;
-		
+
 		$inv['number'] = 0;
 		$inv['paytime'] = 14;
 		$inv['paytype'] = 1; // cash
-		$inv['numberplanid'] = 0;
+		$inv['numberplanid'] = $numberplanid;
 		$inv['type'] = DOC_INVOICE;
 		$inv['cdate'] = time() - ($_GET['i']+1) * 86400;
 		$contents['prodid'] = '';
@@ -2101,7 +2111,7 @@ if(isset($_GET['l']) && sprintf('%d',$_GET['l']) > 0 && sprintf('%d',$_GET['l'])
 		$contents['jm'] = trans('pcs.');
 		$contents['name'] = trans('Subscription');
 		
-		$customers = $DB->GetAll('SELECT '.$DB->Concat('UPPER(lastname)',"' '",'customers.name').' AS customername,
+		$customers = $DB->GetAll('SELECT '.$DB->Concat('UPPER(lastname)',"' '",'customeraddressview.name').' AS customername,
 				id, ssn, address, zip, city, ten, divisionid, countryid FROM customeraddressview');
 					    
 		if($customers)
