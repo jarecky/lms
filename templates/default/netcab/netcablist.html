@@ -1,0 +1,148 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM method="get" action="?m=netcablist" name="choosefilter">
+<INPUT type="hidden" NAME="m" VALUE="netcablist">
+<INPUT type="hidden" NAME="page" VALUE="1">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR {tip text="Click on column name to change sorting order"}>
+		<TD width="10%">
+			<IMG src="img/netdev.gif" ALT="">&nbsp;<A href="?m=netcablist&o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}"><B>{trans("Name:")}</B></A> {if $listdata.order == "name"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}<BR>
+			<IMG src="img/producer.gif" ALT="">&nbsp;<A href="?m=netcablist&o=producer{if $listdata.direction == "asc" && $listdata.order == "producer"},desc{/if}">{trans("Manufacturer:")}</A> {if $listdata.order == "producer"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} / 
+			<A href="?m=netcablist&o=model{if $listdata.direction == "asc" && $listdata.order == "model"},desc{/if}">{trans("Model:")}</A> {if $listdata.order == "model"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="4%" class="nobr alift-left valign-top">
+			{trans("Fibers:")}
+		</TD>
+		<TD width="4%" class="nobr alift-left valign-top">
+			{trans("Length:")}
+		</TD>
+		<TD width="30%" class="nobr alift-left valign-top">
+			{trans("Begin:")}
+		</TD>
+		<TD width="30%" class="nobr align-left valign-top">
+			{trans("End:")}
+		</TD>
+		<TD width="20%" class="nobr align-left valign-top">
+			{trans("Destription:")}
+		</TD>
+		<TD width="1%" align="right" valign="top">
+			<A href="?m=netcablist&o=id{if $listdata.direction == "asc" && $listdata.order == "id"},desc{/if}">ID:</A> {if $listdata.order == "id"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="1%" align="right" nowrap>
+			<B>{trans("Total:")} {$listdata.total|default:"0"}</B>
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="8" class="nobr">
+			<span class="bold">{trans("Filter:")}</span>
+			{trans("Status")}:
+			<SELECT SIZE="1" NAME="s" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1" {if $listdata.status == -1}  SELECTED {/if}>- {trans("all")} -</OPTION>
+				{foreach $_NETELEMENTSTATUSES as $idx => $status}
+					<OPTION VALUE="{$idx}"{if $listdata.status == $idx} SELECTED{/if}>{$status}</OPTION>
+				{/foreach}
+			</SELECT>
+			{trans("Project:")}
+			<SELECT SIZE="1" NAME="p" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1"{if $listdata.invprojectid == -1} selected{/if}>- {trans("all")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.invprojectid == -2} selected{/if}>- {trans("without project")} -</OPTION>
+				{section name=project loop=$NNprojects}
+				<OPTION VALUE="{$NNprojects[project].id}" {if ($listdata.invprojectid == $NNprojects[project].id ) } SELECTED {/if} >{$NNprojects[project].name}</OPTION>
+				{/section}
+			</SELECT>
+			{trans("Producer:")}
+			<SELECT SIZE="1" NAME="producer" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1"{if $listdata.producer == -1} selected{/if}>- {trans("all")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.producer == -2} selected{/if}>- {trans("none")} -</OPTION>
+				{foreach $producers as $producer}
+				<OPTION VALUE="{$producer}"{if $listdata.producer == $producer} selected{/if}>{$producer}</OPTION>
+				{/foreach}
+			</SELECT>
+			{trans("Model:")}
+			<SELECT SIZE="1" NAME="model" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1"{if $listdata.model == -1} selected{/if}>- {trans("all")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.model == -2} selected{/if}>- {trans("none")} -</OPTION>
+				{foreach $models as $model}
+				<OPTION VALUE="{$model}"{if $listdata.model == $model} selected{/if}>{$model}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	{if $listdata.total != 0}
+	<TR>
+		<TD class="pagination" colspan="8">
+			{include file="scroller.html" loop=$netcablist}
+		</TD>
+	</TR>
+	{/if}
+    </THEAD>
+    <TBODY>
+	{cycle values="light,lucid" print=false}
+	{section name=netcablist loop=$netcablist start=$start max=$pagelimit}
+	{$src=$netcablist[netcablist].src}
+	{$dst=$netcablist[netcablist].dst}
+	<TR class="highlight {cycle}">
+		<TD VALIGN="TOP">
+			<IMG src="img/netdev.gif" ALT=""> <a name="{$netcablist[netcablist].id}"><B>{$netcablist[netcablist].name}</B></A><BR>
+			<IMG src="img/producer.gif" ALT=""> {$netcablist[netcablist].producer} {if $netcablist[netcablist].model}/ {$netcablist[netcablist].model}{/if}
+		</TD>
+		<TD VALIGN="TOP">
+			{$netcablist[netcablist].fibers}J
+		</TD>
+		<TD VALIGN="TOP">
+			{$netcablist[netcablist].length}m
+		</TD>
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$src.id}';" class="nobr valign-top">
+			{$_NETOBJECTTYPES[$src.type].label} {$src.name}<BR> 
+			{$src.location}
+		</TD>
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$dst.id}';" class="nobr valign-top">
+			{$_NETOBJECTTYPES[$dst.type].label} {$dst.name}<BR>
+			{$dst.location}
+		</TD>
+		<TD align="left" VALIGN="TOP">
+			{$netcablist[netcablist].description}
+		</TD>
+		<TD align="left" VALIGN="TOP">
+			({$netcablist[netcablist].id|string_format:"%04d"})
+		</TD>
+		<TD align="right">
+			<nobr>
+			<a href="?m=netcabdel&id={$netcablist[netcablist].id}" onClick="return confirmLink(this, '{t a=$netcablist[netcablist].name}Are you sure, you want to remove device \'$a\' from database?{/t}')"><IMG src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
+			<a href="?m=netcabedit&id={$netcablist[netcablist].id}"><IMG src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></A>
+			</nobr>
+		</TD>
+	</TR>
+	{if $netcablist[netcablist.index_next].ownerid == $netcablist[netcablist].ownerid && $listdata.order == "owner"}{cycle print=false}{/if}
+	{sectionelse}
+	<TR>
+		<TD colspan="8" align="center">
+			<p>&nbsp;</p>
+			<p><B>{trans("There are no devices in your database.")}</b></p>
+			<p>&nbsp;</p>
+		</TD>
+	</TR>
+	{/section}
+	{if $listdata.total != 0}
+	<TR>
+		<TD class="pagination" colspan="8">
+			{include file="scroller.html" loop=$netcablist}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD COLSPAN="7" ALIGN="right">
+			<B>
+				{trans("Total:")} {$listdata.total|default:"0"}
+			</B>
+		</TD>
+		<TD COLSPAN="1"></TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

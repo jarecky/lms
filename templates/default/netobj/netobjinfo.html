@@ -1,0 +1,19 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+{block name=netobjinfobox}
+	{include file="netobj/netobjinfobox.html"}
+{/block}
+{block name=netobjcablebox}
+        {include file="netobj/netobjcablebox.html"}
+{/block}
+{block name=netobjsplicebox}
+	{if $netobjinfo.type==1 or $netobjinfo.type==2}
+	{include file="netobj/netobjsplicebox.html"}
+	{elseif $netobjinfo.type==3}
+	{include file="netobj/netobjsplitterbox.html"}
+	{/if}
+{/block}
+{/block}

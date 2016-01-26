@@ -1,0 +1,247 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR{if $devicepanel} class="hand" onClick="showOrHide('devicepanel');"{/if}>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netobj.gif" ALT="">
+		</TD>
+		<TD WIDTH="99%">
+			<B>{$netobjinfo.name} ({$netobjinfo.id|string_format:"%04d"})</B>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR{if $devicepanel} id="devicepanel" style="display:none;"{/if}>
+	    <TD WIDTH="100%" COLSPAN="2" {if $devicepanel}CLASS="container" ALIGN="RIGHT"{else}CLASS="container"{/if}>
+			<TABLE WIDTH="100%" CELLPADDING="0">
+				<TR>
+					<TD WIDTH="50%" style="vertical-align:top;">
+						<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+		        <B>{trans("Status:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$_NETELEMENTSTATUSES[$netobjinfo.status]}
+		</TD>
+	</TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/producer.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%">
+                        <B>{trans("Type:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        {$_NETOBJECTTYPES[$netobjinfo.type].label}
+                </TD>
+        </TR>	
+        {if $netobjinfo.producer}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+		        <B>{trans("Producer:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$netobjinfo.producer}
+		</TD>
+	</TR>
+	{/if}
+	{if $netobjinfo.model}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netobj_model.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+		        <B>{trans("Model:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$netobjinfo.model}
+		</TD>
+	</TR>
+	{/if}
+	{if $netobjinfo.serialnumber}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/serialnumber.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Serial number:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$netobjinfo.serialnumber}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/port.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans($_NETOBJECTTYPES[$netobjinfo.type].parameter)}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$netobjinfo.parameter}
+		</TD>
+	</TR>
+	{if $netobjinfo.type==1 or $netobjinfo.type==2}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netobj_takenports.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Splices used:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$netobjinfo.takensplices}
+		</TD>
+	</TR>
+	{/if}
+	{if $netobjinfo.location}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Location:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$netobjinfo.location}{if $netobjinfo.borough_name} ({$netobjinfo.state_name} / {$netobjinfo.district_name} / {$_BOROUGHTYPES[$netobjinfo.borough_type]} {$netobjinfo.borough_name}){/if}
+		</TD>
+	</TR>
+	{/if}
+	{if $netobjinfo.longitude || $netobjinfo.latitude}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("GPS longitude:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT ID="longitude" TYPE="hidden" VALUE="{$netobjinfo.longitude}">
+			{$netobjinfo.longitude}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("GPS latitude:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT ID="latitude" TYPE="hidden" VALUE="{$netobjinfo.latitude}">
+			{$netobjinfo.latitude}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="2%" COLSPAN="2">
+		</TD>
+		<TD WIDTH="98%">
+			<a HREF="?m=netobjmap&netobjid={$netobjinfo.id}"><img src="img/network.gif" alt=""> {trans("Show on map")} &raquo;&raquo;&raquo;</a>
+		</TD>
+	</TR>
+	{/if}
+	                        	</TABLE>
+				</TD>
+				<TD WIDTH="50%" style="vertical-align:top;">
+				        <TABLE WIDTH="100%" CELLPADDING="3">
+	{if $netobjinfo.purchasetime}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/calendar.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Purchase date:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$netobjinfo.purchasetime|date_format:"%Y/%m/%d"}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/guarantee.png" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Guarantee:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			{if !$netobjinfo.guaranteeperiod}
+				{trans("no guarantee")}
+			{elseif $netobjinfo.guaranteeperiod == -1}
+				{trans("lifetime")}
+			{else}
+				{assign var=periodid value=$netobjinfo.guaranteeperiod}
+				{$_GUARANTEEPERIODS.$periodid}
+		        	({if $netobjinfo.guaranteetime-$smarty.now < 0}{trans("expired<!guarantee>")}{else}{$netobjinfo.guaranteetime|date_format:"%Y/%m/%d"}{/if})
+			{/if}
+		</TD>
+	</TR>
+        {if $netobjinfo.description}
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/desc.gif" ALT="">
+                </TD>
+                <TD WIDTH="99%" COLSPAN="2">
+                        <TABLE WIDTH="100%" CELLPADDING="5">
+                                <TR>
+                                        <TD class="fall superlight">
+						{$netobjinfo.description|escape|replace:"\n":"<BR>"}
+                                        </TD>
+                                </TR>
+                        </TABLE>
+                </TD>
+        </TR>
+        {/if}
+	<TR>
+		<TD colspan="2" NOWRAP>
+			<b>{trans("Investment project:")}</b>	
+		</TD>
+		<TD>
+			{$netobjinfo.projectname}
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="2" NOWRAP>
+			<b>{trans("Net node:")}</b>	
+		</TD>
+		<TD>
+			{if $netobjinfo.netnodeid}<a href="?m=netnodeinfo&id={$netobjinfo.netnodeid}" class="bold">{$netobjinfo.nodename}</a>
+			{else}-{/if}
+		</TD>
+	</TR>
+
+	                                        </TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+{if !$devicepanel}
+    		</TD>
+	</TR>
+	<TR>
+	        <TD WIDTH="100%" COLSPAN="2" ALIGN="RIGHT">
+{/if}
+			<A href="javascript:void(0);" onclick="javascript:openSelectWindow('?m=choosenetobjreplace&id={$netobjinfo.id}', 'Replace netobj', 600, 290, 1, 1);">{trans("Replace")} <img src="img/alias.gif" ALT="[ {trans("Replace")} ]"></A>
+			<A href="?m=netobjedit&id={$netobjinfo.id}" ACCESSKEY="E">{trans("Edit")} <IMG src="img/edit.gif" ALT="[ {trans("Edit")} ]"></A>
+			<A href="?m=netobjdel&id={$netobjinfo.id}" OnClick="return confirmLink(this, '{t a=$netobjinfo.name}Are you sure, you want to remove device \'$a\' from database?{/t}');">{trans("Delete")} <img src="img/delete.gif" ALT=""></A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+{if $devicepanel}
+<SCRIPT type="text/javascript">
+<!--
+if (getCookie('devicepanel') == '1')
+{
+	document.getElementById('devicepanel').style.display = '';
+}
+//-->
+</SCRIPT>
+{/if}

@@ -1,0 +1,162 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM method="get" action="?m=netobjlist" name="choosefilter">
+<INPUT type="hidden" NAME="m" VALUE="netobjlist">
+<INPUT type="hidden" NAME="page" VALUE="1">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR {tip text="Click on column name to change sorting order"}>
+		<TD width="50%">
+			<IMG src="img/netobj.gif" ALT="">&nbsp;<A href="?m=netobjlist&o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}"><B>{trans("Name:")}</B></A> {if $listdata.order == "name"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}<BR>
+			<IMG src="img/producer.gif" ALT="">&nbsp;<A href="?m=netobjlist&o=producer{if $listdata.direction == "asc" && $listdata.order == "producer"},desc{/if}">{trans("Manufacturer:")}</A> {if $listdata.order == "producer"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} / 
+			<A href="?m=netobjlist&o=model{if $listdata.direction == "asc" && $listdata.order == "model"},desc{/if}">{trans("Model:")}</A> {if $listdata.order == "model"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="20%" class="nobr alift-left valign-top">
+			<A href="?m=netobjlist&o=type{if $listdata.direction == "asc" && $listdata.order == "type"},desc{/if}">{trans("Type:")}</A> {if $listdata.order == "type"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="26%" class="nobr alift-left valign-top">
+			{trans("Parameter:")}
+		</TD>
+		<TD width="1%" class="nobr alift-left valign-top">
+			<A href="?m=netobjlist&o=location{if $listdata.direction == "asc" && $listdata.order == "location"},desc{/if}">{trans("Location:")}</A> {if $listdata.order == "location"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="1%" class="nobr align-left valign-top">
+			<A href="?m=netobjlist&o=netnode{if $listdata.direction == "asc" && $listdata.order == "netnode"},desc{/if}">{trans("Network node:")}</A> {if $listdata.order == "netnode"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="1%" align="right" valign="top">
+			<A href="?m=netobjlist&o=id{if $listdata.direction == "asc" && $listdata.order == "id"},desc{/if}">ID:</A> {if $listdata.order == "id"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="1%" NOWRAP>
+			<IMG src="img/port.gif" ALT="">{trans("Conn. cables:")} ({trans("Splices used:")})<BR>
+			<IMG src="img/serialnumber.gif" ALT="">&nbsp;<A href="?m=netobjlist&o=serialnumber{if $listdata.direction == "asc" && $listdata.order == "serialnumber"},desc{/if}">{trans("Serial number:")}</A> {if $listdata.order == "serialnumber"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="1%" align="right" nowrap>
+			<B>{trans("Total:")} {$listdata.total|default:"0"}</B>
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="8" class="nobr">
+			<span class="bold">{trans("Filter:")}</span>
+			{trans("Status")}:
+			<SELECT SIZE="1" NAME="s" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1" {if $listdata.status == -1}  SELECTED {/if}>- {trans("all")} -</OPTION>
+				{foreach $_NETELEMENTSTATUSES as $idx => $status}
+					<OPTION VALUE="{$idx}"{if $listdata.status == $idx} SELECTED{/if}>{$status}</OPTION>
+				{/foreach}
+			</SELECT>
+			{trans("Project:")}
+			<SELECT SIZE="1" NAME="p" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1"{if $listdata.invprojectid == -1} selected{/if}>- {trans("all")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.invprojectid == -2} selected{/if}>- {trans("without project")} -</OPTION>
+				{section name=project loop=$NNprojects}
+				<OPTION VALUE="{$NNprojects[project].id}" {if ($listdata.invprojectid == $NNprojects[project].id ) } SELECTED {/if} >{$NNprojects[project].name}</OPTION>
+				{/section}
+			</SELECT>
+			{trans("Network node:")}
+			<SELECT SIZE="1" NAME="n" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1"{if $listdata.netnode == -1} selected{/if}>- {trans("all")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.netnode == -2} selected{/if}>- {trans("none")} -</OPTION>
+				{foreach $netnodes as $netnode}
+				<OPTION VALUE="{$netnode.id}"{if $listdata.netnode == $netnode.id} selected{/if}>{$netnode.name}</OPTION>
+				{/foreach}
+			</SELECT>
+                        {trans("Type:")}
+                        <SELECT SIZE="1" NAME="type" ONCHANGE="document.choosefilter.submit();">
+                                <OPTION VALUE="-1"{if $listdata.producer == -1} selected{/if}>- {trans("all")} -</OPTION>
+                                {foreach $_NETOBJECTTYPES as $type => $typedata}
+                                <OPTION VALUE="{$type}"{if $listdata.type == $type} selected{/if}>{$typedata.label}</OPTION>
+                                {/foreach}
+                        </SELECT>			
+			{trans("Producer:")}
+			<SELECT SIZE="1" NAME="producer" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1"{if $listdata.producer == -1} selected{/if}>- {trans("all")} -</OPTION>
+                                <OPTION VALUE="-2"{if $listdata.producer == -2} selected{/if}>- {trans("none")} -</OPTION>
+				{foreach $producers as $producer}
+				<OPTION VALUE="{$producer}"{if $listdata.producer == $producer} selected{/if}>{$producer}</OPTION>
+				{/foreach}
+			</SELECT>
+			{trans("Model:")}
+			<SELECT SIZE="1" NAME="model" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1"{if $listdata.model == -1} selected{/if}>- {trans("all")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.model == -2} selected{/if}>- {trans("none")} -</OPTION>
+				{foreach $models as $model}
+				<OPTION VALUE="{$model}"{if $listdata.model == $model} selected{/if}>{$model}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	{if $listdata.total != 0}
+	<TR>
+		<TD class="pagination" colspan="8">
+			{include file="scroller.html" loop=$netobjlist}
+		</TD>
+	</TR>
+	{/if}
+    </THEAD>
+    <TBODY>
+	{cycle values="light,lucid" print=false}
+	{section name=netobjlist loop=$netobjlist start=$start max=$pagelimit}
+	<TR class="highlight {cycle}">
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$netobjlist[netobjlist].id}';" VALIGN="TOP">
+			<IMG src="img/netobj.gif" ALT=""> <a name="{$netobjlist[netobjlist].id}"><B>{$netobjlist[netobjlist].name}</B></A><BR>
+			<IMG src="img/producer.gif" ALT=""> {$netobjlist[netobjlist].producer} {if $netobjlist[netobjlist].model}/ {$netobjlist[netobjlist].model}{/if}
+		</TD>
+		<TD>
+			{$_NETOBJECTTYPES[$netobjlist[netobjlist].type].label}
+		</TD>
+		<TD>
+			{$_NETOBJECTTYPES[$netobjlist[netobjlist].type].parameter}: {$netobjlist[netobjlist].parameter}
+		</TD>
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$netobjlist[netobjlist].id}';" class="nobr valign-top">
+			{if $netobjlist[netobjlist].location}{$netobjlist[netobjlist].location} {if $netobjlist[netobjlist].borough_name} ({$netobjlist[netobjlist].state_name} / {$netobjlist[netobjlist].district_name} / {$_BOROUGHTYPES[$netobjlist[netobjlist].borough_type]} {$netobjlist[netobjlist].borough_name}){/if}{/if}
+		</TD>
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$netobjlist[netobjlist].id}';" class="nobr valign-top">
+			{if $netobjlist[netobjlist].netnode}<a href="?m=netnodeinfo&id={$netobjlist[netobjlist].netnodeid}">{$netobjlist[netobjlist].netnode}</a>{/if}
+		</TD>
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$netobjlist[netobjlist].id}';" align="right" VALIGN="TOP">
+			({$netobjlist[netobjlist].id|string_format:"%04d"})
+		</TD>
+		<TD onClick="return self.location.href='?m=netobjinfo&id={$netobjlist[netobjlist].id}';" NOWRAP>
+			<IMG src="img/port.gif" ALT="">{$netobjlist[netobjlist].cables} ({$netobjlist[netobjlist].splices})<BR>
+			<IMG src="img/serialnumber.gif" ALT=""> {$netobjlist[netobjlist].serialnumber}
+		</TD>
+		<TD align="right">
+			<nobr>
+			<a href="?m=netobjdel&id={$netobjlist[netobjlist].id}" onClick="return confirmLink(this, '{t a=$netobjlist[netobjlist].name}Are you sure, you want to remove device \'$a\' from database?{/t}')"><IMG src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
+			<a href="?m=netobjedit&id={$netobjlist[netobjlist].id}"><IMG src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></A>
+			<a href="?m=netobjinfo&id={$netobjlist[netobjlist].id}"><IMG src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></A>
+			</nobr>
+		</TD>
+	</TR>
+	{if $netobjlist[netobjlist.index_next].ownerid == $netobjlist[netobjlist].ownerid && $listdata.order == "owner"}{cycle print=false}{/if}
+	{sectionelse}
+	<TR>
+		<TD colspan="8" align="center">
+			<p>&nbsp;</p>
+			<p><B>{trans("There are no network objects in your database.")}</b></p>
+			<p>&nbsp;</p>
+		</TD>
+	</TR>
+	{/section}
+	{if $listdata.total != 0}
+	<TR>
+		<TD class="pagination" colspan="8">
+			{include file="scroller.html" loop=$netobjlist}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD COLSPAN="7" ALIGN="right">
+			<B>
+				{trans("Total:")} {$listdata.total|default:"0"}
+			</B>
+		</TD>
+		<TD COLSPAN="1"></TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

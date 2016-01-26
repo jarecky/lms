@@ -1,0 +1,205 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+{include file="calendar_js.html"}
+<script type="text/javascript" src="img/netcablehelper.js"></script>
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="netcabadd" METHOD="POST" ACTION="?m=netcabadd">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+			<B>{trans("Name:")}</B>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netcab[name]" VALUE="{$netcab.name}" MAXLENGTH="32" {tip trigger="name" text="Enter cable name" bold=1}>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+        <TD WIDTH="100%" COLSPAN="3" CLASS="container">
+		    <TABLE WIDTH="100%" CELLPADDING="0">
+				<TR>
+					<TD WIDTH="50%" style="vertical-align:top;">
+					        <TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Status:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT NAME="netcab[status]" {tip text="Select cable status"} VALUE="{$netcab.status}">
+				{foreach $_NETELEMENTSTATUSES as $idx => $status}
+				<OPTION VALUE="{$idx}"{if $netcab.status == $idx} selected{/if}>{$status}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Manufacturer:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netcab[producer]" VALUE="{$netcab.producer}" {tip text="Enter producer name (optional)"}>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev_model.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Model:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netcab[model]" VALUE="{$netcab.model}" {tip text="Enter cable model (optional)"}>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/port.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Number of fibers:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netcab[fibers]" VALUE="{if $netcab.fibers}{$netcab.fibers}{/if}" {tip trigger="fibers" text="Enter number of fibers"}>
+		</TD>
+	</TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/long.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Length:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netcab[length]" VALUE="{if $netcab.length}{$netcab.length}{/if}" {tip trigger="length" text="Enter length of cable"}>
+                </TD>
+        </TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Begin:")}</B>
+		</TD>
+		<TD WIDTH="98%" NOWRAP>
+                        <SELECT NAME="netcab[src]" {tip trigger="src" text="Select source object"} VALUE="{$netcab.src}">
+				<OPTION>{trans("Choose source object")}</OPTION>
+                                {foreach $objects as $object}
+                                <OPTION VALUE="{$object.id}"{if $netcab.src == $object.id} selected{/if}>{$object.name}</OPTION>
+                                {/foreach}
+                        </SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("End:")}</B>
+		</TD>
+		<TD WIDTH="98%" NOWRAP>
+                        <SELECT NAME="netcab[dst]" {tip trigger="dst" text="Select destination object"} VALUE="{$netcab.dst}">
+                                <OPTION VALUE="0">{trans("Choose destinationشobject")}</OPTION>
+                                {foreach $objects as $object}
+                                <OPTION VALUE="{$object.id}"{if $netcab.dst == $object.id} selected{/if}>{$object.name}</OPTION>
+                                {/foreach}
+                        </SELECT>
+		</TD>
+	</TR>
+                                        </TABLE>
+				</TD>
+				<TD WIDTH="50%" style="vertical-align:top;">
+					<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/calendar.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Purchase date:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<div class="calendar">
+			<INPUT TYPE="TEXT" NAME="netcab[purchasedate]" VALUE="{if $netcab.purchasedate}{$netcab.purchasedate}{/if}" SIZE="10" MAXSIZE="10" {tip trigger="purchasedate" text="Enter cable purchase date in 'yyyy/mm/dd' format or click to choose date from calendar (optional)"}>
+			</div>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/guarantee.png" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Guarantee period:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT SIZE="1" NAME="netcab[guaranteeperiod]" {tip text="Select cable guarantee period (optional)"}>
+				{foreach from=$_GUARANTEEPERIODS key=key item=period}
+				<OPTION VALUE="{$key}"{if $netcab.guaranteeperiod == $key} SELECTED{/if}>{$period}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/desc.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Description:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<TEXTAREA NAME="netcab[description]" COLS="40" ROWS="5" {tip text="Enter additional information (optional)"}>{$netcab.description}</TEXTAREA>
+		</TD>
+	</TR>
+	<TR>
+		<TD width="1%">
+			<img src="img/money.gif" alt="">
+		</TD>
+		<TD WIDTH="1%" class="bold nobr">
+			{trans("Investment project:")}
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT NAME="netcab[invprojectid]" ID="NNproject" VALUE="{$netcabinfo.invprojectid}" {tip text="Select project for this node"} onchange="setNNProject();">
+				<OPTION value="-2" {if ($netcabinfo.invprojectid == '-2' ) } selected="selected" {/if} >- {trans("none")} -</OPTION>
+				<OPTION value="-1" {if ($netcabinfo.invprojectid == '-1' ) } selected="selected" {/if}>{trans("New project")}</OPTION>
+				<OPTION value="1" {if ($netcabinfo.invprojectid == '1' ) } selected="selected" {/if}>{trans("From root cable")}</OPTION>
+				{section name=project loop=$NNprojects}
+				<OPTION VALUE="{$NNprojects[project].id}" {if ($netcabinfo.invprojectid == $NNprojects[project].id ) } selected="selected" {/if} >{$NNprojects[project].name}</OPTION>
+				{/section}
+			</SELECT>
+			<INPUT TYPE="TEXT" NAME="netcab[projectname]" VALUE="{$netcabinfo.projectname}" {tip text="Enter new project name" trigger="projectname" } ID="NNprojectname">
+		</TD>
+	</TR>
+	
+	                                        </TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
+			<A HREF="javascript:document.netcabadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
+			<A HREF="?m=netcablist">{trans("Cancel")} <IMG SRC="img/cancel.gif" alt=""></A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+<SCRIPT type="text/javascript">
+<!--
+document.forms['netcabadd'].elements['netcab[name]'].focus();
+setNNProject();
+//-->
+</SCRIPT>
+{/block}

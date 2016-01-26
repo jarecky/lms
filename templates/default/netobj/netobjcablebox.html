@@ -1,0 +1,109 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 100%;" class="hand nobr" onClick="showOrHide('objectcables');">
+			<IMG SRC="img/mac.gif" alt="">
+			<span class="bold">{t a=$cablelist|@count}Cables connected ($a):{/t}</span>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR id="objectcables" style="display:none;">
+		<TD style="width: 100%;">
+			<TABLE class="lmsbox-inner">
+        <THEAD>
+	<TR>
+		<TD style="width: 20%;">
+			<IMG src="img/netobj.gif" ALT="">
+		       	<span class="bold">{trans("Name")} / {trans("Producer")} {trans("Model")}:</span><BR>
+		</TD>
+		<TD style="width: 20%;" class="nobr">
+			{trans("Fibers")}
+		</TD>
+		<TD style="width: 20%;" class="nobr">
+			{trans("Length")}
+		</TD>
+		<TD style="width: 20%;" class="nobr">
+			{trans("Destination")}
+		</TD>
+		<TD style="width: 1%;">
+			&nbsp;
+		</TD>
+	</TR>
+        </THEAD>
+        <TBODY>
+	{cycle values="light,lucid" print=false}
+	{foreach key=id item=cable from=$cablelist}
+	<TR class="highlight {cycle}">
+		<TD>
+			{$cable.name} / {$cable.producer} {$cable.model}
+		</TD>
+		<TD>
+			{$cable.fibers}J
+		</TD>
+		<TD>
+			{$cable.length}m
+		</TD>
+		<TD>
+			{$cable.destobj.name}<BR>
+			{$cable.destobj.location}
+		</TD>
+		<TD class="text-right">
+			<A HREF="?m=netobjedit&action=cabledisconnect&id={$netobjinfo.id}&cableid={$cable.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
+		</TD>
+	</TR>
+	{foreachelse}
+	<TR>
+		<TD colspan="6" class="empty-table">
+			<P>&nbsp;</P>
+			<P>{trans("No such cables.")}</P>
+			<P>&nbsp;</P>
+		</TD>
+	</TR>
+	{/foreach}
+	<TR>
+		<TD class="ftop dark text-right nobr" COLSPAN="6">
+			{if $netobjinfo.type==0 and $cablelist|@count==2}
+			<span class="bold">{trans("All cables in that object are in use.")}</span>
+			{elseif !$othercablelist}
+			<span class="bold">{trans("No cables for connection.")}</span>
+			{else}
+			<FORM METHOD="GET" ACTION="?m=netobjedit" NAME="connect">
+			<INPUT type="submit" class="hiddenbtn">
+			<INPUT TYPE="HIDDEN" NAME="m" VALUE="netobjedit">
+			<INPUT TYPE="HIDDEN" NAME="id" VALUE="{$netobjinfo.id}">
+			<INPUT TYPE="HIDDEN" NAME="action" VALUE="cableconnect">
+			<TABLE style="width: 100%;">
+				<TR>
+					<TD style="width: 99%; white-space: nowrap;">
+						<span class="bold">{trans("Connect cable")}:</span>
+                                                <SELECT NAME="cableid" id="cableid" style="width: 300px" {tip trigger="link" text="Select from cable list for connection"}>
+                                                {foreach key=id item=cable from=$othercablelist}
+                                                        <OPTION VALUE="{$cable.id}">{$cable.name}</OPTION>
+                                                {/foreach}
+						</SELECT>
+					</TD>
+					<TD style="width: 1%; white-space: nowrap;">
+						<A HREF="javascript:document.connect.submit(); ">{trans("Connect")}</A> <IMG src="img/save.gif" alt="">
+					</TD>
+				</TR>
+			</TABLE>
+			</FORM>
+			{/if}
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+               </TD>
+       </TR>
+    </TBODY>
+</TABLE>
+<SCRIPT type="text/javascript">
+<!--
+if (getCookie('objectcables') == '1')
+{
+        document.getElementById('objectcables').style.display = '';
+}
+//-->
+</SCRIPT>

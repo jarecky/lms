@@ -50,6 +50,7 @@ class LMS
     protected $node_manager;
     protected $node_group_manager;
     protected $net_dev_manager;
+    protected $net_obj_manager;
     protected $helpdesk_manager;
     protected $finance_manager;
     protected $event_manager;
@@ -1248,6 +1249,140 @@ class LMS
     }
 
     /*
+     *   Network Objects
+     */
+
+    public function NetObjUpdate($data)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->NetObjUpdate($data);
+    }
+    
+    public function NetObjAdd($data)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->NetObjAdd($data);
+    }
+
+    public function DeleteNetObj($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->DeleteNetObj($id);
+    }
+
+    public function GetNetObj($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->GetNetObj($id);
+    }
+
+    public function NetObjExists($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->NetObjExists($id);
+    }
+
+    public function GetNetObjList($order,$search)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->GetNetObjList($order,$search);
+    }
+
+    public function GetNetObjSplices($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->GetNetObjSplices($id);
+    }
+    
+    public function NetObjSplice($objectid,$srccable,$dstcable,$position,$description)
+    {
+	$manager = $this->getNetObjManager();
+	return $manager->NetObjSplice($objectid,$srccable,$dstcable,$position,$description);
+    }
+
+    public function GetNetObjInNode($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->GetNetObjInNode($id);
+    }    
+    public function DelNetSplice($id)
+    {
+        $manager = $this->getNetObjManager();
+        return $manager->DelNetSplice($id);
+    }
+	    
+
+    /*
+     *   Network Cables
+     */
+
+    public function NetCabAdd($data)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->NetCabAdd($data);
+    }
+
+    public function DeleteNetCab($id)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->DeleteNetCab($id);
+    }
+    
+    public function GetNetCab($id)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->GetNetCab($id);
+    }
+
+    public function NetCabUpdate($data)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->NetCabUpdate($data);
+    }
+    
+    public function NetCabExists($id)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->NetCabExists($id);
+    }
+
+    public function GetNetCabList($order,$search)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->GetNetCabList($order,$search);
+    }
+
+    public function GetNetCabInObj($id)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->GetNetCabInObj($id);
+    }
+	    
+    public function GetNetCabUnconnected($id)
+    {
+	$manager = $this->getNetCabManager();
+	return $manager->GetNetCabUnconnected($id);
+    }
+    
+    public function AddCabToObj($objectid,$cableid)
+    {
+	$manager = $this->getNetCabManager();
+	return $manager->AddCabToObj($objectid,$cableid);
+    }
+
+    public function DelCabFromObj($objectid,$cableid)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->DelCabFromObj($objectid,$cableid);
+    }
+
+    public function GetOtherEnd($cableid,$objectid)
+    {
+        $manager = $this->getNetCabManager();
+        return $manager->GetOtherEnd($cableid,$objectid);
+    }
+
+    /*
      *   Request Tracker (Helpdesk)
      */
 
@@ -2376,6 +2511,32 @@ class LMS
     }
 
     /**
+     * Returns net obj manager
+     *
+     * @return LMSNetObjManagerInterface Net obj manager
+     */
+    protected function getNetObjManager()
+    {
+        if (!isset($this->net_obj_manager)) {
+            $this->net_obj_manager = new LMSNetObjManager($this->DB, $this->AUTH, $this->cache, $this->SYSLOG);
+        }
+        return $this->net_obj_manager;
+    }
+    
+    /**
+     * Returns net cab manager
+     *
+     * @return LMSNetCabManagerInterface Net cab manager
+     */
+    protected function getNetCabManager()
+    {
+        if (!isset($this->net_cab_manager)) {
+            $this->net_cab_manager = new LMSNetCabManager($this->DB, $this->AUTH, $this->cache, $this->SYSLOG);
+        }
+        return $this->net_cab_manager;
+    }
+
+    /**
      * Returns helpdesk manager
      * 
      * @return LMSHelpdeskManagerInterface Helpdesk manager
@@ -2591,6 +2752,26 @@ class LMS
     public function setNetDevManager(LMSNetDevManagerInterface $manager)
     {
         $this->net_dev_manager = $manager;
+    }
+
+    /**
+     * Sets net obj manager
+     *
+     * @param LMSNetObjManagerInterface $manager Manager
+     */
+    public function setNetObjManager(LMSNetObjManagerInterface $manager)
+    {
+        $this->net_obj_manager = $manager;
+    }
+
+    /**
+     * Sets net cab manager
+     *
+     * @param LMSNetCabManagerInterface $manager Manager
+     */
+    public function setNetCabManager(LMSNetCabManagerInterface $manager)
+    {
+        $this->net_cab_manager = $manager;
     }
 
     /**

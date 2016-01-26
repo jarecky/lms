@@ -799,7 +799,7 @@ $_LANG['Limit results to n computers'] = 'Ogranicz wyniki do n komputerów';
 $_LANG['Limit results to selected network'] = 'Ogranicz wyniki do wybranej sieci';
 $_LANG['Limit results to selected period'] = 'Ogranicz wyniki do wybranego okresu';
 $_LANG['Link to:'] = 'Przypisz do:';
-$_LANG['List'] = 'Lista';
+$_LANG['Devices list'] = 'Lista urządzeń';
 $_LANG['List of arpd servers for MAC addresses retrieval from remote networks. That list should include IP[:port] items separated with spaces. Default: empty.'] = 'Lista serwerów arpd dla czytania adresów MAC ze zdalnych sieci. Ta lista powinna zawierać pozycje IP[:port] oddzielone spacjami. Domyślnie: pusta.';
 $_LANG['List of Customers'] = 'Lista klientów';
 $_LANG['List of Customers Groups'] = 'Lista grup klientów';
@@ -1134,6 +1134,7 @@ $_LANG['Save'] = 'Zapisz';
 $_LANG['Save & Print'] = 'Zapisz i drukuj';
 $_LANG['Scan'] = 'Skanuj';
 $_LANG['Search'] = 'Szukaj';
+$_LANG['Devices search'] = 'Szukaj urządzeń';
 $_LANG['Searching of Events in Timetable'] = 'Szukanie wpisów w kalendarzu';
 $_LANG['Section:'] = 'Sekcja:';
 $_LANG['Section name contains forbidden characters!'] = 'Nazwa sekcji zawiera zabronione znaki!';
@@ -3041,6 +3042,7 @@ $_LANG['Check if send notification'] = 'Zaznacz, jeżeli chcesz wysyłać powiad
 $_LANG['notifications'] = 'powiadomienia';
 
 $_LANG['Use customer location:'] = 'Użyj lokalizacji klienta:';
+
 $_LANG['Ticket\'s state has been changed from $a to $b.'] = 'Status zgłoszenia został zmieniony z $a na $b.';
 $_LANG['Ticket\'s cause has been changed from $a to $b.'] = 'Przyczyna zgłoszenia została zmieniona z $a na $b.';
 $_LANG['Ticket\'s subject has been changed from $a to $b.'] = 'Temat zgłoszenia został zmieniony z $a na $b.';
@@ -3102,6 +3104,7 @@ $_LANG['Check if bank account should be disabled'] = 'Zaznacz, jeśli rachunek b
 $_LANG['Incorrect bank account!'] = 'Niepoprawny numer rachunku bankowego!';
 $_LANG['Bank account is required!'] = 'Rachunek bankowy jest wymagany!';
 
+<<<<<<< HEAD
 $_LANG['boolean'] = 'wartość logiczna';
 $_LANG['integer greater than 0'] = 'liczba całkowita większa od 0';
 $_LANG['document type'] = 'typ dokumentu';
@@ -3109,6 +3112,32 @@ $_LANG['reload type'] = 'typ przeładowania';
 $_LANG['margins'] = 'marginesy';
 $_LANG['Margins should consist of 4 numbers separated by commas!'] = 'Marginesy powinny się składać z 4 liczb oddzielonymi przecinkami!';
 $_LANG['Select config type'] = 'Wybierz typ opcji';
+
+$_LANG['Objects list'] = 'Lista obiektów';
+$_LANG['Network objects list'] = 'Lista obiektów sieciowych';
+$_LANG['New object'] = 'Nowy obiekt';
+$_LANG['Add new network object'] = 'Dodaj nowy obiekt sieciowy';
+$_LANG['New object'] = 'Nowy obiekt';
+$_LANG['Network Object'] = 'Obiekty sieciowe';
+$_LANG['Cables list'] = 'Lista okablowania';
+$_LANG['Network cables list'] = 'Lista okablowania sieciowego';
+$_LANG['New cable'] = 'Nowe okablowanie';
+$_LANG['Add new network cable'] = 'Dodaj nowe okablowanie sieciowe';
+$_LANG['tube'] = 'tuba';
+$_LANG['fiber<!singular>'] = 'włókno';
+
+$_LANG['blue'] = 'niebieski';
+$_LANG['orange'] = 'pomarańczowy';
+$_LANG['green'] = 'zielony';
+$_LANG['brown'] = 'brązowy';
+$_LANG['slate'] = 'szary';
+$_LANG['white'] = 'biały';
+$_LANG['red'] = 'czerwony';
+$_LANG['black'] = 'czarny';
+$_LANG['yellow'] = 'żółty';
+$_LANG['violet'] = 'fioletowy';
+$_LANG['pink'] = 'różowy';
+$_LANG['aqua'] = 'morski';
 
 $_LANG['mail backend'] = 'silnik poczty';
 $_LANG['Mail backend settings. Available options: pear or phpmailer.'] = 'Wybór silnika pocztwego. Dostępne opcje: pear lub phpmailer.';

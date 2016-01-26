@@ -453,6 +453,51 @@ $NETELEMENTOWNERSHIPS = array(
 	2	=> 'węzeł obcy',
 );
 
+$NETOBJECTTYPES = array(
+	0 	=> array(
+		'id' 		=> 'reserve',
+		'label' 	=> trans('Zapas'),
+		'tip' 		=> trans('Zapas kabla światłowodowego'),
+		'parameter' 	=> trans('Ilość'),
+		'table' 	=> 'netobjreserve'
+	),
+	1	=> array(
+		'id' 		=> 'closure',
+		'label' 	=> trans('Mufa'),
+		'tip' 		=> trans('Mufa światłowodowa'),
+		'parameter' 	=> trans('Pojemność'),
+		'table' 	=> 'netobjspliceclosure'
+	),
+	2	=> array(
+		'id' 		=> 'box',
+		'label' 	=> trans('Przełącznica'),
+		'tip' 		=> trans('Przełącznica światłowodowa'),
+		'parameter' 	=> trans('Porty'),
+		'table' 	=> 'netobjsplicebox'
+	),
+	3	=> array(
+		'id' 		=> 'splitter',
+		'label'		=> trans('Splitter'),
+		'tip'		=> trans('Splitter optyczny'),
+		'parameter'	=> trans('Podział'),
+		'table'		=> 'netobjsplitter'
+	),
+);
+
+$FIBEROPTICCOLORCODES = array(
+	1	=>	trans('red'),
+	2	=>	trans('green'),
+	3	=>	trans('blue'),
+	4	=>	trans('yellow'),
+	5	=>	trans('white'),
+	6	=>	trans('slate'),
+	7	=>	trans('brown'),
+	8	=>	trans('violet'),
+	9	=>	trans('aqua'),
+	10	=>	trans('black'),
+	11	=>	trans('orange'),
+	12	=>	trans('pink')
+);
 $USERPANEL_ID_TYPES = array(
 	1	=> array(
 		'label' => trans('Customer ID:'),
@@ -539,6 +584,8 @@ if(isset($SMARTY))
 	$SMARTY->assign('_NETELEMENTSTATUSES', $NETELEMENTSTATUSES);
 	$SMARTY->assign('_NETELEMENTTYPES', $NETELEMENTTYPES);
 	$SMARTY->assign('_NETELEMENTOWNERSHIPS', $NETELEMENTOWNERSHIPS);
+	$SMARTY->assign('_NETOBJECTTYPES', $NETOBJECTTYPES);
+	$SMARTY->assign('_FIBEROPTICCOLORCODES', $FIBEROPTICCOLORCODES);
 	$SMARTY->assign('_USERPANEL_ID_TYPES', $USERPANEL_ID_TYPES);
 	$SMARTY->assign('_EVENTTYPES', $EVENTTYPES);
 	$SMARTY->assign('_SESSIONTYPES', $SESSIONTYPES);

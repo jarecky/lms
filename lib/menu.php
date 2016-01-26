@@ -222,7 +222,7 @@ $menu = array(
 			'prio' => 15,
 			'submenu' => array(
 				array(
-					'name' => trans('List'),
+					'name' => trans('Devices list'),
 					'link' => '?m=netdevlist',
 					'tip' => trans('Network devices list'),
 					'prio' => 10,
@@ -234,7 +234,7 @@ $menu = array(
 					'prio' => 20,
 				),
 				array(
-					'name' => trans('Search'),
+					'name' => trans('Devices search'),
 					'link' => '?m=netdevsearch',
 					'tip' => trans('Allows you to search device'),
 					'prio' => 30,
@@ -251,23 +251,47 @@ $menu = array(
 					'tip' => trans('Add new network device node'),
 					'prio' => 50,
 				),
+                                array(
+                                        'name' => trans('Objects list'),
+                                        'link' => '?m=netobjlist',
+                                        'tip' => trans('Network objects list'),
+                                        'prio' => 60,
+                                ),
+                                array(
+                                        'name' => trans('New object'),
+                                        'link' => '?m=netobjadd',
+                                        'tip' => trans('Add new network object'),
+                                        'prio' => 61,
+                                ),
+                                array(
+                                        'name' => trans('Cables list'),
+                                        'link' => '?m=netcablist',
+                                        'tip' => trans('Network cables list'),
+                                        'prio' => 62,
+                                ),
+                                array(
+                                        'name' => trans('New cable'),
+                                        'link' => '?m=netcabadd',
+                                        'tip' => trans('Add new network cable'),
+                                        'prio' => 63,
+                                ),
 				array(
 					'name' => trans('Producers and models'),
 					'link' => '?m=netdevmodels',
 					'tip' => trans('Network device producers and models management'),
-					'prio' => 60,
+					'prio' => 70,
 				),
 				array(
 					'name' => trans('Map'),
 					'link' => '?m=netdevmap',
 					'tip' => trans('Network map display'),
-					'prio' => 70,
+					'prio' => 80,
 				),
 				array(
 					'name' => trans('Reports'),
 					'link' => '?m=netdevprint',
 					'tip' => trans('Lists and reports printing'),
-					'prio' => 80,
+					'prio' => 90,
 				),
 				),
 			),

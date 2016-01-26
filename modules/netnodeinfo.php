@@ -49,9 +49,11 @@ $layout['pagetitle'] = trans('Net Device Node Info: $a', $info['name']);
 $SMARTY->assign('nodeinfo', $result);
 $SMARTY->assign('objectid', $result['id']);
 
+$olist = $LMS->GetNetObjInNode($id);
+$SMARTY->assign('netobjlist', $olist);
+
 $nlist = $DB->GetAll("SELECT * FROM netdevices WHERE netnodeid=".$id." ORDER BY NAME");
 $SMARTY->assign('netdevlist', $nlist);
-
 
 
 $SMARTY->display('netnode/netnodeinfo.html');
