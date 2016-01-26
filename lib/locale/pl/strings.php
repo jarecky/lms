@@ -3104,15 +3104,6 @@ $_LANG['Check if bank account should be disabled'] = 'Zaznacz, jeśli rachunek b
 $_LANG['Incorrect bank account!'] = 'Niepoprawny numer rachunku bankowego!';
 $_LANG['Bank account is required!'] = 'Rachunek bankowy jest wymagany!';
 
-<<<<<<< HEAD
-$_LANG['boolean'] = 'wartość logiczna';
-$_LANG['integer greater than 0'] = 'liczba całkowita większa od 0';
-$_LANG['document type'] = 'typ dokumentu';
-$_LANG['reload type'] = 'typ przeładowania';
-$_LANG['margins'] = 'marginesy';
-$_LANG['Margins should consist of 4 numbers separated by commas!'] = 'Marginesy powinny się składać z 4 liczb oddzielonymi przecinkami!';
-$_LANG['Select config type'] = 'Wybierz typ opcji';
-
 $_LANG['Objects list'] = 'Lista obiektów';
 $_LANG['Network objects list'] = 'Lista obiektów sieciowych';
 $_LANG['New object'] = 'Nowy obiekt';
@@ -3138,6 +3129,14 @@ $_LANG['yellow'] = 'żółty';
 $_LANG['violet'] = 'fioletowy';
 $_LANG['pink'] = 'różowy';
 $_LANG['aqua'] = 'morski';
+
+$_LANG['boolean'] = 'wartość logiczna';
+$_LANG['integer greater than 0'] = 'liczba całkowita większa od 0';
+$_LANG['document type'] = 'typ dokumentu';
+$_LANG['reload type'] = 'typ przeładowania';
+$_LANG['margins'] = 'marginesy';
+$_LANG['Margins should consist of 4 numbers separated by commas!'] = 'Marginesy powinny się składać z 4 liczb oddzielonymi przecinkami!';
+$_LANG['Select config type'] = 'Wybierz typ opcji';
 
 $_LANG['mail backend'] = 'silnik poczty';
 $_LANG['Mail backend settings. Available options: pear or phpmailer.'] = 'Wybór silnika pocztwego. Dostępne opcje: pear lub phpmailer.';
