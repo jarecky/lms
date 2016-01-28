@@ -3151,6 +3151,5 @@ $_LANG['Security protocol. Available options: ssl or tls.'] = 'Protokół bezpie
 $_LANG['Incorrect mail security protocol. Valid types are: ssl, tls!'] = 'Niepoprawny protokół bezpieczeństwa. Dostępne opcje: ssl, tls!';
 $_LANG['To view the message, please use an HTML compatible email viewer'] = 'Aby zobaczyć tą wiadomość użyj kompatybilnego z HTML programu pocztowego.';
 $_LANG['date format'] = 'format daty';
->>>>>>> upstream/master
 
 ?>
