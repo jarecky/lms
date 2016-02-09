@@ -33,6 +33,7 @@
 				<OPTION VALUE="{$net.id}" {if $net.id == $nodeinfo.netid} selected{/if}{if $net.disabled == 1} class="alert"{/if}>{$net.name|truncate:20:"":true}: {$net.address}/{$net.prefix}</OPTION>
 				{/foreach}
 			</SELECT>
+			<label><input type="checkbox" name="nodeedit[wholenetwork]" VALUE="1" onchange="change_wholenetwork()"{if $nodeinfo.wholenetwork} checked{/if}>&nbsp;{trans("the whole network")}</label>
 		</TD>
 	</TR>
 	<TR>
@@ -43,6 +44,7 @@
 			<INPUT TYPE="TEXT" NAME="nodeeditipaddr" VALUE="{$nodeinfo.ip}" {tip text="Enter IP address" trigger="ipaddr"}> <a href="javascript: void(0);" onClick="return ipchoosewin(document.editnode.nodeeditipaddr, document.editnode.nodeeditnetid, {$nodeinfo.netid});" {tip text="Click to select IP from the list"}>&raquo;&raquo;&raquo;</A>
 		</TD>
 	</TR>
+	{if ConfigHelper::checkValue(ConfigHelper::checkConfig('phpui.public_ip', 'true'))}
 	<TR>
 		<TD style="width: 1%;">
 			<IMG SRC="img/ip_pub.gif" ALT="{trans("Pub. IP address:")}">
@@ -51,6 +53,7 @@
 			<INPUT TYPE="TEXT" NAME="nodeeditipaddrpub" {if $nodeinfo.ip_pub != "0.0.0.0"}VALUE="{$nodeinfo.ip_pub}"{/if} {tip text="Enter IP address (optional)" trigger="ipaddr_pub"}> <a href="javascript: void(0);" onClick="return ipchoosewin(document.editnode.nodeeditipaddrpub, null, {if $nodeinfo.netpubid}{$nodeinfo.netpubid}{else}0{/if});" {tip text="Click to select IP from the list"}>&raquo;&raquo;&raquo;</A>
 		</TD>
 	</TR>
+	{/if}
 	<TR>
 		<TD style="width: 1%;">
 			<IMG SRC="img/mac.gif" ALT="{trans("MAC address:")}">
@@ -151,17 +154,8 @@
 		<TD style="width: 1%;">
 			<IMG SRC="img/customer.gif" ALT="{trans("Customer:")}">
 		</TD>
-		<TD style="width: 99%; white-space: nowrap;" COLSPAN="2">
-			{if $customers}
-			<SELECT SIZE="1" NAME="nodeedit[customerid]" {tip text="Assign node to customer"} style="max-width:160px;" onChange="document.editnode.elements['nodeedit[ownerid]'].value=this.value">
-				{foreach from=$customers item=c}
-				<OPTION VALUE="{$c.id}"{if $nodeinfo.ownerid == $c.id} SELECTED{/if}>{$c.customername|truncate:40:"...":true} ({$c.id|string_format:"%04d"})</OPTION>
-				{/foreach}
-			</SELECT>
-			{trans("or Customer ID:")}
-			{/if}
-			<INPUT TYPE="TEXT" NAME="nodeedit[ownerid]" VALUE="{$nodeinfo.ownerid}" SIZE="5"{if $customers} onChange="reset_customer()" onfocus="reset_customer()"{/if} {tip text="Enter customer ID" trigger="ownerid"}>
-			<A href="javascript: void(0);" onClick="return customerchoosewin(document.editnode.elements['nodeedit[ownerid]']);" {tip text="Click to search customer"}>{trans("Search")}&nbsp;&raquo;&raquo;&raquo;</A>
+		<TD style="width: 99%;" class="nobr" colspan="2">
+			{customerlist form="editnode" customers=$customers selected=$nodeinfo.ownerid selectname="nodeedit[customerid]" inputname="nodeedit[ownerid]" firstoption="" selecttip="Assign node to customer"}
 		</TD>
 	</TR>
 	<TR>
@@ -328,6 +322,15 @@
 			xajax_getRadioSectors(id, xjx.$('linktechnology').value);
 		}
 	}
+
+	function change_wholenetwork() {
+		var wholenetwork = document.forms['editnode'].elements['nodeedit[wholenetwork]'];
+		var display = wholenetwork.checked ? 'none' : 'table-row';
+
+		document.getElementsByName("nodeeditipaddr")[0].parentNode.parentNode.style.display = display;
+		document.getElementsByName("nodeeditipaddrpub")[0].parentNode.parentNode.style.display = display;
+	}
+	change_wholenetwork();
 
 	function change_linktype(linktype) {
 		linktype = parseInt(linktype);

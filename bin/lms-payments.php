@@ -4,7 +4,7 @@
 /*
  * LMS version 1.11-git
  *
- *  (C) Copyright 2001-2015 LMS Developers
+ *  (C) Copyright 2001-2016 LMS Developers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -56,7 +56,7 @@ foreach ($short_to_longs as $short => $long)
 if (array_key_exists('version', $options)) {
 	print <<<EOF
 lms-payments.php
-(C) 2001-2015 LMS Developers
+(C) 2001-2016 LMS Developers
 
 EOF;
 	exit(0);
@@ -65,7 +65,7 @@ EOF;
 if (array_key_exists('help', $options)) {
 	print <<<EOF
 lms-payments.php
-(C) 2001-2015 LMS Developers
+(C) 2001-2016 LMS Developers
 
 -C, --config-file=/etc/lms/lms.ini      alternate config file (default: /etc/lms/lms.ini);
 -h, --help                      print this help and exit;
@@ -81,7 +81,7 @@ $quiet = array_key_exists('quiet', $options);
 if (!$quiet) {
 	print <<<EOF
 lms-payments.php
-(C) 2001-2015 LMS Developers
+(C) 2001-2016 LMS Developers
 
 EOF;
 }
@@ -109,10 +109,12 @@ define('SYS_DIR', $CONFIG['directories']['sys_dir']);
 define('LIB_DIR', $CONFIG['directories']['lib_dir']);
 
 // Load autoloader
-require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'autoloader.php');
-
-// Do some checks and load config defaults
-require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'config.php');
+$composer_autoload_path = SYS_DIR . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+if (file_exists($composer_autoload_path)) {
+    require_once $composer_autoload_path;
+} else {
+    die("Composer autoload not found. Run 'composer install' command from LMS directory and try again. More informations at https://getcomposer.org/");
+}
 
 // Init database
 
@@ -128,9 +130,9 @@ try {
 
 // Include required files (including sequence is important)
 
-//require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'definitions.php');
 require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'common.php');
 require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'language.php');
+require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'definitions.php');
 
 $deadline = ConfigHelper::getConfig('payments.deadline', 14);
 $sdate_next = ConfigHelper::getConfig('payments.saledate_next_month', 0);
@@ -139,6 +141,7 @@ $comment = ConfigHelper::getConfig('payments.comment', "Tariff %tariff - %attrib
 $s_comment = ConfigHelper::getConfig('payments.settlement_comment', ConfigHelper::getConfig('payments.comment'));
 $suspension_description = ConfigHelper::getConfig('payments.suspension_description', '');
 $suspension_percentage = ConfigHelper::getConfig('finances.suspension_percentage', 0);
+$unit_name = trans(ConfigHelper::getConfig('payments.default_unit_name'));
 
 function localtime2() {
 	global $fakedate;
@@ -204,33 +207,34 @@ if ($month > 6)
 else
 	$halfyear = $dom + ($month - 1) * 100;
 
-$q_month = $month + 2;
-$q_year = $year;
-$y_month  = $month + 5;
-$y_year = $year;
-if ($q_month > 12) {
-	$q_month -= 12;
-	$q_year += 1;
-}
-if ($y_month > 12) {
-	$y_month -= 12;
-	$y_year += 1;
-}
+$date_format = ConfigHelper::getConfig('payments.date_format');
+$txts = array(
+	DAY => strftime($date_format, mktime(12, 0, 0, $month, $dom, $year)),
+	WEEK => strftime($date_format, mktime(12, 0, 0, $month, $dom, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month, $dom + 6, $year)),
+	MONTH => strftime($date_format, mktime(12, 0, 0, $month, $dom, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month + 1, $dom - 1, $year)),
+	QUARTER => strftime($date_format, mktime(12, 0, 0, $month, $dom, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month + 3, $dom - 1, $year)),
+	HALFYEAR => strftime($date_format, mktime(12, 0, 0, $month, $dom, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month + 6, $dom - 1, $year)),
+	YEAR => strftime($date_format, mktime(12, 0, 0, $month, $dom, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month, $dom - 1, $year + 1)),
+	DISPOSABLE => strftime($date_format, mktime(12, 0, 0, $month, $dom, $year)),
+);
 
-$txts[DAY] = strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom, $year));
-$txts[WEEK] = strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom, $year))." - ".strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom + 6, $year));
-$txts[MONTH] = strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom, $year))." - ".strftime("%Y/%m/%d", mktime(12, 0, 0, $month + 1, $dom - 1, $year));
-$txts[QUARTER] = strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom, $year))." - ".strftime("%Y/%m/%d", mktime(12, 0, 0, $q_month + 1, $dom - 1, $q_year));
-$txts[HALFYEAR] = strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom, $year))." - ".strftime("%Y/%m/%d", mktime(12, 0, 0, $y_month + 1, $dom - 1, $y_year));
-$txts[YEAR] = strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom, $year))." - ".strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom - 1, $year + 1));
-$txts[DISPOSABLE] = strftime("%Y/%m/%d", mktime(12, 0, 0, $month, $dom, $year));
+$txts_aligned = array(
+	DAY => $txts[DAY],
+	WEEK => $txts[WEEK],
+	MONTH => strftime($date_format, mktime(12, 0, 0, $month, 1, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month + 1, 0, $year)),
+	QUARTER => strftime($date_format, mktime(12, 0, 0, $month, 1, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month + 3, 0, $year)),
+	HALFYEAR => strftime($date_format, mktime(12, 0, 0, $month, 1, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month + 6, 0, $year)),
+	YEAR => strftime($date_format, mktime(12, 0, 0, $month, 1, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month, 0, $year + 1)),
+	DISPOSABLE => $txts[DISPOSABLE],
+);
 
 // Special case, ie. you have 01.01.2005-01.31.2005 on invoice, but invoice/
 // assignment is made not January, the 1st:
 
-$current_month = strftime("%Y/%m/%d", mktime(12, 0, 0, $month, 1, $year))." - ".strftime("%Y/%m/%d", mktime(12, 0, 0, $month + 1, 0, $year));
+$current_month = strftime($date_format, mktime(12, 0, 0, $month, 1, $year))." - ".strftime($date_format, mktime(12, 0, 0, $month + 1, 0, $year));
 $current_period = strftime("%m/%Y", mktime(12, 0, 0, $month, 1, $year));
 $next_period = strftime("%m/%Y", mktime(12, 0, 0, $month + 1, 1, $year));
+$prev_period = strftime("%m/%Y", mktime(12, 0, 0, $month - 1, 1, $year));
 
 // sale date setting
 $saledate = $currtime;
@@ -294,13 +298,14 @@ function get_period($period) {
 $query = "SELECT n.id, n.period, COALESCE(a.divisionid, 0) AS divid, isdefault 
 		FROM numberplans n 
 		LEFT JOIN numberplanassignments a ON (a.planid = n.id) 
-		WHERE doctype = 1";
-$results = $DB->GetAll($query);
-foreach ($results as $row) {
-	if ($row['isdefault'])
-		$plans[$row['divid']] = $row['id'];
-	$periods[$row['id']] = ($row['period'] ? $row['period'] : YEAR);
-}
+		WHERE doctype = ?";
+$results = $DB->GetAll($query, array(DOC_INVOICE));
+if (!empty($results))
+	foreach ($results as $row) {
+		if ($row['isdefault'])
+			$plans[$row['divid']] = $row['id'];
+		$periods[$row['id']] = ($row['period'] ? $row['period'] : YEARLY);
+	}
 
 // prepare customergroups in sql query
 $customergroups = " AND EXISTS (SELECT 1 FROM customergroups g, customerassignments ca 
@@ -342,7 +347,7 @@ $query = "SELECT a.tariffid, a.liabilityid, a.customerid,
 	LEFT JOIN tariffs t ON (a.tariffid = t.id) 
 	LEFT JOIN liabilities l ON (a.liabilityid = l.id) 
 	LEFT JOIN divisions d ON (d.id = c.divisionid) 
-	WHERE c.status = 3 
+	WHERE c.status = ?
 		AND ((a.period = ".DISPOSABLE." AND at = $today) 
 			OR ((a.period = ".DAY." 
 			OR (a.period = ".WEEK." AND at = $weekday) 
@@ -354,7 +359,7 @@ $query = "SELECT a.tariffid, a.liabilityid, a.customerid,
 			AND (a.dateto > $currtime OR a.dateto = 0)))"
 		.(!empty($groupnames) ? $customergroups : "")
 	." ORDER BY a.customerid, a.invoice, a.paytype, a.numberplanid, value DESC";
-$assigns = $DB->GetAll($query);
+$assigns = $DB->GetAll($query, array(CSTATUS_CONNECTED));
 
 if (empty($assigns))
 	die;
@@ -379,12 +384,14 @@ foreach ($assigns as $assign) {
 		$desc = $comment;
 	$desc = preg_replace("/\%type/", $assign['tarifftype'] != TARIFF_OTHER ? $TARIFFTYPES[$assign['tarifftype']] : '', $desc);
 	$desc = preg_replace("/\%tariff/", $assign['name'], $desc);
-        $desc = preg_replace("/\%attribute/", $assign['attribute'], $desc);
+	$desc = preg_replace("/\%attribute/", $assign['attribute'], $desc);
 	$desc = preg_replace("/\%desc/", $assign['description'], $desc);
 	$desc = preg_replace("/\%period/", $txts[$assign['period']], $desc);
+	$desc = preg_replace("/\%aligned_period/", $txts_aligned[$assign['period']], $desc);
 	$desc = preg_replace("/\%current_month/", $current_month, $desc);
 	$desc = preg_replace("/\%current_period/", $current_period, $desc);
 	$desc = preg_replace("/\%next_period/", $next_period, $desc);
+	$desc = preg_replace("/\%prev_period/", $prev_period, $desc);
 
 	if ($suspension_percentage && ($assign['suspended'] || $assign['allsuspended']))
 		$desc .= " ".$suspension_description;
@@ -451,7 +458,7 @@ foreach ($assigns as $assign) {
 				$numbers[$plan]++;
 
 				$customer = $DB->GetRow("SELECT lastname, name, address, city, zip, ssn, ten, countryid, divisionid, paytime 
-						FROM customers WHERE id = $cid");
+						FROM customeraddressview WHERE id = $cid");
 
 				$division = $DB->GetRow('SELECT name, shortname, address, city, zip, countryid, ten, regon,
 						account, inv_header, inv_footer, inv_author, inv_cplace 
@@ -505,8 +512,8 @@ foreach ($assigns as $assign) {
 
 				$DB->Execute("INSERT INTO invoicecontents (docid, value, taxid, prodid, 
 					content, count, description, tariffid, itemid, pdiscount, vdiscount) 
-					VALUES (?, $val, ?, ?, 'szt.', 1, ?, ?, $itemid, ?, ?)",
-					array($invoices[$cid], $assign['taxid'], $assign['prodid'],
+					VALUES (?, $val, ?, ?, ?, 1, ?, ?, $itemid, ?, ?)",
+					array($invoices[$cid], $assign['taxid'], $assign['prodid'], $unit_name,
 					$desc, $assign['tariffid'], $assign['pdiscount'], $assign['vdiscount']));
 				$DB->Execute("INSERT INTO cash (time, value, taxid, customerid, comment, docid, itemid) 
 					VALUES ($currtime, $val * -1, ?, $cid, ?, ?, $itemid)",
@@ -527,7 +534,7 @@ foreach ($assigns as $assign) {
 			$diffdays = sprintf("%d", ($today - $assign['datefrom']) / 86400);
 			$period_start = mktime(0, 0, 0, $month, $dom - $diffdays, $year);
 			$period_end = mktime(0, 0, 0, $month, $dom - 1, $year);
-			$period = strftime("%Y/%m/%d", $period_start) . " - " . strftime("%Y/%m/%d", $period_end);
+			$period = strftime($date_format, $period_start) . " - " . strftime($date_format, $period_end);
 
 			switch ($assign['period']) {
 				case WEEK:
@@ -569,12 +576,13 @@ foreach ($assigns as $assign) {
 			$sdesc = $s_comment;
 			$sdesc = preg_replace("/\%type/", $assign['tarifftype'] != TARIFF_OTHER ? $TARIFFTYPES[$assign['tarifftype']] : '', $sdesc);
 			$sdesc = preg_replace("/\%tariff/", $assign['name'], $sdesc);
-                        $sdesc = preg_replace("/\%attribute/", $assign['attribute'], $sdesc);
+			$sdesc = preg_replace("/\%attribute/", $assign['attribute'], $sdesc);
 			$sdesc = preg_replace("/\%desc/", $assign['description'], $sdesc);
 			$sdesc = preg_replace("/\%period/", $period, $sdesc);
 			$sdesc = preg_replace("/\%current_month/", $current_month, $sdesc);
 			$sdesc = preg_replace("/\%current_period/", $current_period, $sdesc);
 			$sdesc = preg_replace("/\%next_period/", $next_period, $sdesc);
+			$sdesc = preg_replace("/\%prev_period/", $prev_period, $sdesc);
 
 			if ($assign['invoice'])
 			{
@@ -596,8 +604,8 @@ foreach ($assigns as $assign) {
 
 					$DB->Execute("INSERT INTO invoicecontents (docid, value, taxid, prodid, 
 						content, count, description, tariffid, itemid, pdiscount, vdiscount) 
-						VALUES (?, $value, ?, ?, 'szt.', 1, ?, ?, $itemid, ?, ?)",
-						array($invoices[$cid], $assign['taxid'], $assign['prodid'],
+						VALUES (?, $value, ?, ?, ?, 1, ?, ?, $itemid, ?, ?)",
+						array($invoices[$cid], $assign['taxid'], $assign['prodid'], $unit_name,
 						$sdesc, $assign['tariffid'], $assign['pdiscount'], $assign['vdiscount']));
 					$DB->Execute("INSERT INTO cash (time, value, taxid, customerid, comment, docid, itemid) 
 						VALUES($currtime, $value * -1, ?, $cid, ?, ?, $itemid)",

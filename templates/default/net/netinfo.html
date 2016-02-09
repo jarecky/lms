@@ -122,6 +122,20 @@
 			{/if}
 		</TD>
 	</TR>
+	{if $network.ownerid || $unlockedit}
+	<tr>
+		<TD style="width: 2%;" class="fleft bold nobr">
+			<img src="img/customer.gif" alt=""> {trans("Customer:")}
+		</td>
+		<TD style="width: 98%;" colspan="3">
+			{if $unlockedit}
+				{customerlist form="netedit" customers=$customers selected=$network.ownerid selectname="networkdata[customerid]" inputname="networkdata[ownerid]" selecttip="Assign network to customer" inputtip="Enter customer ID (optional)"}
+			{else}
+				<a href="?m=customerinfo&id={$network.ownerid}">{$network.customername}</a>
+			{/if}
+		</td>
+	</tr>
+	{/if}
 	{if $network.hostid || $unlockedit}
 	<tr> 
 		<TD style="width: 2%;" class="fleft bold nobr">

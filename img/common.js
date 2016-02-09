@@ -508,6 +508,13 @@ function changeMacFormat(id)
 
 function tinymce_init(ui_language) {
 	tinyMCE.init({
+		setup : function(ed) {
+			ed.onBeforeSetContent.add(function(ed, o) {
+				if (o.initial) {
+					o.content = o.content.replace(/\r?\n/g, '<br />');
+				}
+			});
+		},
 		mode: "none",
 		language: ui_language,
 		theme: "advanced",
@@ -543,6 +550,11 @@ function init_links() {
 			link.onkeypress = function() { window.open(this.href); return false; }
 		}
 	}
+}
+
+function reset_customer(form, elemname1, elemname2) {
+	if (document.forms[form].elements[elemname1].value)
+		document.forms[form].elements[elemname2].value = document.forms[form].elements[elemname1].value;
 }
 
 if (window.addEventListener) window.addEventListener("load", init_links, false);

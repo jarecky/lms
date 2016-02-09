@@ -3,7 +3,7 @@
 /*
  *  LMS version 1.11-git
  *
- *  (C) Copyright 2001-2015 LMS Developers
+ *  (C) Copyright 2001-2016 LMS Developers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -40,6 +40,8 @@ if (is_readable('lms.ini'))
 	$CONFIG_FILE = 'lms.ini';
 elseif (is_readable(DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'lms' . DIRECTORY_SEPARATOR . 'lms-' . $_SERVER['HTTP_HOST'] . '.ini'))
 	$CONFIG_FILE = DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'lms' . DIRECTORY_SEPARATOR . 'lms-' . $_SERVER['HTTP_HOST'] . '.ini';
+elseif (is_readable('..' . DIRECTORY_SEPARATOR .'lms.ini'))
+	$CONFIG_FILE = '..' . DIRECTORY_SEPARATOR .'lms.ini';
 elseif (!is_readable($CONFIG_FILE))
 	die('Unable to read configuration file ['.$CONFIG_FILE.']!');
 
@@ -70,13 +72,19 @@ define('SMARTY_COMPILE_DIR', $CONFIG['directories']['smarty_compile_dir']);
 define('PLUGIN_DIR', $CONFIG['directories']['plugin_dir']);
 define('PLUGINS_DIR', $CONFIG['directories']['plugin_dir']);
 
+define('K_TCPDF_EXTERNAL_CONFIG', true);
+
 // include required files
 
 // Load autoloader
-require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'autoloader.php');
+$composer_autoload_path = SYS_DIR . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+if (file_exists($composer_autoload_path)) {
+    require_once $composer_autoload_path;
+} else {
+    die("Composer autoload not found. Run 'composer install' command from LMS directory and try again. More informations at https://getcomposer.org/");
+}
 
 require_once(USERPANEL_LIB_DIR . DIRECTORY_SEPARATOR . 'checkdirs.php');
-require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'config.php');
 
 // Initialize database
 
@@ -204,6 +212,7 @@ $layout['dberrors'] =& $DB->GetErrors();
 
 $SMARTY->assignByRef('modules', $USERPANEL->MODULES);
 $SMARTY->assignByRef('layout', $layout);
+$SMARTY->assign('page_header', ConfigHelper::getConfig('userpanel.page_header'));
 
 header('X-Powered-By: LMS/'.$layout['lmsv']);
 
@@ -223,7 +232,7 @@ if($SESSION->islogged)
 
 	if(ConfigHelper::checkConfig('userpanel.hide_nodes_modules'))
 	{
-		if(!$DB->GetOne('SELECT COUNT(*) FROM nodes WHERE ownerid = ? LIMIT 1', array($SESSION->id)))
+		if(!$DB->GetOne('SELECT COUNT(*) FROM vnodes WHERE ownerid = ? LIMIT 1', array($SESSION->id)))
 		{
 			unset($USERPANEL->MODULES['notices']);
 			unset($USERPANEL->MODULES['stats']);

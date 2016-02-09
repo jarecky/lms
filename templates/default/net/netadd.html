@@ -47,6 +47,14 @@
 		<TD style="width: 1%;" class="bold nobr"><IMG src="img/wins.gif" alt=""> {trans("WINS server:")}</TD>
 		<TD><INPUT type="text" size="23" name="netadd[wins]" value="{$netadd.wins}" {tip text="Enter WINS address (optional)" trigger="wins"}></TD>
 	</TR>
+	<tr>
+		<TD style="width: 1%;" class="fleft bold nobr">
+			<img src="img/customer.gif" alt=""> {trans("Customer:")}
+		</td>
+		<TD style="width: 98%;" colspan="3">
+			{customerlist form="netadd" customers=$customers selected=$netadd.ownerid selectname="netadd[customerid]" inputname="netadd[ownerid]" selecttip="Assign network to customer" inputtip="Enter customer ID (optional)"}
+		</td>
+	</tr>
 	<TR>
 		<TD style="width: 1%;" class="bold nobr"><IMG src="img/dhcpstart.gif" alt=""> {trans("Begin of DHCP range:")}</TD>
 		<TD><INPUT type="text" size="23" name="netadd[dhcpstart]" value="{$netadd.dhcpstart}" {tip text="Enter beginning of DHCP range (optional)" trigger="dhcpstart"}></TD>

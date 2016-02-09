@@ -3,7 +3,7 @@
 /*
  *  LMS version 1.11-git
  *
- *  Copyright (C) 2001-2013 LMS Developers
+ *  Copyright (C) 2001-2016 LMS Developers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -28,6 +28,7 @@
  * LMSFinanceManager
  *
  * @author Maciej Lew <maciej.lew.1987@gmail.com>
+ * @author Tomasz Chiliński <tomasz.chilinski@chilan.com>
  */
 class LMSFinanceManager extends LMSManager implements LMSFinanceManagerInterface
 {
@@ -96,8 +97,8 @@ class LMSFinanceManager extends LMSManager implements LMSFinanceManagerInterface
                 $assignments[$idx] = $row;
 
                 // assigned nodes
-                $assignments[$idx]['nodes'] = $this->db->GetAll('SELECT nodes.name, nodes.id FROM nodeassignments, nodes
-						    WHERE nodeid = nodes.id AND assignmentid = ?', array($row['id']));
+                $assignments[$idx]['nodes'] = $this->db->GetAll('SELECT vnodes.name, vnodes.id FROM nodeassignments, vnodes
+						    WHERE nodeid = vnodes.id AND assignmentid = ?', array($row['id']));
 
                 $assignments[$idx]['discounted_value'] = (((100 - $row['pdiscount']) * $row['value']) / 100) - $row['vdiscount'];
 
@@ -698,12 +699,22 @@ class LMSFinanceManager extends LMSManager implements LMSFinanceManagerInterface
 				d.div_inv_header AS division_header, d.div_inv_footer AS division_footer,
 				d.div_inv_author AS division_author, d.div_inv_cplace AS division_cplace,
 				c.pin AS customerpin, c.divisionid AS current_divisionid,
+				c.street, c.building, c.apartment,
+				c.post_street, c.post_building, c.post_apartment,
 				c.post_name, c.post_address, c.post_zip, c.post_city, c.post_countryid
 				FROM documents d
-				JOIN customers c ON (c.id = d.customerid)
+				JOIN customeraddressview c ON (c.id = d.customerid)
 				LEFT JOIN countries cn ON (cn.id = d.countryid)
 				LEFT JOIN numberplans n ON (d.numberplanid = n.id)
 				WHERE d.id = ? AND (d.type = ? OR d.type = ?)', array($invoiceid, DOC_INVOICE, DOC_CNOTE))) {
+
+			$result['bankaccounts'] = $this->db->GetCol('SELECT contact FROM customercontacts
+				WHERE customerid = ? AND (type & ?) = ?',
+				array($result['customerid'], CONTACT_BANKACCOUNT | CONTACT_INVOICES | CONTACT_DISABLED,
+					CONTACT_BANKACCOUNT | CONTACT_INVOICES));
+			if (empty($result['bankaccounts']))
+				$result['bankaccounts'] = array();
+
             $result['pdiscount'] = 0;
             $result['vdiscount'] = 0;
             $result['totalbase'] = 0;
@@ -821,12 +832,22 @@ class LMSFinanceManager extends LMSManager implements LMSFinanceManagerInterface
 				d.div_inv_header AS division_header, d.div_inv_footer AS division_footer,
 				d.div_inv_author AS division_author, d.div_inv_cplace AS division_cplace,
 				c.pin AS customerpin, c.divisionid AS current_divisionid,
+				c.street, c.building, c.apartment,
+				c.post_street, c.post_building, c.post_apartment,
 				c.post_name, c.post_address, c.post_zip, c.post_city, c.post_countryid
 				FROM documents d
-				JOIN customers c ON (c.id = d.customerid)
+				JOIN customeraddressview c ON (c.id = d.customerid)
 				LEFT JOIN countries cn ON (cn.id = d.countryid)
 				LEFT JOIN numberplans n ON (d.numberplanid = n.id)
 				WHERE d.id = ? AND d.type = ?', array($id, DOC_DNOTE))) {
+
+			$result['bankaccounts'] = $this->db->GetCol('SELECT contact FROM customercontacts
+				WHERE customerid = ? AND (type & ?) = ?',
+				array($result['customerid'], CONTACT_BANKACCOUNT | CONTACT_INVOICES | CONTACT_DISABLED,
+					CONTACT_BANKACCOUNT | CONTACT_INVOICES));
+			if (empty($result['bankaccounts']))
+				$result['bankaccounts'] = array();
+
             $result['value'] = 0;
 
             if (!$result['division_header']) {
@@ -1018,9 +1039,9 @@ class LMSFinanceManager extends LMSManager implements LMSFinanceManagerInterface
 
         $result['customers'] = $this->db->GetAll('SELECT c.id AS id, COUNT(c.id) AS cnt, '
                 . $this->db->Concat('c.lastname', "' '", 'c.name') . ' AS customername '
-                . ($network ? ', COUNT(nodes.id) AS nodescount ' : '')
-                . 'FROM assignments, customersview c '
-                . ($network ? 'LEFT JOIN nodes ON (c.id = nodes.ownerid) ' : '')
+                . ($network ? ', COUNT(vnodes.id) AS nodescount ' : '')
+                . 'FROM assignments, customerview c '
+                . ($network ? 'LEFT JOIN vnodes ON (c.id = vnodes.ownerid) ' : '')
                 . 'WHERE c.id = customerid AND deleted = 0 AND tariffid = ? '
                 . ($network ? 'AND ((ipaddr > ' . $net['address'] . ' AND ipaddr < ' . $net['broadcast'] . ') OR (ipaddr_pub > '
                         . $net['address'] . ' AND ipaddr_pub < ' . $net['broadcast'] . ')) ' : '')

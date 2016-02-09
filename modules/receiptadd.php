@@ -3,7 +3,7 @@
 /*
  * LMS version 1.11-git
  *
- *  (C) Copyright 2001-2013 LMS Developers
+ *  (C) Copyright 2001-2016 LMS Developers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -174,11 +174,11 @@ switch($action)
 		{
 			$customer = $LMS->GetCustomer($receipt['customerid'], true);
 			$customer['groups'] = $LMS->CustomergroupGetForCustomer($receipt['customerid']);
-			if (!ConfigHelper::checkValue(ConfigHelper::getConfig('receipts.show_notes', false)))
+			if (!ConfigHelper::checkConfig('receipts.show_notes'))
 				unset($customer['notes']);
-			
+
 			// niezatwierdzone dokumenty klienta
-			if(ConfigHelper::checkValue(ConfigHelper::getConfig('receipts.show_documents_warning', false)))
+			if (ConfigHelper::checkConfig('receipts.show_documents_warning'))
 				if($DB->GetOne('SELECT COUNT(*) FROM documents WHERE customerid = ? AND closed = 0 AND type < 0', array($receipt['customerid'])))
 				{
 					$documents_warning = ConfigHelper::getConfig('receipts.documents_warning');
@@ -190,8 +190,8 @@ switch($action)
 
 			// jesli klient posiada zablokowane komputery poinformujmy
 			// o tym kasjera, moze po wplacie trzeba bedzie zmienic ich status
-			if (ConfigHelper::checkValue(ConfigHelper::getConfig('receipts.show_nodes_warning', false)))
-				if($DB->GetOne('SELECT COUNT(*) FROM nodes WHERE ownerid = ? AND access = 0', array($receipt['customerid'])))
+			if (ConfigHelper::checkConfig('receipts.show_nodes_warning'))
+				if($DB->GetOne('SELECT COUNT(*) FROM vnodes WHERE ownerid = ? AND access = 0', array($receipt['customerid'])))
 				{
 					$nodes_warning = ConfigHelper::getConfig('receipts.nodes_warning');
 					if(!empty($nodes_warning))
@@ -206,7 +206,7 @@ switch($action)
 			if(!empty($show_nodegroups_warning))
 			{
 				$list = preg_split("/\s+/", $show_nodegroups_warning);
-				if($DB->GetOne('SELECT COUNT(*) FROM nodes n
+				if($DB->GetOne('SELECT COUNT(*) FROM vnodes n
 						JOIN nodegroupassignments a ON (n.id = a.nodeid)
 						JOIN nodegroups g ON (g.id = a.nodegroupid)
 						WHERE n.ownerid = ? AND UPPER(g.name) IN (UPPER(\''
@@ -489,11 +489,11 @@ switch($action)
 				{
 					$customer = $LMS->GetCustomer($cid, true);
 					$customer['groups'] = $LMS->CustomergroupGetForCustomer($cid);
-					if(!ConfigHelper::checkValue(ConfigHelper::getConfig('receipts.show_notes', false)))
+					if (!ConfigHelper::checkConfig('receipts.show_notes'))
 						unset($customer['notes']);
 
 					// niezatwierdzone dokumenty klienta
-					if (ConfigHelper::checkValue(ConfigHelper::getConfig('receipts.show_documents_warning', false)))
+					if (ConfigHelper::checkConfig('receipts.show_documents_warning'))
 						if($DB->GetOne('SELECT COUNT(*) FROM documents WHERE customerid = ? AND closed = 0 AND type < 0', array($cid)))
 						{
 							$documents_warning = ConfigHelper::getConfig('receipts.documents_warning');
@@ -504,10 +504,10 @@ switch($action)
 						}
 
 					// jesli klient posiada zablokowane komputery poinformujmy
-	    				// o tym kasjera, moze po wplacie trzeba bedzie zmienic ich status
-                                                
-					if (ConfigHelper::checkValue(ConfigHelper::getConfig('receipts.show_nodes_warning', false)))
-						if($DB->GetOne('SELECT COUNT(*) FROM nodes WHERE ownerid = ? AND access = 0', array($cid)))
+					// o tym kasjera, moze po wplacie trzeba bedzie zmienic ich status
+
+					if (ConfigHelper::checkConfig('receipts.show_nodes_warning'))
+						if($DB->GetOne('SELECT COUNT(*) FROM vnodes WHERE ownerid = ? AND access = 0', array($cid)))
 						{
 							$nodes_warning = ConfigHelper::getConfig('receipts.nodes_warning');
 							if(!empty($nodes_warning))
@@ -523,7 +523,7 @@ switch($action)
 					{
 						$list = preg_split("/\s+/", $show_nodegroups_warning);
 
-						if($DB->GetOne('SELECT COUNT(*) FROM nodes n
+						if($DB->GetOne('SELECT COUNT(*) FROM vnodes n
 			    				JOIN nodegroupassignments a ON (n.id = a.nodeid)
 				    			JOIN nodegroups g ON (g.id = a.nodegroupid)
 					    		WHERE n.ownerid = ? AND UPPER(g.name) IN (UPPER(\''
@@ -987,10 +987,8 @@ if(isset($list))
 	$invoicelist = array_slice($invoicelist, 0, 10);
 }
 
-if (!ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.big_networks', false)))
-{
-        $SMARTY->assign('customerlist', $LMS->GetCustomerNames());
-}
+if (!ConfigHelper::checkConfig('phpui.big_networks'))
+	$SMARTY->assign('customerlist', $LMS->GetCustomerNames());
 
 $SMARTY->assign('invoicelist', $invoicelist);
 $SMARTY->assign('rights', $DB->GetOne('SELECT rights FROM cashrights WHERE userid=? AND regid=?', array($AUTH->id, $receipt['regid'])));
