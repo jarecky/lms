@@ -67,15 +67,6 @@ CREATE TABLE netreserves (
   netelemid     int(11)         NOT NULL DEFAULT '0',
   cableid	int(11)         NOT NULL DEFAULT '0',
   count		smallint(4)	NOT NULL DEFAULT '0',
-  /*gps_long decimal(10,6) null,
-  gps_lat decimal(10,6) null,*/
-  /*moze faktycznie przeniesc definicje lokalizacji do osobnej tabeli?
-    - lokalizacje masz poprzez netelements w netnodes
-    - chodzi mi o to zeby nie bylo w 3 tabelach kolumn lokalizacyjnych ;) 
-      z kolei wszedzie wskazywanie na netelements bedzie rodzic bardziej skomplikowane zapytania
-      bo dojdzie ci jedna tabela posrednia (netelements) zeby uzyskac lokalizacje
-      docelowo proponowalbym tez takie wskazanie dac do klientow i komputerow (jesli nie wyladuja tutaj ;) )
-  */
   PRIMARY KEY (id),
   FOREIGN KEY (cableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -89,12 +80,9 @@ CREATE TABLE netcables (
     - jakie parametry ? netwires wskazuja na ta tabele a src/dst-nodeid wskazuja wezly 
       nie widze nigdzie powiazania rowniez po stronie php nie jest potrzebne 
       bo kable to osobna grupa rownolegla do netelements
+    - nie jest rownolegla - na GG wyjasnie ;)
   */
   type		tinyint(2)	NOT NULL DEFAULT '0',
-  /*color_schema_id int(11) not null default '0', */ /* mysle ze lepiej to zrobic slownikowo, ale OK */
-  /* czyli slownik w php i jakas zmiana to update kodu ;)?
-  - a ile masz schematów kolorowania kabli swiatlowodowych?  
-  - w sumie to sa dosc statyczne ;) do wywalenia*/
   label		varchar(100)	NOT NULL DEFAULT '',
   capacity	smallint(4)	NOT NULL DEFAULT '0',
   distance	int(4)		UNSIGNED NOT NULL DEFAULT '0',
@@ -105,27 +93,9 @@ CREATE TABLE netcables (
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (srcnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY (dstnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
-  /*UNIQUE KEY type (netelemid,type)*/ /*tu lepiej zmienic na */
   UNIQUE KEY label(label)
 ) ENGINE=InnoDB;
 
-/* skoro slowniki w php to to do wywalenia
-CREATE TABLE `color_schema` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(20) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB;
-
-CREATE TABLE `colors` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `color_schema_id` int(11) NOT NULL DEFAULT '0',
-  `color` varchar(8) COLLATE utf8_bin NOT NULL DEFAULT 'dcdcdc00',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `color_schema_id` (`color_schema_id`,`color`),
-  KEY `color_schema` (`color_schema_id`)
-) ENGINE=InnoDB;
-*/
 CREATE TABLE netdevports (
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
@@ -154,6 +124,7 @@ CREATE TABLE netradiosectors (
     jesli netdevice typ==radio_sector to szukaj w tej tabeli parametrow
     ewentualnie dodalbym tu jeszcze kolumne SSID i/lub BSSID 
     (nie wiem dlaczego ta tabela zawsze kojazyla mi sie z pasmami licencjonowanymi)
+  - nie! dla netdevices szukamy portow w netdevports i netradiosectors :)
   */
   name		varchar(64)	NOT NULL,
   azimuth	decimal(9,2)	DEFAULT 0 NOT NULL,
@@ -222,11 +193,12 @@ CREATE TABLE netconnections (
      port_type masz w netdevports wystarczy konektor=spaw i konektor=radio i masz wyroznik dla dodatkowych tabeli
      - tyle ze to sie odnosi do innych tabel (netdevports, netradiosectors czy netobjports)
      - wiesz, ze warunki mozna laczyc ?? ;)
+     - jasne - dlatego mozna zrobic albo para (src|dst)type+portid
+       albo odnosnik do osobnej tabeli
   */
   srcconnid	int(11)         not NULL DEFAULT '0',
   dstconnid	int(11)         not NULL DEFAULT '0',
   distance      float(4,1)	DEFAULT NULL, 
-  /* smialo mozesz dac int(11) i liczyc w metrach - to mialo byc w metrach - patchcord 0,5m :) */
   description	varchar(50)	NOT NULL DEFAULT '',	
   PRIMARY KEY (id),
   FOREIGN KEY (srcwireid) REFERENCES netwires (id) ON DELETE CASCADE ON UPDATE CASCADE,
