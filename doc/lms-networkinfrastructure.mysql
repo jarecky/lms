@@ -63,6 +63,17 @@ CREATE TABLE netdevparams (
 ) ENGINE=InnoDB;
 
 
+CREATE TABLE netreserves (
+  id            int(11)         NOT NULL auto_increment,
+  netelemid     int(11)         NOT NULL DEFAULT '0',
+  cableid	int(11)         NOT NULL DEFAULT '0',
+  count		smallint(4)	NOT NULL DEFAULT '0',
+  PRIMARY KEY (id),
+  FOREIGN KEY (cableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (netelemeid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  UNIQUE KEY reserve (netelemid,cableid)
+) ENGINE=InnoDB;
+
 CREATE TABLE netcables (
   id		int(11)		NOT NULL auto_increment,
   netelemid	int(11)		NOT NULL DEFAULT '0', /*zdecydowanie potrzebne - musisz wskazywać do czego to parametry */
