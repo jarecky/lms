@@ -68,7 +68,10 @@ CREATE TABLE netreserves (
   cableid	int(11)         NOT NULL DEFAULT '0',
   count		smallint(4)	NOT NULL DEFAULT '0',
   /*gps_long decimal(10,6) null,
-  gps_lat decimal(10,6) null,*//*moze faktycznie przeniesc definicje lokalizacji do osobnej tabeli?*/
+  gps_lat decimal(10,6) null,*/
+  /*moze faktycznie przeniesc definicje lokalizacji do osobnej tabeli?
+    - lokalizacje masz poprzez netelements w netnodes
+  */
   PRIMARY KEY (id),
   FOREIGN KEY (cableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -80,7 +83,8 @@ CREATE TABLE netcables (
   netelemid	int(11)		NOT NULL DEFAULT '0', /*zdecydowanie potrzebne - musisz wskazywać do czego to parametry */
   type		tinyint(2)	NOT NULL DEFAULT '0',
   /*color_schema_id int(11) not null default '0', */ /* mysle ze lepiej to zrobic slownikowo, ale OK */
-  /* czyli slownik w php i jakas zmiana to update kodu ;)?*/
+  /* czyli slownik w php i jakas zmiana to update kodu ;)?
+  - a ile masz schematów kolorowania kabli swiatlowodowych?  */
   label		varchar(100)	NOT NULL DEFAULT '',
   capacity	smallint(4)	NOT NULL DEFAULT '0',
   distance	int(4)		UNSIGNED NOT NULL DEFAULT '0',
@@ -131,7 +135,12 @@ CREATE TABLE netradiosectors (
   /* to nie bedzie lepiej przypiac do portu ?? - zdecydowanie nie sektor sam w sobie 
      bedzie portem do ktorego bedziesz podpinal urzadzenia 
      no to sie wy...je koncepcja laczenia port-port+wlokno-wlokno, a w tej tabeli masz dodatkowe dane tak jak w spiterach
-     w koncu stacja bazowa ma co najmniej 2 porty eth+n radio*/
+     w koncu stacja bazowa ma co najmniej 2 porty eth+n radio
+  - dla mnie sektor radiowy jest takim samym portem jak ethernet o
+    tyle, ze jest portem p2mp - w i tak planowalem w 
+    netdevports dodawanie portow radiowych p2p (np. w CPE gdzie nie ma
+    sensu definiowac zasiegow, azymutow itp
+  */
   name		varchar(64)	NOT NULL,
   azimuth	decimal(9,2)	DEFAULT 0 NOT NULL,
   width		decimal(9,2)	DEFAULT 0 NOT NULL,
@@ -196,7 +205,10 @@ CREATE TABLE netconnections (
   dstwireid	int(11)		not NULL DEFAULT '0',
   /* jesli chodzi o porty to mamy 3 rodzaje portow: aktywne, pasywne i radiowe co powoduje koniecznosc 
      albo zastosowania kolejnego pola port_type albo wyrzucenie tego do kolejnej tabeli (netports) 
-     port_type masz w netdevports wystarczy konektor=spaw i konektor=radio i masz wyroznik dla dodatkowych tabel*/
+     port_type masz w netdevports wystarczy konektor=spaw i konektor=radio i masz wyroznik dla dodatkowych tabeli
+     - tyle ze to sie odnosi do innych tabel (netdevports,
+       netradiosectors czy netparams <- chyba trzeba zmienic nazwe
+  */
   srcconnid	int(11)         not NULL DEFAULT '0',
   dstconnid	int(11)         not NULL DEFAULT '0',
   distance      float(4,1)	DEFAULT NULL, 
