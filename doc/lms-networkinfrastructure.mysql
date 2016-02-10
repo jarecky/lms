@@ -1,5 +1,4 @@
 
-
 CREATE TABLE netnodes (
   id int(11) NOT NULL auto_increment,
   name varchar(255) NOT NULL,
@@ -50,13 +49,13 @@ CREATE TABLE netelements (
 CREATE TABLE netdevparams (
   id                int(11)         NOT NULL auto_increment,
   netelemid         int(11)         NOT NULL DEFAULT '0',
-  /*shortname     varchar(32)     NOT NULL DEFAULT '',*//* to chyba niepotrzebne jesli jest w nadrzednej tabeli*/
+  shortname     varchar(32)     NOT NULL DEFAULT '',/* Nie ma - to było więc zostawiłem */
   nastype       int(11)         NOT NULL DEFAULT '0',
   clients       int(11)         NOT NULL DEFAULT '0',
-  user          varchar(20)     not null default '',/*w roznych urzadzeniach sa rozni uzytkownicy administracyjni*/
+  user          varchar(20)     not null default '',
   secret        varchar(60)     NOT NULL DEFAULT '',
   community     varchar(50)     NOT NULL DEFAULT '',
-  channelid     int(11)         DEFAULT NULL, /* do czego ta kolumna ?? */
+  channelid     int(11)         DEFAULT NULL, /* do czego ta kolumna ?? - do etherwerx ;) */
   PRIMARY KEY (id),
   INDEX channelid (channelid),
   FOREIGN KEY (channelid) REFERENCES ewx_channels (id) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -66,19 +65,19 @@ CREATE TABLE netdevparams (
 
 CREATE TABLE netcables (
   id		int(11)		NOT NULL auto_increment,
-  /*netelemid	int(11)		NOT NULL DEFAULT '0',*/ /*to raczej niepotrzebne*/
+  netelemid	int(11)		NOT NULL DEFAULT '0', /*zdecydowanie potrzebne - musisz wskazywać do czego to parametry */
   type		tinyint(2)	NOT NULL DEFAULT '0',
-  color_schema_id int(11) not null default '0', /*producenci stosuja rozna numeracje i kolory*/
+  /*color_schema_id int(11) not null default '0', */ /* mysle ze lepiej to zrobic slownikowo, ale OK */
   label		varchar(100)	NOT NULL DEFAULT '',
   capacity	smallint(4)	NOT NULL DEFAULT '0',
   distance	int(4)		UNSIGNED NOT NULL DEFAULT '0',
-  srcelemid	int(11)		DEFAULT NULL,	/*tu proponuje zmienic nazwy na srcnetnodeid dstnetnodeid*/
+  srcelemid	int(11)		DEFAULT NULL,	/* Nie - łączysz elementy sieciowe a nie węzły! */
   dstelemid	int(11)		DEFAULT NULL,	
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (srcelemid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
-  FOREIGN KEY (dstelemid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY (srcelemid) REFERENCES netelements (id) ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY (dstelemid) REFERENCES netelements (id) ON DELETE SET NULL ON UPDATE CASCADE,
   /*UNIQUE KEY type (netelemid,type)*/ /*tu lepiej zmienic na */
   UNIQUE KEY label(label)
 ) ENGINE=InnoDB;
@@ -114,7 +113,9 @@ CREATE TABLE netports (
 
 CREATE TABLE netradiosectors (
   id		int(11)		NOT NULL auto_increment,
-  netelemid     int(11)         NOT NULL DEFAULT '0', /* to nie bedzie lepiej przypiac do portu ??*/
+  netelemid     int(11)         NOT NULL DEFAULT '0', 
+  /* to nie bedzie lepiej przypiac do portu ?? - zdecydowanie nie sektor sam w sobie 
+     bedzie portem do ktorego bedziesz podpinal urzadzenia */
   name		varchar(64)	NOT NULL,
   azimuth	decimal(9,2)	DEFAULT 0 NOT NULL,
   width		decimal(9,2)	DEFAULT 0 NOT NULL,
@@ -165,18 +166,31 @@ CREATE TABLE netwires (
   UNIQUE KEY wire (netcableid,bundle,wire)
 ) ENGINE=INNODB;
 
+
+CREATE TABLE netconnports (
+  id            int(11)         NOT NULL auto_increment,
+  type		tinyint(1) 	NOT NULL default '0',
+  portid	int(11)		NOT NULL default '0',
+  PRIMARY KEY (id)
+) ENGINE=INNODB;
+
 CREATE TABLE netconnections (
   id            int(11)         NOT NULL auto_increment,
   srcwireid	int(11)         not NULL DEFAULT '0',
   dstwireid	int(11)		not NULL DEFAULT '0',
-  srcconnector	tinyint(2)	not NULL DEFAULT '0',/*to chyba lepiej bedzie zamienic na src_port_id*/
-  dstconnector	tinyint(2)	not NULL DEFAULT '0',/*to chyba lepiej bedzie zamienic na dst_port_id*/
-  distance      float(4,1)	DEFAULT NULL, /* smialo mozesz dac int(11) i liczyc w metrach */
+  /* jesli chodzi o porty to mamy 3 rodzaje portow: aktywne, pasywne i radiowe co powoduje koniecznosc 
+     albo zastosowania kolejnego pola port_type albo wyrzucenie tego do kolejnej tabeli (netconnports) */
+  srcconnid	int(11)         not NULL DEFAULT '0',
+  dstconnid	int(11)         not NULL DEFAULT '0',
+  distance      float(4,1)	DEFAULT NULL, 
+  /* smialo mozesz dac int(11) i liczyc w metrach - to mialo byc w metrach - patchcord 0,5m :) */
   description	varchar(50)	NOT NULL DEFAULT '',	
   PRIMARY KEY (id),
   FOREIGN KEY (srcwireid) REFERENCES netwires (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (dstwireid) REFERENCES netwires (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY wires (srcwireid,dstwireid) /*kluczyk rozszerzyc jeszcze o pola portów 
-    poprawilem tez defaulta dla indexowanych pol dla unikalnego nie moze byc null*/
+  FOREIGN KEY (srcconnid) REFERENCES netconnports (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (dstconnid) REFERENCES netconnports (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  UNIQUE KEY wires (srcwireid,dstwireid,srcconnid,dstconnid)
 ) ENGINE=INNODB;
+
 
