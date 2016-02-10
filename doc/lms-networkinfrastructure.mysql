@@ -71,7 +71,7 @@ CREATE TABLE netreserves (
   gps_lat decimal(10,6) null,*//*moze faktycznie przeniesc definicje lokalizacji do osobnej tabeli?*/
   PRIMARY KEY (id),
   FOREIGN KEY (cableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (netelemeid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY reserve (netelemid,cableid)
 ) ENGINE=InnoDB;
 
