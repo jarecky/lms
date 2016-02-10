@@ -157,7 +157,7 @@ CREATE TABLE netradiosectors (
   UNIQUE KEY name (name, netelemid)
 ) ENGINE=INNODB;
 
-CREATE TABLE netparams (
+CREATE TABLE netobjports (
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   label		varchar(64)     NOT NULL,
@@ -206,8 +206,7 @@ CREATE TABLE netconnections (
   /* jesli chodzi o porty to mamy 3 rodzaje portow: aktywne, pasywne i radiowe co powoduje koniecznosc 
      albo zastosowania kolejnego pola port_type albo wyrzucenie tego do kolejnej tabeli (netports) 
      port_type masz w netdevports wystarczy konektor=spaw i konektor=radio i masz wyroznik dla dodatkowych tabeli
-     - tyle ze to sie odnosi do innych tabel (netdevports,
-       netradiosectors czy netparams <- chyba trzeba zmienic nazwe
+     - tyle ze to sie odnosi do innych tabel (netdevports, netradiosectors czy netobjports)
   */
   srcconnid	int(11)         not NULL DEFAULT '0',
   dstconnid	int(11)         not NULL DEFAULT '0',
