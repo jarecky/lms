@@ -71,13 +71,13 @@ CREATE TABLE netcables (
   label		varchar(100)	NOT NULL DEFAULT '',
   capacity	smallint(4)	NOT NULL DEFAULT '0',
   distance	int(4)		UNSIGNED NOT NULL DEFAULT '0',
-  srcelemid	int(11)		DEFAULT NULL,	/* Nie - łączysz elementy sieciowe a nie węzły! */
-  dstelemid	int(11)		DEFAULT NULL,	
+  srcnodeid	int(11)		DEFAULT NULL,
+  dstnodeid	int(11)		DEFAULT NULL,	
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (srcelemid) REFERENCES netelements (id) ON DELETE SET NULL ON UPDATE CASCADE,
-  FOREIGN KEY (dstelemid) REFERENCES netelements (id) ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY (srcnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY (dstnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
   /*UNIQUE KEY type (netelemid,type)*/ /*tu lepiej zmienic na */
   UNIQUE KEY label(label)
 ) ENGINE=InnoDB;
