@@ -98,7 +98,7 @@ CREATE TABLE `colors` (
   KEY `color_schema` (`color_schema_id`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE netports (
+CREATE TABLE netdevports (
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   label		varchar(32)	NOT NULL DEFAULT '',
@@ -167,7 +167,7 @@ CREATE TABLE netwires (
 ) ENGINE=INNODB;
 
 
-CREATE TABLE netconnports (
+CREATE TABLE netports (
   id            int(11)         NOT NULL auto_increment,
   type		tinyint(1) 	NOT NULL default '0',
   portid	int(11)		NOT NULL default '0',
@@ -179,7 +179,7 @@ CREATE TABLE netconnections (
   srcwireid	int(11)         not NULL DEFAULT '0',
   dstwireid	int(11)		not NULL DEFAULT '0',
   /* jesli chodzi o porty to mamy 3 rodzaje portow: aktywne, pasywne i radiowe co powoduje koniecznosc 
-     albo zastosowania kolejnego pola port_type albo wyrzucenie tego do kolejnej tabeli (netconnports) */
+     albo zastosowania kolejnego pola port_type albo wyrzucenie tego do kolejnej tabeli (netports) */
   srcconnid	int(11)         not NULL DEFAULT '0',
   dstconnid	int(11)         not NULL DEFAULT '0',
   distance      float(4,1)	DEFAULT NULL, 
@@ -188,8 +188,8 @@ CREATE TABLE netconnections (
   PRIMARY KEY (id),
   FOREIGN KEY (srcwireid) REFERENCES netwires (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (dstwireid) REFERENCES netwires (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (srcconnid) REFERENCES netconnports (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (dstconnid) REFERENCES netconnports (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (srcconnid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (dstconnid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY wires (srcwireid,dstwireid,srcconnid,dstconnid)
 ) ENGINE=INNODB;
 
