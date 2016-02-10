@@ -71,6 +71,10 @@ CREATE TABLE netreserves (
   gps_lat decimal(10,6) null,*/
   /*moze faktycznie przeniesc definicje lokalizacji do osobnej tabeli?
     - lokalizacje masz poprzez netelements w netnodes
+    - chodzi mi o to zeby nie bylo w 3 tabelach kolumn lokalizacyjnych ;) 
+      z kolei wszedzie wskazywanie na netelements bedzie rodzic bardziej skomplikowane zapytania
+      bo dojdzie ci jedna tabela posrednia (netelements) zeby uzyskac lokalizacje
+      docelowo proponowalbym tez takie wskazanie dac do klientow i komputerow (jesli nie wyladuja tutaj ;) )
   */
   PRIMARY KEY (id),
   FOREIGN KEY (cableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -80,11 +84,17 @@ CREATE TABLE netreserves (
 
 CREATE TABLE netcables (
   id		int(11)		NOT NULL auto_increment,
-  netelemid	int(11)		NOT NULL DEFAULT '0', /*zdecydowanie potrzebne - musisz wskazywać do czego to parametry */
+  netelemid	int(11)		NOT NULL DEFAULT '0', 
+  /*zdecydowanie potrzebne - musisz wskazywać do czego to parametry 
+    - jakie parametry ? netwires wskazuja na ta tabele a src/dst-nodeid wskazuja wezly 
+      nie widze nigdzie powiazania rowniez po stronie php nie jest potrzebne 
+      bo kable to osobna grupa rownolegla do netelements
+  */
   type		tinyint(2)	NOT NULL DEFAULT '0',
   /*color_schema_id int(11) not null default '0', */ /* mysle ze lepiej to zrobic slownikowo, ale OK */
   /* czyli slownik w php i jakas zmiana to update kodu ;)?
-  - a ile masz schematów kolorowania kabli swiatlowodowych?  */
+  - a ile masz schematów kolorowania kabli swiatlowodowych?  
+  - w sumie to sa dosc statyczne ;) do wywalenia*/
   label		varchar(100)	NOT NULL DEFAULT '',
   capacity	smallint(4)	NOT NULL DEFAULT '0',
   distance	int(4)		UNSIGNED NOT NULL DEFAULT '0',
@@ -99,7 +109,7 @@ CREATE TABLE netcables (
   UNIQUE KEY label(label)
 ) ENGINE=InnoDB;
 
-/* skoro slowniki w php
+/* skoro slowniki w php to to do wywalenia
 CREATE TABLE `color_schema` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(20) COLLATE utf8_bin NOT NULL,
@@ -140,6 +150,10 @@ CREATE TABLE netradiosectors (
     tyle, ze jest portem p2mp - w i tak planowalem w 
     netdevports dodawanie portow radiowych p2p (np. w CPE gdzie nie ma
     sensu definiowac zasiegow, azymutow itp
+  - no to dlatego prponuje wskazanie na port 
+    jesli netdevice typ==radio_sector to szukaj w tej tabeli parametrow
+    ewentualnie dodalbym tu jeszcze kolumne SSID i/lub BSSID 
+    (nie wiem dlaczego ta tabela zawsze kojazyla mi sie z pasmami licencjonowanymi)
   */
   name		varchar(64)	NOT NULL,
   azimuth	decimal(9,2)	DEFAULT 0 NOT NULL,
@@ -207,6 +221,7 @@ CREATE TABLE netconnections (
      albo zastosowania kolejnego pola port_type albo wyrzucenie tego do kolejnej tabeli (netports) 
      port_type masz w netdevports wystarczy konektor=spaw i konektor=radio i masz wyroznik dla dodatkowych tabeli
      - tyle ze to sie odnosi do innych tabel (netdevports, netradiosectors czy netobjports)
+     - wiesz, ze warunki mozna laczyc ?? ;)
   */
   srcconnid	int(11)         not NULL DEFAULT '0',
   dstconnid	int(11)         not NULL DEFAULT '0',
