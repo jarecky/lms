@@ -45,9 +45,14 @@ CREATE TABLE netelements (
   FOREIGN KEY (netdevicemodelid) REFERENCES netdevicemodels (id) ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE netdevparams (
-  id                int(11)         NOT NULL auto_increment,
-  netelemid         int(11)         NOT NULL DEFAULT '0',
+/* Urządzenia aktywne (3 dodatkowe tabele)
+  - dane dodatkowe
+  - porty p2p - miedz/optyka/radio
+  - porty p2mp - sektory radiowe (jako rozszerzenie portu radiowego)
+*/
+CREATE TABLE netdevices (
+  id            int(11)         NOT NULL auto_increment,
+  netelemid     int(11)         NOT NULL DEFAULT '0',
   shortname     varchar(32)     NOT NULL DEFAULT '',
   nastype       int(11)         NOT NULL DEFAULT '0',
   clients       int(11)         NOT NULL DEFAULT '0',
@@ -61,13 +66,40 @@ CREATE TABLE netdevparams (
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE NULL ON UPDATE CASCADE,
 ) ENGINE=InnoDB;
 
+CREATE TABLE netdevports (
+  id            int(11)         NOT NULL auto_increment,
+  netelemid     int(11)         NOT NULL DEFAULT '0',
+  label         varchar(32)     NOT NULL DEFAULT '',
+  technology    tinyint(3)      UNSIGNED NOT NULL DEFAULT '0',
+  connector     tinyint(3)      UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (id),
+  INDEX netelemid(netelemid),
+  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  UNIQUE KEY label (label, netelemid)
+) ENGINE=InnoDB;
 
+CREATE TABLE netradiosectors (
+  id            int(11)         NOT NULL auto_increment,
+  netdevportid  int(11)         NOT NULL DEFAULT '0',
+  name          varchar(64)     NOT NULL,
+  azimuth       decimal(9,2)    DEFAULT 0 NOT NULL,
+  width         decimal(9,2)    DEFAULT 0 NOT NULL,
+  altitude      smallint        DEFAULT 0 NOT NULL,
+  rsrange       int(11)         DEFAULT 0 NOT NULL,
+  license       varchar(64)     DEFAULT NULL,
+  technology    int(11)         DEFAULT 0 NOT NULL,
+  frequency     numeric(9,5)    DEFAULT NULL,
+  frequency2    numeric(9,5)    DEFAULT NULL,
+  bandwidth     numeric(9,5)    DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX netelemid (netelemid),
+  FOREIGN KEY (netdevportid) REFERENCES netdevports (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  UNIQUE KEY name (name, netelemid)
+) ENGINE=INNODB;
+
+
+/* zapasy kablowe */
 CREATE TABLE netreserves (
-/*
-  - nie bardzo podoba mi sie koncepcja wstawiania do netelements rzeczy, ktore nie biora udzialu w transmisji
-    ale to pewnie tak jak z kablami ;)
-    do takich rzeczy jak zapas kabla czy studnia potrzebujesz tylko wskazania na kabel i pozycji(lokalizacji)
-*/
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   cableid	int(11)         NOT NULL DEFAULT '0',
@@ -78,16 +110,10 @@ CREATE TABLE netreserves (
   UNIQUE KEY reserve (netelemid,cableid)
 ) ENGINE=InnoDB;
 
+/* kable - optyczne/miedziane */
 CREATE TABLE netcables (
   id		int(11)		NOT NULL auto_increment,
   netelemid	int(11)		NOT NULL DEFAULT '0', 
-  /*zdecydowanie potrzebne - musisz wskazywać do czego to parametry 
-    - jakie parametry ? netwires wskazuja na ta tabele a src/dst-nodeid wskazuja wezly 
-      nie widze nigdzie powiazania rowniez po stronie php nie jest potrzebne 
-      bo kable to osobna grupa rownolegla do netelements
-    - nie jest rownolegla - na GG wyjasnie ;)
-    - OK pewnie dojdziemy do konsensusu ;)
-  */
   type		tinyint(2)	NOT NULL DEFAULT '0',
   label		varchar(100)	NOT NULL DEFAULT '',
   capacity	smallint(4)	NOT NULL DEFAULT '0',
@@ -102,64 +128,19 @@ CREATE TABLE netcables (
   UNIQUE KEY label(label)
 ) ENGINE=InnoDB;
 
-CREATE TABLE netdevports (
+CREATE TABLE netwires (
   id            int(11)         NOT NULL auto_increment,
-  netelemid     int(11)         NOT NULL DEFAULT '0',
-  label		varchar(32)	NOT NULL DEFAULT '',
-  type		tinyint(1)	UNSIGNED NOT NULL DEFAULT '0',
-  connector	tinyint(1)      UNSIGNED NOT NULL DEFAULT '0',
-  technology	tinyint(1)      UNSIGNED NOT NULL DEFAULT '0',
+  netcableid    int(11)         NOT NULL DEFAULT '0',
+  bundle        tinyint(2)      NOT NULL DEFAULT '1',
+  wire          tinyint(2)      NOT NULL DEFAULT '1',
   PRIMARY KEY (id),
-  INDEX netelemid(netelemid),
-  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY label (label, netelemid)
-) ENGINE=InnoDB;
-
-CREATE TABLE netradiosectors (
-  id		int(11)		NOT NULL auto_increment,
-  netelemid     int(11)         NOT NULL DEFAULT '0', 
-  /* to nie bedzie lepiej przypiac do portu ?? - zdecydowanie nie sektor sam w sobie 
-     bedzie portem do ktorego bedziesz podpinal urzadzenia 
-     no to sie wy...je koncepcja laczenia port-port+wlokno-wlokno, a w tej tabeli masz dodatkowe dane tak jak w spiterach
-     w koncu stacja bazowa ma co najmniej 2 porty eth+n radio
-  - dla mnie sektor radiowy jest takim samym portem jak ethernet o
-    tyle, ze jest portem p2mp - w i tak planowalem w 
-    netdevports dodawanie portow radiowych p2p (np. w CPE gdzie nie ma
-    sensu definiowac zasiegow, azymutow itp
-  - no to dlatego prponuje wskazanie na port 
-    jesli netdevice typ==radio_sector to szukaj w tej tabeli parametrow
-    ewentualnie dodalbym tu jeszcze kolumne SSID i/lub BSSID 
-    (nie wiem dlaczego ta tabela zawsze kojazyla mi sie z pasmami licencjonowanymi)
-  - nie! dla netdevices szukamy portow w netdevports i netradiosectors :)
-  - czyli proponujesz poszukiwanie portów w 2 tabelach, ale troche wyzej piszesz o wrzucaniu portow p2mp do netdevports
-    troche sie to nielogiczne. 
-    wg mnie prosciej bedzie opisac port radiowy(nadawczy) tutaj i wskazac nie urzadzenie
-    ale konkretny port ktory wykorzystasz w netlinks.
-    (wez takiego MT433 tam mozesz miec 3 porty radiowe) 
-    to do ktorego bedzie sie tyczyc rekord skoro wskazujesz calego mietka??
-  */
-  name		varchar(64)	NOT NULL,
-  azimuth	decimal(9,2)	DEFAULT 0 NOT NULL,
-  width		decimal(9,2)	DEFAULT 0 NOT NULL,
-  altitude	smallint	DEFAULT 0 NOT NULL,
-  rsrange	int(11)		DEFAULT 0 NOT NULL,
-  license	varchar(64)	DEFAULT NULL,
-  technology	int(11)		DEFAULT 0 NOT NULL,
-  frequency	numeric(9,5)	DEFAULT NULL,
-  frequency2	numeric(9,5)	DEFAULT NULL,
-  bandwidth	numeric(9,5)	DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX netelemid (netelemid),
-  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY name (name, netelemid)
+  INDEX netcableid (netcableid),
+  FOREIGN KEY (netcableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  UNIQUE KEY wire (netcableid,bundle,wire)
 ) ENGINE=INNODB;
 
+/* urzadzenia pasywne */
 CREATE TABLE netobjports (
-/*
-  - a to do czego ??? domyslam sie ze moze chodzic o tacki ale to mozna zalatwic dodatkowa kolumna w netdevports
-    (ilosc mozliwych dowiazan do danego portu) kwestia obmyslenia warunkow dla algorytmu
-    czeste laczenie tabel zeby wyciagnac jakies dane (w tym przypadku pojemnosc) jest troche upierdliwe w programowaniu ;)
-*/
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   label		varchar(64)     NOT NULL,
@@ -170,30 +151,19 @@ CREATE TABLE netobjports (
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=INNODB;
 
-
+/* splitery optyczne */
 CREATE TABLE netsplitters (
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   side          tinyint(2)      NOT NULL DEFAULT '0',
-  capacity      int(11)         NOT NULL DEFAULT '1',
+  capacity      tinyint(3)      NOT NULL DEFAULT '1',
   PRIMARY KEY (id),
   INDEX netelemid (netdelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY side (netelemid,side)
 ) ENGINE=INNODB;
 
-CREATE TABLE netwires (
-  id            int(11)         NOT NULL auto_increment,
-  netcableid    int(11)         NOT NULL DEFAULT '0',
-  bundle	tinyint(2)	NOT NULL DEFAULT '1',
-  wire		tinyint(2)	NOT NULL DEFAULT '1',
-  PRIMARY KEY (id),
-  INDEX netcableid (netcableid),
-  FOREIGN KEY (netcableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY wire (netcableid,bundle,wire)
-) ENGINE=INNODB;
-
-
+/* opis portu do połączeń - type portu i id z odpowiedniej bazy */
 CREATE TABLE netports (
   id            int(11)         NOT NULL auto_increment,
   type		tinyint(1) 	NOT NULL default '0',
@@ -201,19 +171,14 @@ CREATE TABLE netports (
   PRIMARY KEY (id)
 ) ENGINE=INNODB;
 
+/* polaczenia miedzy elementami:
+  - kabel-kabel + srcconnid wskazujace na tacke spawow (rekord w netobjports)
+  - kabel-connector-connector-kabel
+*/
 CREATE TABLE netconnections (
   id            int(11)         NOT NULL auto_increment,
   srcwireid	int(11)         not NULL DEFAULT '0',
   dstwireid	int(11)		not NULL DEFAULT '0',
-  /* jesli chodzi o porty to mamy 3 rodzaje portow: aktywne, pasywne i radiowe co powoduje koniecznosc 
-     albo zastosowania kolejnego pola port_type albo wyrzucenie tego do kolejnej tabeli (netports) 
-     port_type masz w netdevports wystarczy konektor=spaw i konektor=radio i masz wyroznik dla dodatkowych tabeli
-     - tyle ze to sie odnosi do innych tabel (netdevports, netradiosectors czy netobjports)
-     - wiesz, ze warunki mozna laczyc ?? ;)
-     - jasne - dlatego mozna zrobic albo para (src|dst)type+portid
-       albo odnosnik do osobnej tabeli
-     - tabele netports masz  ;) 
-  */
   srcconnid	int(11)         not NULL DEFAULT '0',
   dstconnid	int(11)         not NULL DEFAULT '0',
   distance      float(4,1)	DEFAULT NULL, 
