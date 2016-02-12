@@ -66,12 +66,14 @@ CREATE TABLE netdevices (
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE NULL ON UPDATE CASCADE,
 ) ENGINE=InnoDB;
 
-CREATE TABLE netdevports (
+CREATE TABLE netports (
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
+  type          tinyint(2)      NOT NULL DEFAULT '0',
   label         varchar(32)     NOT NULL DEFAULT '',
   technology    tinyint(3)      UNSIGNED NOT NULL DEFAULT '0',
   connector     tinyint(3)      UNSIGNED NOT NULL DEFAULT '0',
+  capacity      tinyint(2)	UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -80,7 +82,7 @@ CREATE TABLE netdevports (
 
 CREATE TABLE netradiosectors (
   id            int(11)         NOT NULL auto_increment,
-  netdevportid  int(11)         NOT NULL DEFAULT '0',
+  netportid     int(11)         NOT NULL DEFAULT '0',
   name          varchar(64)     NOT NULL,
   azimuth       decimal(9,2)    DEFAULT 0 NOT NULL,
   width         decimal(9,2)    DEFAULT 0 NOT NULL,
@@ -93,20 +95,19 @@ CREATE TABLE netradiosectors (
   bandwidth     numeric(9,5)    DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX netelemid (netelemid),
-  FOREIGN KEY (netdevportid) REFERENCES netdevports (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (netdevportid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY name (name, netelemid)
 ) ENGINE=INNODB;
-
 
 /* zapasy kablowe */
 CREATE TABLE netreserves (
   id            int(11)         NOT NULL auto_increment,
-  netelemid     int(11)         NOT NULL DEFAULT '0',
-  cableid	int(11)         NOT NULL DEFAULT '0',
+  netcableid	int(11)         NOT NULL DEFAULT '0',
+  netnodeid     int(11)         NOT NULL DEFAULT '0',
   count		smallint(4)	NOT NULL DEFAULT '0',
   PRIMARY KEY (id),
-  FOREIGN KEY (cableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (netcableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY reserve (netelemid,cableid)
 ) ENGINE=InnoDB;
 
@@ -118,12 +119,10 @@ CREATE TABLE netcables (
   label		varchar(100)	NOT NULL DEFAULT '',
   capacity	smallint(4)	NOT NULL DEFAULT '0',
   distance	int(4)		UNSIGNED NOT NULL DEFAULT '0',
-  srcnodeid	int(11)		DEFAULT NULL,
-  dstnodeid	int(11)		DEFAULT NULL,	
+  dstnodeid	int(11)		DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (srcnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY (dstnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
   UNIQUE KEY label(label)
 ) ENGINE=InnoDB;
@@ -137,38 +136,6 @@ CREATE TABLE netwires (
   INDEX netcableid (netcableid),
   FOREIGN KEY (netcableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY wire (netcableid,bundle,wire)
-) ENGINE=INNODB;
-
-/* urzadzenia pasywne */
-CREATE TABLE netobjports (
-  id            int(11)         NOT NULL auto_increment,
-  netelemid     int(11)         NOT NULL DEFAULT '0',
-  label		varchar(64)     NOT NULL,
-  type          tinyint(2)      NOT NULL DEFAULT '0', 
-  capacity	int(11)         NOT NULL DEFAULT '1',
-  PRIMARY KEY (id),
-  INDEX netelemid (netdelemid),
-  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=INNODB;
-
-/* splitery optyczne */
-CREATE TABLE netsplitters (
-  id            int(11)         NOT NULL auto_increment,
-  netelemid     int(11)         NOT NULL DEFAULT '0',
-  side          tinyint(2)      NOT NULL DEFAULT '0',
-  capacity      tinyint(3)      NOT NULL DEFAULT '1',
-  PRIMARY KEY (id),
-  INDEX netelemid (netdelemid),
-  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY side (netelemid,side)
-) ENGINE=INNODB;
-
-/* opis portu do połączeń - type portu i id z odpowiedniej bazy */
-CREATE TABLE netports (
-  id            int(11)         NOT NULL auto_increment,
-  type		tinyint(1) 	NOT NULL default '0',
-  portid	int(11)		NOT NULL default '0',
-  PRIMARY KEY (id)
 ) ENGINE=INNODB;
 
 /* polaczenia miedzy elementami:
