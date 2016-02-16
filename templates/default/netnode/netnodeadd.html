@@ -103,7 +103,7 @@
 		</TD>
 		<TD WIDTH="98%">
 			<SELECT NAME="netnode[ownership]" ID="NNownership" VALUE="{$netnode.ownership}" {tip text="Select ownership for this node"} onchange="setNNOwner();">
-				{foreach $_NETELEMENTOWNERSHIPS as $idx => $ownership}
+				{foreach $_NETNODEOWNERSHIPS as $idx => $ownership}
 				<OPTION VALUE="{$idx}"{if $netnode.ownership == $idx} selected{/if}>{$ownership}</OPTION>
 				{/foreach}
 			</SELECT>

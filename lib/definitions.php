@@ -455,10 +455,11 @@ $NETNODETYPES = array(
 	9	=> 'studnia kablowa',
 );
 
-$NETELEMENTOWNERSHIPS = array(
+$NETNODEOWNERSHIPS = array(
 	0	=> 'węzeł własny',
 	1	=> 'węzeł współdzielony z innym podmiotem',
 	2	=> 'węzeł obcy',
+	3	=> 'węzeł kliencki',
 );
 
 $USERPANEL_ID_TYPES = array(
@@ -546,7 +547,7 @@ if(isset($SMARTY))
 	$SMARTY->assign('_PASSWDEXPIRATIONS', $PASSWDEXPIRATIONS);
 	$SMARTY->assign('_NETELEMENTSTATUSES', $NETELEMENTSTATUSES);
 	$SMARTY->assign('_NETNODETYPES', $NETNODETYPES);
-	$SMARTY->assign('_NETELEMENTOWNERSHIPS', $NETELEMENTOWNERSHIPS);
+	$SMARTY->assign('_NETNODEOWNERSHIPS', $NETNODEOWNERSHIPS);
 	$SMARTY->assign('_USERPANEL_ID_TYPES', $USERPANEL_ID_TYPES);
 	$SMARTY->assign('_EVENTTYPES', $EVENTTYPES);
 	$SMARTY->assign('_SESSIONTYPES', $SESSIONTYPES);

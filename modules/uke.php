@@ -623,7 +623,7 @@ foreach ($netnodes as $netnodename => $netnode) {
 	if ($netnode['ownership'] < 2) {
 		$data = array(
 			'ww_id' => $netnode['id'],
-			'ww_ownership' => $NETELEMENTOWNERSHIPS[$netnode['ownership']],
+			'ww_ownership' => $NETNODEOWNERSHIPS[$netnode['ownership']],
 			'ww_coowner' => $netnode['coowner'],
 			'ww_coloc' => '',
 			'ww_state' => isset($netnode['area_woj']) ? $netnode['area_woj']
@@ -1515,9 +1515,9 @@ if ($netlinks)
 					'lp_id' => $netlineid,
 					'lp_owner' => 'Własna',
 					'lp_foreingerid' => '',
-					'lp_anodetype' => $NETELEMENTOWNERSHIPS[$netnodes[$netlink['src']]['ownership']],
+					'lp_anodetype' => $NETNODEOWNERSHIPS[$netnodes[$netlink['src']]['ownership']],
 					'lp_anodeid' => $netnodes[$netlink['src']]['id'],
-					'lp_bnodetype' => $NETELEMENTOWNERSHIPS[$netnodes[$netlink['dst']]['ownership']],
+					'lp_bnodetype' => $NETNODEOWNERSHIPS[$netnodes[$netlink['dst']]['ownership']],
 					'lp_bnodeid' => $netnodes[$netlink['dst']]['id'],
 					'lp_tech' => $linktypes[$netlink['type']]['technologia'],
 					'lp_fibertype' => $netlink['type'] == 2 ? $linktypes[$netlink['type']]['typ'] : '',

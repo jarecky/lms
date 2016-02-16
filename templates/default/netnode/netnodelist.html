@@ -67,7 +67,7 @@
 			{trans("Ownership:")}
 			<SELECT SIZE="1" NAME="w" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1" {if !$listdata.ownership == -1 } SELECTED {/if}>- {trans("all")} -</OPTION>
-				{foreach $_NETELEMENTOWNERSHIPS as $idx => $ownership}
+				{foreach $_NETNODEOWNERSHIPS as $idx => $ownership}
 				<OPTION VALUE="{$idx}"{if $listdata.ownership == $idx} SELECTED {/if}>{$ownership}</OPTION>
 				{/foreach}
 			</SELECT>
