@@ -490,6 +490,22 @@ $NETCONNECTORS = array(
 	),
 );
 
+$NETCABLETYPES = array (
+	MEDIUM_COPPER = array (
+		0 => 'UTP',
+		1 => 'FTP',
+		2 => 'coaxial',
+	),
+	MEDIUM_FIBER = array (
+		0 => 'wielomodowy',
+		1 => 'jednotubowy',
+		2 => 'wielotubowy',
+		3 => 'łatwy dostęp',
+		4 => 'samonośny',
+		5 => 'doziemny',
+	),
+);
+
 $NETNODETYPES = array(
 	0	=> 'budynek biurowy',
 	2	=> 'budynek mieszkalny',
@@ -602,6 +618,7 @@ if(isset($SMARTY))
 	$SMARTY->assign('_NETELEMENTTYPES', $NETELEMENTTYPES);
 	$SMARTY->assign('_NETPORTTYPES', $NETPORTTYPES);
 	$SMARTY->assign('_NETCONNECTORS', $NETCONNECTORS);
+	$SMARTY->assign('_NETCABLETYPES', $NETCABLETYPES);
 	$SMARTY->assign('_NETNODETYPES', $NETNODETYPES);
 	$SMARTY->assign('_NETNODEOWNERSHIPS', $NETNODEOWNERSHIPS);
 	$SMARTY->assign('_USERPANEL_ID_TYPES', $USERPANEL_ID_TYPES);
