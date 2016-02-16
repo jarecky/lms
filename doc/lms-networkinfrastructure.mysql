@@ -128,9 +128,7 @@ CREATE TABLE netcables (
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (dstnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
-  UNIQUE KEY label(label)
-  /* jesli chcesz miec taki sam label na podzielonym kablu to nie moze tu byc unique*/
+  FOREIGN KEY (dstnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE netwires (
