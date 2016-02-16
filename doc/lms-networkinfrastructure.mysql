@@ -90,7 +90,6 @@ CREATE TABLE netradiosectors (
   altitude      smallint        DEFAULT 0 NOT NULL,
   rsrange       int(11)         DEFAULT 0 NOT NULL,
   license       varchar(64)     DEFAULT NULL,
-  technology    int(11)         DEFAULT 0 NOT NULL,
   frequency     numeric(9,5)    DEFAULT NULL,
   frequency2    numeric(9,5)    DEFAULT NULL,
   bandwidth     numeric(9,5)    DEFAULT NULL,

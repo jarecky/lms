@@ -337,14 +337,18 @@ $DAYS = array(
 	DAY_SUNDAY	=> trans('Sun'),
 );
 
+define('MEDIUM_COPPER',0);
+define('MEDIUM_WIRELESS',1);
+define('MEDIUM_FIBER',2);
+
 $LINKTYPES = array(
-	0		=> trans('wire'),
-	1		=> trans('wireless'),
-	2		=> trans('fiber'),
+	MEDIUM_COPPER	=> trans('copper'),
+	MEDIUM_WIRELESS	=> trans('wireless'),
+	MEDIUM_FIBER	=> trans('fiber'),
 );
 
 $LINKTECHNOLOGIES = array(
-	0 => array(
+	MEDIUM_COPPER => array(
 		1 => 'ADSL',
 		2 => 'ADSL2',
 		3 => 'ADSL2+',
@@ -361,7 +365,7 @@ $LINKTECHNOLOGIES = array(
 		51 => '(EURO)DOCSIS 2.x',
 		52 => '(EURO)DOCSIS 3.x',
 	),
-	1 => array(
+	MEDIUM_WIRELESS => array(
 		100 => 'WiFi - 2,4 GHz',
 		101 => 'WiFi - 5 GHz',
 		102 => 'WiMAX',
@@ -378,7 +382,7 @@ $LINKTECHNOLOGIES = array(
 		113 => 'UMTS',
 		114 => 'DMS',
 	),
-	2 => array(
+	MEDIUM_FIBER => array(
 		200 => 'CWDM',
 		201 => 'DWDM',
 		202 => 'SDH',
@@ -442,6 +446,48 @@ $NETELEMENTTYPES = array(
 	1	=> trans('passive'),
 	2	=> trans('cable'),
 	3	=> trans('splitter'),
+);
+
+
+$NETPORTTYPES = array( 
+	0	=> trans('copper'),
+	1	=> trans('fiber'),
+	2	=> trans('wireless'),
+	3	=> trans('tray'),
+	4	=> trans('splitter in'),
+	5	=> trans('splitter out'),
+);
+
+$NETCONNECTORS = array(
+	MEDIUM_COPPER => array(
+		1 => 'RJ-45',
+		2 => 'RJ-12',
+		3 => 'RJ-11',
+		4 => 'BNC',
+		5 => 'FC',
+	),
+	MEDIUM_FIBER => array(
+		100 => 'SC/FLAT',
+		101 => 'SC/PC',
+		102 => 'SC/UPC',
+		103 => 'SC/APC',
+		110 => 'LC/FLAT',
+		111 => 'LC/PC',
+		112 => 'LC/UPC',
+		113 => 'LC/APC',
+		120 => 'FC/FLAT',
+		121 => 'FC/PC',
+		122 => 'FC/UPC',
+		123 => 'FC/APC',
+		130 => 'ST/FLAT',
+		131 => 'ST/PC',
+		132 => 'ST/UPC',
+		133 => 'ST/APC',
+		140 => 'E2000/FLAT',
+		141 => 'E2000/PC',
+		142 => 'E2000/UPC',
+		143 => 'E2000/APC',
+	),
 );
 
 $NETNODETYPES = array(
@@ -554,6 +600,8 @@ if(isset($SMARTY))
 	$SMARTY->assign('_PASSWDEXPIRATIONS', $PASSWDEXPIRATIONS);
 	$SMARTY->assign('_NETELEMENTSTATUSES', $NETELEMENTSTATUSES);
 	$SMARTY->assign('_NETELEMENTTYPES', $NETELEMENTTYPES);
+	$SMARTY->assign('_NETPORTTYPES', $NETPORTTYPES);
+	$SMARTY->assign('_NETCONNECTORS', $NETCONNECTORS);
 	$SMARTY->assign('_NETNODETYPES', $NETNODETYPES);
 	$SMARTY->assign('_NETNODEOWNERSHIPS', $NETNODEOWNERSHIPS);
 	$SMARTY->assign('_USERPANEL_ID_TYPES', $USERPANEL_ID_TYPES);
