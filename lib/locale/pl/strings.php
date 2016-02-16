@@ -3148,4 +3148,14 @@ $_LANG['active, with invoice'] = 'aktywne, z fakturą';
 $_LANG['without end date'] = 'bez daty zakończenia';
 $_LANG['expire in $a days'] = 'wygasną w ciągu $a dni';
 
+$_LANG['TERRIT not specified'] = 'Bez TERYT-u';
+$_LANG['Net Device not specified'] = 'Bez urządzenia sieciowego';
+
+$_LANG['with e-invoice'] = 'z e-fakturą';
+$_LANG['with connected nodes'] = 'z aktywnymi komputerami';
+$_LANG['with nodes'] = 'z komputerami';
+
+$_LANG['debt collection'] = 'windykacja należności';
+$_LANG['Debt collection:'] = 'Windykacja należności:';
+
 ?>

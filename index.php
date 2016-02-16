@@ -73,12 +73,13 @@ define('PLUGINS_DIR', $CONFIG['directories']['plugin_dir']);
 define('VENDOR_DIR', $CONFIG['directories']['vendor_dir']);
 
 // Load autoloader
-$composer_autoload_path = SYS_DIR . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+$composer_autoload_path = VENDOR_DIR . DIRECTORY_SEPARATOR . 'autoload.php';
 if (file_exists($composer_autoload_path)) {
     require_once $composer_autoload_path;
 } else {
     die("Composer autoload not found. Run 'composer install' command from LMS directory and try again. More informations at https://getcomposer.org/");
 }
+require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'Smarty' . DIRECTORY_SEPARATOR . 'Smarty.class.php');
 
 // Do some checks and load config defaults
 require_once(LIB_DIR . DIRECTORY_SEPARATOR . 'checkdirs.php');
@@ -116,7 +117,10 @@ define('SMARTY_VERSION', $ver_chunks[0]);
 
 // add LMS's custom plugins directory
 $SMARTY->addPluginsDir(LIB_DIR . DIRECTORY_SEPARATOR . 'SmartyPlugins');
-$SMARTY->registerFilter('pre', array('Smarty_Prefilter_Extendsall_Include', 'prefilter_extendsall_include'));
+
+$SMARTY->setMergeCompiledIncludes(true);
+
+$SMARTY->setDefaultResourceType('extendsall');
 
 // uncomment this line if you're not gonna change template files no more
 //$SMARTY->compile_check = false;

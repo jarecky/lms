@@ -8,6 +8,7 @@ TABLE		{ border-collapse: collapse; border-color: #000000 }
 .bottomline { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #bdac8a; }
 
 TD		{ font-size: 8pt; font-family: Tahoma, Verdana, Arial, Helvetica; vertical-align: middle; border-color: black; }
+td[onclick]	{ cursor: pointer; }
 .fleft           { border-left-width: 1pt; border-left-style: solid; }
 .fright          { border-right-width: 1pt; border-right-style: solid; }
 .ftop		{ border-top-width: 1pt; border-top-style: solid; }
@@ -273,7 +274,8 @@ table.lmsbox > tfoot > tr {
 
 table.lmsbox > thead { text-align: left; }
 
-td.empty-table { text-align: center; font-weight: bold; padding: 2em; background-color: #EBE4D6; }
+td.empty-table { background-color: #EBE4D6; }
+td.empty-table p { text-align: center; font-weight: bold; padding: 2em; }
 
 .nobr { white-space: nowrap; }
 .text-right { text-align: right; }
