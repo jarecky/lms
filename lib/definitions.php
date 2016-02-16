@@ -460,11 +460,11 @@ $NETPORTTYPES = array(
 
 $NETCONNECTORS = array(
 	MEDIUM_COPPER => array(
-		1 => 'RJ-45',
-		2 => 'RJ-12',
-		3 => 'RJ-11',
+		1 => '8P8C',
+		2 => '6P6C',
+		3 => '4P4C',
 		4 => 'BNC',
-		5 => 'FC',
+		5 => 'F',
 	),
 	MEDIUM_FIBER => array(
 		100 => 'SC/FLAT',
