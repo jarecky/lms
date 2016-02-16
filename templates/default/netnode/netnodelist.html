@@ -45,7 +45,7 @@
                         {trans("Type:")}
 			<SELECT SIZE="1" NAME="t" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1" {if $listdata.type==-1} SELECTED {/if} >- {trans("all")} -</OPTION>
-				{foreach $_NETELEMENTTYPES as $idx => $type}
+				{foreach $_NETNODETYPES as $idx => $type}
 					<OPTION VALUE="{$idx}"{if $listdata.type == $idx} SELECTED{/if} >{$type}</OPTION>
 				{/foreach}
 			</SELECT>
@@ -89,7 +89,7 @@
 	<TR class="highlight {cycle}"  >
 		<TD onClick="return self.location.href='?m=netnodeinfo&id={$nlist[nlist].id}';" VALIGN="TOP">
 			<IMG src="img/netdev.gif" ALT=""> <a name="{$nlist[nlist].id}"><B>{$nlist[nlist].name}</B></A><BR>
-			<IMG src="img/producer.gif" ALT=""> {$_NETELEMENTTYPES[$nlist[nlist].type]} / {$_NETELEMENTSTATUSES[$nlist[nlist].status]}
+			<IMG src="img/producer.gif" ALT=""> {$_NETNODETYPES[$nlist[nlist].type]} / {$_NETELEMENTSTATUSES[$nlist[nlist].status]}
 		</TD>
 		<TD nowrap>
 			{$nlist[nlist].location}{if $nlist[nlist].borough_name} ({$nlist[nlist].state_name} / {$nlist[nlist].district_name} / {$_BOROUGHTYPES[$nlist[nlist].borough_type]} {$nlist[nlist].borough_name}){/if}

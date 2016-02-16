@@ -51,7 +51,7 @@
 		</TD>
 		<TD WIDTH="98%">
 			<SELECT NAME="netnode[type]"   {tip text="Enter node type"} >
-				{foreach $_NETELEMENTTYPES as $idx => $type}
+				{foreach $_NETNODETYPES as $idx => $type}
 				<OPTION VALUE="{$idx}"{if $netnode.type == $idx} selected{/if}>{$type}</OPTION>
 				{/foreach}
 			</SELECT>

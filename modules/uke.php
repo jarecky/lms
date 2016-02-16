@@ -640,7 +640,7 @@ foreach ($netnodes as $netnodename => $netnode) {
 			'ww_zip' => $netnode['location_zip'],
 			'ww_latitude' =>  isset($netnode['latitude']) ? $netnode['latitude'] : '',
 			'ww_longitude' => isset($netnode['longitude']) ? $netnode['longitude'] : '',
-			'ww_objtype' => $NETELEMENTTYPES[$netnode['type']],
+			'ww_objtype' => $NETNODETYPES[$netnode['type']],
 			'ww_uip' => $netnode['uip'] ? 'Tak' : 'Nie',
 			'ww_miar' => $netnode['miar'] ? 'Tak' : 'Nie',
 			'ww_eu' => $netnode['invproject'] ? 'Tak' : 'Nie',
@@ -671,7 +671,7 @@ foreach ($netnodes as $netnodename => $netnode) {
 			'wo_zip' => $netnode['location_zip'],
 			'wo_latitude' =>  isset($netnode['latitude']) ? $netnode['latitude'] : '',
 			'wo_longitude' => isset($netnode['longitude']) ? $netnode['longitude'] : '',
-			'wo_objtype' => $NETELEMENTTYPES[$netnode['type']],
+			'wo_objtype' => $NETNODETYPES[$netnode['type']],
 			'wo_invproject' => $netnode['invproject'],
 		);
 		if (in_array('wo', $sheets))
