@@ -437,6 +437,13 @@ $NETELEMENTSTATUSES = array(
 	2	=> trans('planned'),
 );
 
+$NETELEMENTTYPES = array(
+	0	=> trans('active'),
+	1	=> trans('passive'),
+	2	=> trans('cable'),
+	3	=> trans('splitter'),
+);
+
 $NETNODETYPES = array(
 	0	=> 'budynek biurowy',
 	2	=> 'budynek mieszkalny',
@@ -546,6 +553,7 @@ if(isset($SMARTY))
 	$SMARTY->assign('_BOROUGHTYPES', $BOROUGHTYPES);
 	$SMARTY->assign('_PASSWDEXPIRATIONS', $PASSWDEXPIRATIONS);
 	$SMARTY->assign('_NETELEMENTSTATUSES', $NETELEMENTSTATUSES);
+	$SMARTY->assign('_NETELEMENTTYPES', $NETELEMENTTYPES);
 	$SMARTY->assign('_NETNODETYPES', $NETNODETYPES);
 	$SMARTY->assign('_NETNODEOWNERSHIPS', $NETNODEOWNERSHIPS);
 	$SMARTY->assign('_USERPANEL_ID_TYPES', $USERPANEL_ID_TYPES);
