@@ -42,6 +42,7 @@ CREATE TABLE netelements (
   PRIMARY KEY (id),
   FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY (invprojectid) REFERENCES invprojects (id) ON DELETE SET NULL ON UPDATE CASCADE,
+  /*IMHO ten klucz jest zbedny ;) */
   FOREIGN KEY (netdevicemodelid) REFERENCES netdevicemodels (id) ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
@@ -52,7 +53,7 @@ CREATE TABLE netelements (
 */
 CREATE TABLE netdevices (
   id            int(11)         NOT NULL auto_increment,
-  netelemid     int(11)         NOT NULL DEFAULT '0',
+  netelemid     int(11)         NOT NULL DEFAULT '0', /* tu nie powinno byc netnodeid ?? */
   shortname     varchar(32)     NOT NULL DEFAULT '',
   nastype       int(11)         NOT NULL DEFAULT '0',
   clients       int(11)         NOT NULL DEFAULT '0',
@@ -63,7 +64,7 @@ CREATE TABLE netdevices (
   PRIMARY KEY (id),
   INDEX channelid (channelid),
   FOREIGN KEY (channelid) REFERENCES ewx_channels (id) ON DELETE SET NULL ON UPDATE CASCADE,
-  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE NULL ON UPDATE CASCADE,
+  FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE NULL ON UPDATE CASCADE, /* jw */
 ) ENGINE=InnoDB;
 
 CREATE TABLE netports (
@@ -77,7 +78,7 @@ CREATE TABLE netports (
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY label (label, netelemid)
+  UNIQUE KEY label (label, netelemid) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE netradiosectors (
@@ -108,7 +109,11 @@ CREATE TABLE netreserves (
   PRIMARY KEY (id),
   FOREIGN KEY (netcableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY reserve (netelemid,cableid)
+  UNIQUE KEY reserve (netelemid,cableid) 
+  /* 
+  -jak rozumiem mozliwy jest tylko jeden zapas na calym kablu <rotfl> 
+  klucze troche nie pasuja do tabeli 
+  */
 ) ENGINE=InnoDB;
 
 /* kable - optyczne/miedziane */
@@ -125,6 +130,7 @@ CREATE TABLE netcables (
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (dstnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
   UNIQUE KEY label(label)
+  /* jesli chcesz miec taki sam label na podzielonym kablu to nie moze tu byc unique*/
 ) ENGINE=InnoDB;
 
 CREATE TABLE netwires (
@@ -156,6 +162,9 @@ CREATE TABLE netconnections (
   FOREIGN KEY (srcconnid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (dstconnid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY wires (srcwireid,dstwireid,srcconnid,dstconnid)
+  /*
+    - zastawnawiam sie czy nie dac w innodb zamiast kaskady restrict wtedy nie usuniesz portu ani wlokna dopoki bedzie uzyty
+  */
 ) ENGINE=INNODB;
 
 
