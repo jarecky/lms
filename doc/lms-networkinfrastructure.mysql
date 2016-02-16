@@ -38,11 +38,11 @@ CREATE TABLE netelements (
   guaranteeperiod tinyint unsigned DEFAULT '0',
   netnodeid     int(11)         DEFAULT NULL,
   invprojectid  int(11)         DEFAULT NULL,
+  netdevicemodelid int(11) DEFAULT NULL,
   status        tinyint         DEFAULT '0',
   PRIMARY KEY (id),
   FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY (invprojectid) REFERENCES invprojects (id) ON DELETE SET NULL ON UPDATE CASCADE,
-  /*IMHO ten klucz jest zbedny ;) */
   FOREIGN KEY (netdevicemodelid) REFERENCES netdevicemodels (id) ON UPDATE CASCADE ON DELETE restrict
 ) ENGINE=InnoDB;
 
@@ -105,15 +105,12 @@ CREATE TABLE netreserves (
   id            int(11)         NOT NULL auto_increment,
   netcableid	int(11)         NOT NULL DEFAULT '0',
   netnodeid     int(11)         NOT NULL DEFAULT '0',
+  priority	tinyint(3)	NOT NULL DEFAULT '1',
   count		smallint(4)	NOT NULL DEFAULT '0',
   PRIMARY KEY (id),
   FOREIGN KEY (netcableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE CASCADE ON UPDATE CASCADE/*,
-  UNIQUE KEY reserve (netelemid,cableid) */
-   /*
-  -jak rozumiem mozliwy jest tylko jeden zapas na calym kablu <rotfl> 
-  klucze troche nie pasuja do tabeli 
-  */
+  FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  UNIQUE KEY reserve (netelemid,cableid,priority)
 ) ENGINE=InnoDB;
 
 /* kable - optyczne/miedziane */
@@ -160,15 +157,6 @@ CREATE TABLE netconnections (
   FOREIGN KEY (srcconnid) REFERENCES netports (id) ON DELETE restrict ON UPDATE CASCADE,
   FOREIGN KEY (dstconnid) REFERENCES netports (id) ON DELETE restrict ON UPDATE CASCADE,
   UNIQUE KEY wires (srcwireid,dstwireid,srcconnid,dstconnid)
-  /*FOREIGN KEY (srcwireid) REFERENCES netwires (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (dstwireid) REFERENCES netwires (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (srcconnid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (dstconnid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY wires (srcwireid,dstwireid,srcconnid,dstconnid)
-  */
-  /*
-    - zastawnawiam sie czy nie dac w innodb zamiast kaskady restrict wtedy nie usuniesz portu ani wlokna dopoki bedzie uzyty
-  */
 ) ENGINE=INNODB;
 
 
