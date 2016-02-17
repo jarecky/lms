@@ -495,15 +495,8 @@ $NETCONNECTORS = array(
 
 $NETCABLETYPES = array (
 	MEDIUM_COPPER = array (
-		1 => trans('UTP cat. 1'),
-		2 => trans('UTP cat. 2'),
-		3 => trans('UTP cat. 3'),
-		4 => trans('UTP cat. 4'),
-		5 => trans('UTP cat. 5'),
-		6 => trans('UTP cat. 5a'),
-		7 => trans('UTP cat. 7'),
-		8 => trans('UTP cat. 7a'),
-		50 => trans('coaxial'),
+		1 => trans('twisted-pair');
+		2 => trans('coaxial'),
 	),
 	MEDIUM_FIBER = array (
 		1 => 'jednotubowy',
@@ -516,12 +509,44 @@ $NETCABLETYPES = array (
 
 $NETWIRETYPES = array (
         MEDIUM_COPPER = array (
-                1 => trans('twisted-pair'),
-                2 => trans('coaxial'),
+                1 => trans('UTP cat. 1'),
+                2 => trans('UTP cat. 2'),
+                3 => trans('UTP cat. 3'),
+                4 => trans('UTP cat. 4'),
+                5 => trans('UTP cat. 5'),
+                6 => trans('UTP cat. 5a'),
+                7 => trans('UTP cat. 7'),
+                8 => trans('UTP cat. 7a'),
+
+                50 => trans('Thicknet'),
+		51 => trans('Thinnet'),
         ),
         MEDIUM_FIBER = array (
-		1 => trans('single-mode'),
-		2 => trans('multi-mode'),
+		1 => trans('single-mode G.652.A');
+		2 => trans('single-mode G.652.B');
+		3 => trans('single-mode G.652.C');
+		4 => trans('single-mode G.652.D');
+		5 => trans('single-mode G.653.A');
+		5 => trans('single-mode G.653.B');
+		6 => trans('single-mode G.654.A');
+		7 => trans('single-mode G.654.B');
+		8 => trans('single-mode G.654.C');
+		9 => trans('single-mode G.655.A');
+		10 => trans('single-mode G.655.B');
+		11 => trans('single-mode G.655.C');
+		12 => trans('single-mode G.655.D');
+		13 => trans('single-mode G.655.E');
+		14 => trans('single-mode G.656');
+		15 => trans('single-mode G.657.A1');
+		16 => trans('single-mode G.657.A2');
+		17 => trans('single-mode G.657.B2');
+		18 => trans('single-mode G.657.B3');
+
+		50 => trans('multi-mode FFDI');
+		51 => trans('multi-mode OM1'),
+		52 => trans('multi-mode OM2'),
+		53 => trans('multi-mode OM3'),
+		54 => trans('multi-mode OM4'),
 	),
 );		
 
