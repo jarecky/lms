@@ -506,6 +506,44 @@ $NETCABLETYPES = array (
 	),
 );
 
+$FIBEROPTICCOLORSCHEMAS = array(
+	1	=> array(
+			label => 'IEC 304',
+			colors => array(
+				1       =>      trans('red'),
+				2       =>      trans('green'),
+				3       =>      trans('blue'),
+				4       =>      trans('yellow'),
+				5       =>      trans('white'),
+				6       =>      trans('slate'),
+				7       =>      trans('brown'),
+				8       =>      trans('violet'),
+				9       =>      trans('aqua'),
+				10      =>      trans('black'),
+				11      =>      trans('orange'),
+				12      =>      trans('pink')
+			),
+		),		
+	2	=> array(
+			label => 'Telefonika',
+			colors => array(
+                                1       =>      trans('red'),
+                                2       =>      trans('green'),
+                                3       =>      trans('blue'),
+                                4       =>      trans('white'),
+                                5       =>      trans('violet'),
+                                6	=>      trans('orange'),
+                                7       =>      trans('slate'),
+                                8       =>      trans('yellow'),
+                                9       =>      trans('brown'),
+                                10      =>      trans('pink')
+                                11      =>      trans('black'),
+                                12      =>      trans('aqua'),
+			),
+		),
+);
+
+
 $NETNODETYPES = array(
 	0	=> 'budynek biurowy',
 	2	=> 'budynek mieszkalny',
@@ -619,6 +657,7 @@ if(isset($SMARTY))
 	$SMARTY->assign('_NETPORTTYPES', $NETPORTTYPES);
 	$SMARTY->assign('_NETCONNECTORS', $NETCONNECTORS);
 	$SMARTY->assign('_NETCABLETYPES', $NETCABLETYPES);
+	$SMARTY->assign('_FIBEROPTICCOLORSCHEMAS', $FIBEROPTICCOLORSCHEMAS);
 	$SMARTY->assign('_NETNODETYPES', $NETNODETYPES);
 	$SMARTY->assign('_NETNODEOWNERSHIPS', $NETNODEOWNERSHIPS);
 	$SMARTY->assign('_USERPANEL_ID_TYPES', $USERPANEL_ID_TYPES);
