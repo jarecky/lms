@@ -72,12 +72,12 @@ CREATE TABLE netports (
   netelemid     int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
   label         varchar(32)     NOT NULL DEFAULT '',
-  technology    tinyint(3)      UNSIGNED NOT NULL DEFAULT '0',
-  connector     tinyint(3)      UNSIGNED NOT NULL DEFAULT '0',
+  technology    int(11)         UNSIGNED NOT NULL DEFAULT '0',
   capacity      tinyint(2)	UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE restrict ON UPDATE CASCADE,
+  FOREIGN KEY (technology) REFERENCES nettechnologies (id) ON DELETE restrict ON UPDATE CASCADE,
   UNIQUE KEY label (label, netelemid) 
 ) ENGINE=InnoDB;
 
@@ -98,6 +98,17 @@ CREATE TABLE netradiosectors (
   FOREIGN KEY (netdevportid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY name (name, netelemid)
 ) ENGINE=INNODB;
+
+CREATE TABLE nettechnologies (
+  id            int(11)         NOT NULL auto_increment,
+  label		varchar(32)	NOT NULL,
+  uke_label	varchar(32)	NOT NULL default '',
+  wiretype	tinyint(3)	NOT NULL default '0',
+  connectortype tinyint(3)      NOT NULL DEFAULT '0',
+  upspeed	int(11)		NOT NULL DEFAULT '0',
+  downspeed	int(11)		NOT NULL DEFAULT '0',
+  PRIMARY KEY (id),
+) ENGINE=InnoDB;
 
 /* zapasy kablowe */
 CREATE TABLE netreserves (

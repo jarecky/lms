@@ -548,6 +548,13 @@ $NETWIRETYPES = array (
 		53 => trans('multi-mode OM3'),
 		54 => trans('multi-mode OM4'),
 	),
+	MEDIUM_WIRELESS (
+		1 => trans('802.11b/g'),
+		2 => trans('802.11a/an/ac'),
+		3 => trans('Microwave'),
+		4 => trans('WiMax'),
+		5 => trans('GSM'),
+	),
 );		
 
 $COPERCOLORSSCHEMAS = array (
