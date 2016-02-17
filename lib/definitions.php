@@ -506,40 +506,115 @@ $NETCABLETYPES = array (
 	),
 );
 
+
+$COPERCOLORSSCHEMAS = array (
+	1	=> array(
+			label => 'standard',
+			colors => array (
+				1  => trans('white').'/'.trans('blue'),
+				2  => trans('white').'/'.trans('orange'),
+				3  => trans('white').'/'.trans('green'),
+				4  => trans('white').'/'.trans('brown'),
+				5  => trans('white').'/'.trans('slate'),
+                                6  => trans('red').'/'.trans('blue'),
+                                7  => trans('red').'/'.trans('orange'),
+                                8  => trans('red').'/'.trans('green'),
+                                9  => trans('red').'/'.trans('brown'),
+                                10 => trans('red').'/'.trans('slate'),
+                                11 => trans('black').'/'.trans('blue'),
+                                12 => trans('black').'/'.trans('orange'),
+                                13 => trans('black').'/'.trans('green'),
+                                14 => trans('black').'/'.trans('brown'),
+                                15 => trans('black').'/'.trans('slate'),
+                                16 => trans('yellow').'/'.trans('blue'),
+                                17 => trans('yellow').'/'.trans('orange'),
+                                18 => trans('yellow').'/'.trans('green'),
+                                19 => trans('yellow').'/'.trans('brown'),
+                                20 => trans('yellow').'/'.trans('slate'),
+                                21 => trans('violet').'/'.trans('blue'),
+                                22 => trans('violet').'/'.trans('orange'),
+                                23 => trans('violet').'/'.trans('green'),
+                                24 => trans('violet').'/'.trans('brown'),
+                                25 => trans('violet').'/'.trans('slate'),
+)
+
+define('RED',1);
+define('GREEN',2);
+define('BLUE',3);
+define('YELLOW',4);
+define('WHITE',5);
+define('SLATE',6);
+define('BROWN',7);
+define('VIOLET',8);
+define('AQUA',9);
+define('BLACK',10);
+define('ORANGE',11);
+define('PINK',12);
+
 $FIBEROPTICCOLORSCHEMAS = array(
 	1	=> array(
-			label => 'IEC 304',
-			colors => array(
-				1       =>      trans('red'),
-				2       =>      trans('green'),
-				3       =>      trans('blue'),
-				4       =>      trans('yellow'),
-				5       =>      trans('white'),
-				6       =>      trans('slate'),
-				7       =>      trans('brown'),
-				8       =>      trans('violet'),
-				9       =>      trans('aqua'),
-				10      =>      trans('black'),
-				11      =>      trans('orange'),
-				12      =>      trans('pink')
+			label => 'IEC-60304',
+			fibers => array(
+				1  => RED,
+				2  => GREEN,
+				3  => BLUE,
+				4  => YELLOW,
+				5  => WHITE,
+				6  => SLATE,
+				7  => BROWN,
+				8  => VIOLET,
+				9  => AQUA,
+				10 => BLACK,
+				11 => ORANGE,
+				12 => PINK
 			),
+                        tubes => array(
+                                1  => RED,
+                                2  => GREEN,
+                                3  => BLUE,
+                                4  => YELLOW,
+                                5  => WHITE,
+                                6  => SLATE,
+                                7  => BROWN,
+                                8  => VIOLET,
+                                9  => AQUA,
+                                10 => BLACK,
+                                11 => ORANGE,
+                                12 => PINK
+                        ),
+
 		),		
 	2	=> array(
 			label => 'Telefonika',
-			colors => array(
-                                1       =>      trans('red'),
-                                2       =>      trans('green'),
-                                3       =>      trans('blue'),
-                                4       =>      trans('white'),
-                                5       =>      trans('violet'),
-                                6	=>      trans('orange'),
-                                7       =>      trans('slate'),
-                                8       =>      trans('yellow'),
-                                9       =>      trans('brown'),
-                                10      =>      trans('pink')
-                                11      =>      trans('black'),
-                                12      =>      trans('aqua'),
+			fibers => array(
+                                1  => RED,
+                                2  => GREEN,
+                                3  => BLUE,
+                                4  => WHITE,
+                                5  => VIOLET,
+                                6  => ORANGE,
+                                7  => SLATE,
+                                8  => YELLOW,
+                                9  => BROWN,
+                                10 => PINK,
+                                11 => BLACK,
+                                12 => AQUA
 			),
+                        tubes => array(
+                                1  => RED,
+                                2  => GREEN,
+                                3  => WHITE,
+                                4  => WHITE,
+                                5  => WHITE,
+                                6  => WHITE,
+                                7  => WHITE,
+                                8  => WHITE,
+                                9  => WHITE,
+                                10 => WHITE,
+                                11 => WHITE,
+                                12 => WHITE
+                        ),
+
 		),
 );
 
