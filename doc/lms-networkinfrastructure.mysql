@@ -68,7 +68,7 @@ CREATE TABLE netdevices (
 ) ENGINE=InnoDB;
 
 CREATE TABLE netports (
-  id            int(11)         NOT NULL auto_increment,
+  id            int(11)         NOT NULL ZEROFILL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
   label         varchar(32)     NOT NULL DEFAULT '',
@@ -129,7 +129,7 @@ CREATE TABLE netcables (
 ) ENGINE=InnoDB;
 
 CREATE TABLE netwires (
-  id            int(11)         NOT NULL auto_increment,
+  id            int(11)         NOT NULL ZEROFILL auto_increment,
   netcableid    int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
   bundle        tinyint(2)      NOT NULL DEFAULT '1',
@@ -146,22 +146,12 @@ CREATE TABLE netwires (
 */
 CREATE TABLE netconnections (
   id            int(11)         NOT NULL auto_increment,
-  wire1id	int(11)         not NULL DEFAULT '0',
-  wire2id	int(11)         not NULL DEFAULT '0',
-  wire3id	int(11)         not NULL DEFAULT '0',
-  wire4id	int(11)         not NULL DEFAULT '0',
-  port1id	int(11)         not NULL DEFAULT '0',
-  port2id	int(11)         not NULL DEFAULT '0',
+  wires		varchar(100)    NOT NULL DEFAULT '',
+  ports		varchar(100)	NOT NULL DEFAULT '',
   distance      float(4,1)	DEFAULT NULL, 
   description	varchar(50)	NOT NULL DEFAULT '',	
   PRIMARY KEY (id),
-  FOREIGN KEY (wire1id) REFERENCES netwires (id) ON DELETE restrict ON UPDATE CASCADE,
-  FOREIGN KEY (wire2id) REFERENCES netwires (id) ON DELETE restrict ON UPDATE CASCADE,
-  FOREIGN KEY (wire3id) REFERENCES netwires (id) ON DELETE restrict ON UPDATE CASCADE,
-  FOREIGN KEY (wire4id) REFERENCES netwires (id) ON DELETE restrict ON UPDATE CASCADE,
-  FOREIGN KEY (port1id) REFERENCES netports (id) ON DELETE restrict ON UPDATE CASCADE,
-  FOREIGN KEY (port2id) REFERENCES netports (id) ON DELETE restrict ON UPDATE CASCADE,
-  UNIQUE KEY wires (wire1id,wire2id,wire3id,wire4id,port1id,port2id)
+  UNIQUE KEY wires (wires,ports)
 ) ENGINE=INNODB;
 
 
