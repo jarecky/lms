@@ -131,6 +131,7 @@ CREATE TABLE netcables (
 CREATE TABLE netwires (
   id            int(11)         NOT NULL auto_increment,
   netcableid    int(11)         NOT NULL DEFAULT '0',
+  type          tinyint(2)      NOT NULL DEFAULT '0',
   bundle        tinyint(2)      NOT NULL DEFAULT '1',
   wire          tinyint(2)      NOT NULL DEFAULT '1',
   PRIMARY KEY (id),

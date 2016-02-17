@@ -492,12 +492,10 @@ $NETCONNECTORS = array(
 
 $NETCABLETYPES = array (
 	MEDIUM_COPPER = array (
-		0 => 'UTP',
-		1 => 'FTP',
-		2 => 'coaxial',
+		1 => trans('twisted-pair'),
+		2 => trans('coaxial'),
 	),
 	MEDIUM_FIBER = array (
-		0 => 'wielomodowy',
 		1 => 'jednotubowy',
 		2 => 'wielotubowy',
 		3 => 'łatwy dostęp',
@@ -506,6 +504,16 @@ $NETCABLETYPES = array (
 	),
 );
 
+$NETWIRETYPES = array (
+        MEDIUM_COPPER = array (
+                1 => trans('twisted-pair'),
+                2 => trans('coaxial'),
+        ),
+        MEDIUM_FIBER = array (
+		1 => trans('single-mode'),
+		2 => trans('multi-mode'),
+	),
+);		
 
 $COPERCOLORSSCHEMAS = array (
 	1	=> array(
@@ -732,6 +740,7 @@ if(isset($SMARTY))
 	$SMARTY->assign('_NETPORTTYPES', $NETPORTTYPES);
 	$SMARTY->assign('_NETCONNECTORS', $NETCONNECTORS);
 	$SMARTY->assign('_NETCABLETYPES', $NETCABLETYPES);
+	$SMARYY->assign('_NETWIRETYPES', $NETWIRETYPES);
 	$SMARTY->assign('_FIBEROPTICCOLORSCHEMAS', $FIBEROPTICCOLORSCHEMAS);
 	$SMARTY->assign('_NETNODETYPES', $NETNODETYPES);
 	$SMARTY->assign('_NETNODEOWNERSHIPS', $NETNODEOWNERSHIPS);
