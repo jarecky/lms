@@ -461,10 +461,13 @@ $NETPORTTYPES = array(
 $NETCONNECTORS = array(
 	MEDIUM_COPPER => array(
 		1 => '8P8C',
-		2 => '6P6C',
-		3 => '4P4C',
-		4 => 'BNC',
-		5 => 'F',
+		2 => '8P4C',
+		3 => '8P2C',
+		4 => '6P6C',
+		5 => '4P4C',
+		6 => '4P2C',
+		7 => 'BNC',
+		8 => 'F',
 	),
 	MEDIUM_FIBER => array(
 		100 => 'SC/FLAT',
