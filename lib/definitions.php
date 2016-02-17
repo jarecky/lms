@@ -495,8 +495,15 @@ $NETCONNECTORS = array(
 
 $NETCABLETYPES = array (
 	MEDIUM_COPPER = array (
-		1 => trans('twisted-pair'),
-		2 => trans('coaxial'),
+		1 => trans('UTP cat. 1'),
+		2 => trans('UTP cat. 2'),
+		3 => trans('UTP cat. 3'),
+		4 => trans('UTP cat. 4'),
+		5 => trans('UTP cat. 5'),
+		6 => trans('UTP cat. 5a'),
+		7 => trans('UTP cat. 7'),
+		8 => trans('UTP cat. 7a'),
+		50 => trans('coaxial'),
 	),
 	MEDIUM_FIBER = array (
 		1 => 'jednotubowy',
