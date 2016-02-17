@@ -518,8 +518,8 @@ $NETWIRETYPES = array (
                 7 => trans('UTP cat. 7'),
                 8 => trans('UTP cat. 7a'),
 
-                50 => trans('Thicknet'),
-		51 => trans('Thinnet'),
+		50 => trans('thicknet'),
+		51 => trans('thinnet'),
         ),
         MEDIUM_FIBER = array (
 		1 => trans('single-mode G.652.A');
