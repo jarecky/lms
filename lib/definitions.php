@@ -455,10 +455,10 @@ $NETPORTTYPES = array(
 	1	=> trans('fiber'),
 	2	=> trans('wireless'),
 	3	=> trans('tray'),
-	4	=> trans('splitter in'),
-	5	=> trans('splitter out'),
+	4	=> trans('in'),
+	5	=> trans('out'),
 	6	=> trans('SFP'),
-	7	=> trans('SFPٌ+'),
+	7	=> trans('SFP+'),
 );
 
 $NETCONNECTORS = array(
