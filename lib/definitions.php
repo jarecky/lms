@@ -456,6 +456,8 @@ $NETPORTTYPES = array(
 	3	=> trans('tray'),
 	4	=> trans('splitter in'),
 	5	=> trans('splitter out'),
+	6	=> trans('SFP'),
+	7	=> trans('SFPٌ+'),
 );
 
 $NETCONNECTORS = array(
