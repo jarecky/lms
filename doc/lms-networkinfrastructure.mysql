@@ -76,7 +76,7 @@ CREATE TABLE netports (
   label         varchar(32)     NOT NULL DEFAULT '',
   connectortype tinyint(3)      NOT NULL DEFAULT '0',
   technology    int(11)         UNSIGNED NOT NULL DEFAULT '0',
-  capacity      tinyint(2)	UNSIGNED NOT NULL DEFAULT '1',
+  capacity      int(11)		UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE restrict ON UPDATE CASCADE,
