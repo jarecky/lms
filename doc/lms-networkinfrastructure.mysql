@@ -75,7 +75,7 @@ CREATE TABLE netports (
   type          tinyint(2)      NOT NULL DEFAULT '0',
   label         varchar(32)     NOT NULL DEFAULT '',
   connectortype tinyint(3)      NOT NULL DEFAULT '0',
-  technology    int(11)         UNSIGNED NOT NULL DEFAULT '0',
+  technology    int(11)         NOT NULL DEFAULT '0',
   capacity      int(11)		UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
