@@ -446,7 +446,7 @@ $NETELEMENTTYPES = array(
 	1	=> trans('passive'),
 	2	=> trans('cable'),
 	3	=> trans('splitter'),
-	4	=> trans('multiplexer');
+	4	=> trans('multiplexer')
 );
 
 
@@ -497,11 +497,11 @@ $NETCONNECTORS = array(
 );
 
 $NETCABLETYPES = array (
-	MEDIUM_COPPER = array (
-		1 => trans('twisted-pair');
+	MEDIUM_COPPER => array (
+		1 => trans('twisted-pair'),
 		2 => trans('coaxial'),
 	),
-	MEDIUM_FIBER = array (
+	MEDIUM_FIBER => array (
 		1 => 'jednotubowy',
 		2 => 'wielotubowy',
 		3 => 'łatwy dostęp',
@@ -511,7 +511,7 @@ $NETCABLETYPES = array (
 );
 
 $NETWIRETYPES = array (
-        MEDIUM_COPPER = array (
+        MEDIUM_COPPER => array (
                 1 => trans('UTP cat. 1'),
                 2 => trans('UTP cat. 2'),
                 3 => trans('UTP cat. 3'),
@@ -524,34 +524,34 @@ $NETWIRETYPES = array (
 		50 => trans('thicknet'),
 		51 => trans('thinnet'),
         ),
-        MEDIUM_FIBER = array (
-		1 => trans('single-mode G.652.A');
-		2 => trans('single-mode G.652.B');
-		3 => trans('single-mode G.652.C');
-		4 => trans('single-mode G.652.D');
-		5 => trans('single-mode G.653.A');
-		5 => trans('single-mode G.653.B');
-		6 => trans('single-mode G.654.A');
-		7 => trans('single-mode G.654.B');
-		8 => trans('single-mode G.654.C');
-		9 => trans('single-mode G.655.A');
-		10 => trans('single-mode G.655.B');
-		11 => trans('single-mode G.655.C');
-		12 => trans('single-mode G.655.D');
-		13 => trans('single-mode G.655.E');
-		14 => trans('single-mode G.656');
-		15 => trans('single-mode G.657.A1');
-		16 => trans('single-mode G.657.A2');
-		17 => trans('single-mode G.657.B2');
-		18 => trans('single-mode G.657.B3');
+        MEDIUM_FIBER => array (
+		1 => trans('single-mode G.652.A'),
+		2 => trans('single-mode G.652.B'),
+		3 => trans('single-mode G.652.C'),
+		4 => trans('single-mode G.652.D'),
+		5 => trans('single-mode G.653.A'),
+		5 => trans('single-mode G.653.B'),
+		6 => trans('single-mode G.654.A'),
+		7 => trans('single-mode G.654.B'),
+		8 => trans('single-mode G.654.C'),
+		9 => trans('single-mode G.655.A'),
+		10 => trans('single-mode G.655.B'),
+		11 => trans('single-mode G.655.C'),
+		12 => trans('single-mode G.655.D'),
+		13 => trans('single-mode G.655.E'),
+		14 => trans('single-mode G.656'),
+		15 => trans('single-mode G.657.A1'),
+		16 => trans('single-mode G.657.A2'),
+		17 => trans('single-mode G.657.B2'),
+		18 => trans('single-mode G.657.B3'),
 
-		50 => trans('multi-mode FFDI');
+		50 => trans('multi-mode FFDI'),
 		51 => trans('multi-mode OM1'),
 		52 => trans('multi-mode OM2'),
 		53 => trans('multi-mode OM3'),
 		54 => trans('multi-mode OM4'),
 	),
-	MEDIUM_WIRELESS (
+	MEDIUM_WIRELESS => array(
 		1 => trans('802.11b/g'),
 		2 => trans('802.11a/an/ac'),
 		3 => trans('Microwave'),
@@ -589,7 +589,9 @@ $COPERCOLORSSCHEMAS = array (
                                 23 => trans('violet').'/'.trans('green'),
                                 24 => trans('violet').'/'.trans('brown'),
                                 25 => trans('violet').'/'.trans('slate'),
-)
+			    )
+	    )
+);
 
 define('RED',1);
 define('GREEN',2);
@@ -785,7 +787,7 @@ if(isset($SMARTY))
 	$SMARTY->assign('_NETPORTTYPES', $NETPORTTYPES);
 	$SMARTY->assign('_NETCONNECTORS', $NETCONNECTORS);
 	$SMARTY->assign('_NETCABLETYPES', $NETCABLETYPES);
-	$SMARYY->assign('_NETWIRETYPES', $NETWIRETYPES);
+	$SMARTY->assign('_NETWIRETYPES', $NETWIRETYPES);
 	$SMARTY->assign('_FIBEROPTICCOLORSCHEMAS', $FIBEROPTICCOLORSCHEMAS);
 	$SMARTY->assign('_NETNODETYPES', $NETNODETYPES);
 	$SMARTY->assign('_NETNODEOWNERSHIPS', $NETNODEOWNERSHIPS);
