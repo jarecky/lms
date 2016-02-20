@@ -75,7 +75,7 @@ CREATE TABLE netports (
   type          tinyint(2)      NOT NULL DEFAULT '0',
   label         varchar(32)     NOT NULL DEFAULT '',
   connectortype tinyint(3)      NOT NULL DEFAULT '0',
-  technology    int(11)         UNSIGNED NOT NULL DEFAULT '0',
+  technology    int(11)         NOT NULL DEFAULT '0',
   capacity      int(11)		UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
@@ -122,7 +122,7 @@ CREATE TABLE netreserves (
   PRIMARY KEY (id),
   FOREIGN KEY (netcableid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY reserve (netelemid,cableid,priority)
+  UNIQUE KEY reserve (netcableid,priority)
 ) ENGINE=InnoDB;
 
 /* kable - optyczne/miedziane */
