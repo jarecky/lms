@@ -70,7 +70,7 @@ CREATE TABLE netdevices (
 ) ENGINE=InnoDB;
 
 CREATE TABLE netports (
-  id            int(11)         NOT NULL ZEROFILL auto_increment,
+  id            int(11)         NOT NULL UNSIGNED ZEROFILL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
   label         varchar(32)     NOT NULL DEFAULT '',
@@ -142,7 +142,7 @@ CREATE TABLE netcables (
 ) ENGINE=InnoDB;
 
 CREATE TABLE netwires (
-  id            int(11)         NOT NULL ZEROFILL auto_increment,
+  id            int(11)         NOT NULL UNSIGNED ZEROFILL auto_increment,
   netcableid    int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
   bundle        tinyint(2)      NOT NULL DEFAULT '1',
