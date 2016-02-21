@@ -85,7 +85,7 @@ CREATE TABLE netports (
 
 CREATE TABLE netradiosectors (
   id            int(11)         NOT NULL auto_increment,
-  netportid     int(11)         NOT NULL DEFAULT '0',
+  netportid     int(11)         UNSIGNED ZEROFILL NOT NULL DEFAULT '0',
   name          varchar(64)     NOT NULL,
   azimuth       decimal(9,2)    DEFAULT 0 NOT NULL,
   width         decimal(9,2)    DEFAULT 0 NOT NULL,
@@ -96,9 +96,9 @@ CREATE TABLE netradiosectors (
   frequency2    numeric(9,5)    DEFAULT NULL,
   bandwidth     numeric(9,5)    DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX netelemid (netelemid),
-  FOREIGN KEY (netdevportid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE KEY name (name, netelemid)
+  INDEX netportid (netportid),
+  FOREIGN KEY (netportid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  UNIQUE KEY name (name, netportid)
 ) ENGINE=INNODB;
 
 CREATE TABLE nettechnologies (
