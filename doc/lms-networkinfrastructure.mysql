@@ -40,7 +40,6 @@ CREATE TABLE netelements (
   netnodeid     int(11)         DEFAULT NULL,
   invprojectid  int(11)         DEFAULT NULL,
   netdevicemodelid int(11) DEFAULT NULL,
-  description   text NOT NULL DEFAULT '',
   status        tinyint         DEFAULT '0',
   PRIMARY KEY (id),
   FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -70,7 +69,7 @@ CREATE TABLE netdevices (
 ) ENGINE=InnoDB;
 
 CREATE TABLE netports (
-  id            int(11)         NOT NULL UNSIGNED ZEROFILL auto_increment,
+  id            int(11)         UNSIGNED ZEROFILL NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
   label         varchar(32)     NOT NULL DEFAULT '',
@@ -109,7 +108,7 @@ CREATE TABLE nettechnologies (
   wiretype	tinyint(3)	NOT NULL default '0',
   upspeed	int(11)		NOT NULL DEFAULT '0',
   downspeed	int(11)		NOT NULL DEFAULT '0',
-  PRIMARY KEY (id),
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
 /* zapasy kablowe */
@@ -142,7 +141,7 @@ CREATE TABLE netcables (
 ) ENGINE=InnoDB;
 
 CREATE TABLE netwires (
-  id            int(11)         NOT NULL UNSIGNED ZEROFILL auto_increment,
+  id            int(11)         UNSIGNED ZEROFILL NOT NULL auto_increment,
   netcableid    int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
   bundle        tinyint(2)      NOT NULL DEFAULT '1',
