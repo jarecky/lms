@@ -28,20 +28,21 @@ $id = intval($_GET['id']);
 $result = $DB->GetRow('SELECT n.*, p.name AS projectname,
 	lb.name AS borough_name, lb.type AS borough_type,
 	ld.name AS district_name, ls.name AS state_name,
-        (SELECT d.shortname FROM divisions d WHERE d.id = n.divisionid) AS division
+        (SELECT d.shortname FROM divisions d WHERE d.id = n.divisionid) AS division,
+	CONCAT(c.lastname," ",c.name) AS ownername
 	FROM netnodes n
 	LEFT JOIN invprojects p ON n.invprojectid = p.id
 	LEFT JOIN location_cities lc ON lc.id = n.location_city
 	LEFT JOIN location_boroughs lb ON lb.id = lc.boroughid
 	LEFT JOIN location_districts ld ON ld.id = lb.districtid
 	LEFT JOIN location_states ls ON ls.id = ld.stateid
+	LEFT JOIN customers c ON c.id=n.ownerid
 	WHERE n.id=? ',array($id));
 if (!$result)
 	$SESSION->redirect('?m=netnodelist');
 
 
 //$netdevinfo = $LMS->GetNetDev($_GET['id']);
-
 
 $SESSION->save('backto', $_SERVER['QUERY_STRING']);
 
@@ -52,7 +53,6 @@ $SMARTY->assign('objectid', $result['id']);
 
 $nlist = $DB->GetAll("SELECT * FROM netdevices WHERE netnodeid=".$id." ORDER BY NAME");
 $SMARTY->assign('netdevlist', $nlist);
-
 
 
 $SMARTY->display('netnode/netnodeinfo.html');

@@ -108,6 +108,11 @@
 				{/foreach}
 			</SELECT>
 			<INPUT TYPE="TEXT" NAME="netnode[coowner]" VALUE={$netnode.coowner}"" {tip trigger="coowner" text="Enter co-owner identifier"} ID="NNcoowner" SIZE="25"/>
+			<SELECT NAME="netnode[ownerid]" {tip trigger="ownerid" text="Choose owner from list"} ID="NNownerid">
+				{foreach $ownerlist as $id => $owner}
+				<OPTION VALUE="{$owner.id}">{$owner.ownername}</OPTION>
+				{/foreach}
+			</SELECT>
 		</TD>
 	</TR>
 	<TR>

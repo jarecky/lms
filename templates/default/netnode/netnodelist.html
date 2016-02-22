@@ -9,10 +9,13 @@
     <THEAD>
 	
 	<TR {tip text="Click on column name to change sorting order"}>
-		<TD width="67%">
+		<TD width="42%">
 			<IMG src="img/netdev.gif" ALT="">&nbsp;<A href="?m=netnodelist&o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}"><B>{trans("Name:")}</B></A> {if $listdata.order == "name"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}<BR>
 			<IMG src="img/producer.gif" ALT="">&nbsp;<A href="?m=netnodelist&o=type{if $listdata.direction == "asc" && $listdata.order == "type"},desc{/if}">{trans("Type:")}</A> {if $listdata.order == "type"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} / 
 			<A href="?m=netnodelist&o=status{if $listdata.direction == "asc" && $listdata.order == "status"},desc{/if}">{trans("Status:")}</A> {if $listdata.order == "status"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} 
+		</TD>
+		<TD width="25%">
+			{trans("Ownership:")}
 		</TD>
 		<TD width="15%">
 			<A href="?m=netnodelist&o=location{if $listdata.direction == "asc" && $listdata.order == "location"},desc{/if}">{trans("Location:")}</A> {if $listdata.order == "location"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} 
@@ -31,7 +34,7 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD colspan="6" class="nobr">
+		<TD colspan="7" class="nobr">
 			<span class="bold">{trans("Filter:")}</span> 
                         {if $divisions}
                         {trans("Division:")}
@@ -76,7 +79,7 @@
 	</TR>    
 	{if $listdata.total != 0}
 	<TR>
-		<TD class="pagination" colspan="6">
+		<TD class="pagination" colspan="7">
 			{include file="scroller.html" loop=$nlist}
 		</TD>
 	</TR>
@@ -90,6 +93,9 @@
 		<TD onClick="return self.location.href='?m=netnodeinfo&id={$nlist[nlist].id}';" VALIGN="TOP">
 			<IMG src="img/netdev.gif" ALT=""> <a name="{$nlist[nlist].id}"><B>{$nlist[nlist].name}</B></A><BR>
 			<IMG src="img/producer.gif" ALT=""> {$_NETNODETYPES[$nlist[nlist].type]} / {$_NETELEMENTSTATUSES[$nlist[nlist].status]}
+		</TD>
+		<TD nowrap>
+			{$_NETNODEOWNERSHIPS[$nlist[nlist].ownership]} {if ($nlist[nlist].ownership == 3)} ({$nlist[nlist].ownername}) {elseif ($nlist[nlist].ownership >= 1)} ({$nlist[nlist].coowner}) {/if}
 		</TD>
 		<TD nowrap>
 			{$nlist[nlist].location}{if $nlist[nlist].borough_name} ({$nlist[nlist].state_name} / {$nlist[nlist].district_name} / {$_BOROUGHTYPES[$nlist[nlist].borough_type]} {$nlist[nlist].borough_name}){/if}
@@ -111,7 +117,7 @@
 	{if $nlist[nlist.index_next].ownerid == $nlist[nlist].ownerid && $listdata.order == "owner"}{cycle print=false}{/if}
 	{sectionelse}
 	<TR>
-		<TD colspan="6" class="empty-table">
+		<TD colspan="7" class="empty-table">
 			<p>{trans("There are no device nodes in your database.")}</p>
 		</TD>
 	</TR>
@@ -121,13 +127,13 @@
 
 	{if $listdata.total != 0}
 	<TR>
-		<TD class="pagination" colspan="6">
+		<TD class="pagination" colspan="7">
 			{include file="scroller.html" loop=$nlist}
 		</TD>
 	</TR>
 	{/if}
 	<TR>
-		<TD COLSPAN="5" ALIGN="right">
+		<TD COLSPAN="6" ALIGN="right">
 			<B>
 				{trans("Total:")} {$listdata.total|default:"0"}
 			</B>

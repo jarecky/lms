@@ -121,8 +121,7 @@
 			<B>{trans("Ownership:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			{$_NETNODEOWNERSHIPS[$nodeinfo.ownership]} {if ($nodeinfo.ownership >= 1)} ({$nodeinfo.coowner}) {/if}
-		</TD>
+			{$_NETNODEOWNERSHIPS[$nodeinfo.ownership]} {if ($nodeinfo.ownership == 3)} ({$nodeinfo.ownername}) {elseif ($nodeinfo.ownership >= 1)} ({$nodeinfo.coowner}) {/if} </TD>
 	</TR>
 	<TR>
 		<TD WIDTH="1%">

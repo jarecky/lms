@@ -110,15 +110,18 @@ if (strlen(trim($d)) && $d!=-1) {
 $fstr = empty($warr) ? '' : ' WHERE ' . implode(' AND ', $warr);
 
 $nlist = $DB->GetAll('SELECT n.id, n.name, n.type, n.status, n.invprojectid, p.name AS project,
-		n.location, n.divisionid,
+		n.location, n.divisionid, n.ownership, n.coowner,
 		lb.name AS borough_name, lb.type AS borough_type,
-		ld.name AS district_name, ls.name AS state_name
+		ld.name AS district_name, ls.name AS state_name,
+		CONCAT(c.lastname," ",c.name) AS ownername
 	FROM netnodes n
 	LEFT JOIN invprojects p ON (n.invprojectid = p.id) 
 	LEFT JOIN location_cities lc ON lc.id = n.location_city
 	LEFT JOIN location_boroughs lb ON lb.id = lc.boroughid
 	LEFT JOIN location_districts ld ON ld.id = lb.districtid
-	LEFT JOIN location_states ls ON ls.id = ld.stateid ' . $fstr . ' ' . $ostr . ' ' . $dir);
+	LEFT JOIN location_states ls ON ls.id = ld.stateid
+	LEFT JOIN customers c ON c.id=n.ownerid ' . $fstr . ' ' . $ostr . ' ' . $dir);
+
 
 $listdata['total'] = sizeof($nlist);
 $listdata['order'] = $order;

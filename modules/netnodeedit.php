@@ -62,6 +62,8 @@ if (isset($_POST['netnode'])) {
 			$netnodedata['location_house'] = null;
 			$netnodedata['location_flat'] = null;
 		}
+		if ($netnodedata['ownership']<>3)
+			$netnodedata['ownerid'] = null;
 
 		$ipi = $netnodedata['invprojectid'];
 		if ($ipi == '-1') {
@@ -84,6 +86,7 @@ if (isset($_POST['netnode'])) {
 		'latitude' => !empty($netnodedata['latitude']) ? str_replace(',', '.', $netnodedata['latitude']) : NULL,
 		'ownership'=>$netnodedata['ownership'],
 		'coowner'=>$netnodedata['coowner'],
+		'ownerid'=>$netnodedata['ownerid'],
 		'uip'=>$netnodedata['uip'],
 		'miar'=>$netnodedata['miar'],
 		'divisionid'=>$netnodedata['divisionid']
@@ -126,6 +129,7 @@ $SMARTY->assign('error', $error);
 $SMARTY->assign('netnode', $netnodedata);
 $SMARTY->assign('objectid', $netnodedata['id']);
 $SMARTY->assign('divisions', $DB->GetAll('SELECT id, shortname FROM divisions ORDER BY shortname'));
+$SMARTY->assign('ownerlist', $DB->GetAll("SELECT id,concat(lastname,' ',name) AS ownername FROM customers WHERE status=".CSTATUS_CONNECTED." AND deleted=0 ORDER BY lastname ASC,name ASC"));
 
 $nprojects = $DB->GetAll("SELECT * FROM invprojects WHERE type<>? ORDER BY name",
 	array(INV_PROJECT_SYSTEM));
