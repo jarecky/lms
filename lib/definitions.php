@@ -447,6 +447,7 @@ $NETELEMENTTYPES = array(
 	2	=> trans('cable'),
 	3	=> trans('splitter'),
 	4	=> trans('multiplexer')
+	99	=> trans('clients computer');
 );
 
 

@@ -30,7 +30,7 @@ CREATE TABLE netnodes (
 CREATE TABLE netelements (
   id            int(11)         NOT NULL auto_increment,
   name          varchar(32)     NOT NULL DEFAULT '',
-  type		tinyint(1)	NOT NULL DEFAULT '0',
+  type		tinyint(2)	NOT NULL DEFAULT '0',
   description   text            NOT NULL DEFAULT '',
   producer      varchar(64)     NOT NULL DEFAULT '',
   model         varchar(32)     NOT NULL DEFAULT '',
