@@ -30,7 +30,7 @@ CREATE TABLE netnodes (
 CREATE TABLE netelements (
   id            int(11)         NOT NULL auto_increment,
   name          varchar(32)     NOT NULL DEFAULT '',
-  type		tinyint(1)	NOT NULL DEFAULT '0',
+  type		tinyint(2)	NOT NULL DEFAULT '0',
   description   text            NOT NULL DEFAULT '',
   producer      varchar(64)     NOT NULL DEFAULT '',
   model         varchar(32)     NOT NULL DEFAULT '',
@@ -165,33 +165,4 @@ CREATE TABLE netconnections (
   PRIMARY KEY (id),
   UNIQUE KEY wires (wires,ports)
 ) ENGINE=INNODB;
-/*
-  netdevices (clients computers) addresses
-*/
-CREATE TABLE addresses (
-  id		int(11)		NOT NULL auto_increment,
-  netelemid	int(11)		NOT NULL DEFAULT '0',
-  name		varchar(32)	DEFAULT NULL,
-  fqdn		varchar(200)	NOT NULL DEFAULT '',
-  ipaddr	int(16)		unsigned NOT NULL DEFAULT '0',
-  ipaddr_pub	int(16)		unsigned NOT NULL DEFAULT '0',
-  access	tinyint(1)	NOT NULL DEFAULT '1',
-  warning	tinyint(1)	NOT NULL DEFAULT '0',
-  authtype	tinyint(1)	NOT NULL DEFAULT '0',
-  chkmac	tinyint(1)	NOT NULL DEFAULT '1',
-  halfduplex	tinyint(1)	NOT NULL DEFAULT '0',
-  lastonline	int(11)		NOT NULL DEFAULT '0',
-  info		text		NOT NULL DEFAULT '',
-  nas		tinyint(1)	NOT NULL DEFAULT '0',
-  netid		int(11)		NOT NULL DEFAULT '0',
-  PRIMARY KEY  (id),
-  UNIQUE KEY name (name),
-  UNIQUE KEY fqdn (fqdn),
-  UNIQUE KEY ipaddr (ipaddr, netid),
-  INDEX netelemid (netelemid),
-  INDEX ownerid (ownerid),
-  INDEX ipaddr_pub (ipaddr_pub),
-  INDEX authtype (authtype),
-  FOREIGN KEY (netid) REFERENCES networks (id) ON DELETE CASCADE ON UPDATE CASCADE,
-) ENGINE=InnoDB;
 
