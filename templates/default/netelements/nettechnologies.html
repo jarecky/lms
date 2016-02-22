@@ -1,0 +1,101 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM method="get" action="?m=nettechnologies" name="choosefilter">
+<INPUT type="hidden" NAME="m" VALUE="nettechnologies">
+<INPUT type="hidden" NAME="page" VALUE="1">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD width="25%" {tip text="Click on column name to change sorting order"}>
+			<A href="?m=nettechnologies&o=label{if $listdata.direction == "asc" && $listdata.order == "label"},desc{/if}"><B>{trans("Label")}</B></A> {if $listdata.order == "label"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="25%" {tip text="Click on column name to change sorting order"}>
+			<A href="?m=nettechnologies&o=uke_label{if $listdata.direction == "asc" && $listdata.order == "uke_label"},desc{/if}">{trans("Label for UKE")}</A> {if $listdata.order == "uke_label"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="25%" {tip text="Click on column name to change sorting order"}>
+			<A href="?m=nettechnologies&o=wiretype{if $listdata.direction == "asc" && $listdata.order == "wiretype"},desc{/if}">{trans("Medium type")}</A> {if $listdata.order == "wiretype"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD width="12%">
+			{trans("Upload speed")}
+		</TD>
+		<TD width="12%">
+			{trans("Download speed")}
+		</TD>
+		<TD width="1%" align="right" nowrap>
+			<B>{trans("Total:")} {$listdata.total|default:"0"}</B>
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="6" class="nobr">
+			<span class="bold">{trans("Filter:")}</span>
+			{trans("Medium type")}:
+			<SELECT SIZE="1" NAME="wiretype" ONCHANGE="document.choosefilter.submit();">
+				<OPTION VALUE="-1" {if $listdata.wiretype == -1}  SELECTED {/if}>- {trans("all")} -</OPTION>
+				{foreach $_LINKTYPES as $idx => $type}
+					<OPTION VALUE="{$idx}"{if $listdata.wiretype == $idx} SELECTED{/if}>{$type}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	{if $listdata.total != 0}
+	<TR>
+		<TD class="pagination" colspan="6">
+			{include file="scroller.html" loop=$nettechnologies}
+		</TD>
+	</TR>
+	{/if}
+    </THEAD>
+    <TBODY>
+	{cycle values="light,lucid" print=false}
+	{section name=nettechnologies loop=$nettechnologies start=$start max=$pagelimit}
+	<TR class="highlight {cycle}">
+		<TD VALIGN="TOP">
+			{$nettechnologies[nettechnologies].label}
+		</TD>
+		<TD class="nobr valign-top">
+			{$nettechnologies[nettechnologies].uke_label}
+		</TD>
+		<TD class="nobr valign-top">
+			{$_LINKTYPES[$nettechnologies[nettechnologies].wiretype]}
+		</TD>
+		<TD class="nobr valign-top">
+			{$nettechnologies[nettechnologies].upspeed}
+		</TD>
+		<TD class="nobr valign-top">
+			{$nettechnologies[nettechnologies].downspeed}
+		</TD>
+		<TD align="right" class="nobr">
+			<a href="?m=nettechnologies&action=del&id={$nettechnologies[nettechnologies].id}" onClick="return confirmLink(this, '{t a=$nettechnologies[nettechnologies].label}Are you sure, you want to remove technology \'$a\' from database?{/t}')"><IMG src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
+			<a href="?m=nettechnologies&action=edit&id={$nettechnologies[nettechnologies].id}"><IMG src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></A>
+			<a href="?m=nettechnologies&action=clone&id={$nettechnologies[nettechnologies].id}"><IMG src="img/clone.gif" alt="[ {trans("Clone")} ]" title="[ {trans("Clone")} ]"></A>
+		</TD>
+	</TR>
+	{sectionelse}
+	<TR>
+		<TD colspan="6" class="empty-table">
+			<p>{trans("There are no technologies in your database.")}</p>
+		</TD>
+	</TR>
+	{/section}
+	{if $listdata.total != 0}
+	<TR>
+		<TD class="pagination" colspan="6">
+			{include file="scroller.html" loop=$nettechnologies}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD COLSPAN="5" ALIGN="right">
+			<B>
+				{trans("Total:")} {$listdata.total|default:"0"}
+			</B>
+		</TD>
+		<TD COLSPAN="1"></TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

@@ -26,7 +26,7 @@ td[onclick]	{ cursor: pointer; }
 .flr		{ border-left-width: 1pt; border-left-style: solid; border-right-width: 1pt; border-right-style: solid; }
 .loginform	{ border-width: 1pt; border-style: solid; border-color: #888888; }
 .hand		{ cursor: pointer; }
-.container       { padding: 0; }
+.container       { padding: 0; vertical-align: top; }
 FORM		{ display: inline; }
 
 LABEL       { cursor: pointer; }

@@ -239,6 +239,13 @@ $menu = array(
 					'tip' => trans('Add new network device node'),
 					'prio' => 50,
 				),
+				array(
+                                        'name' => trans('Technologies'),
+                                        'link' => '?m=nettechnologies',
+                                        'tip' => trans('Network technologies'),
+                                        'prio' => 100,
+                                ),
+
 			),
 		),
 
