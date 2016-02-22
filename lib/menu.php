@@ -213,6 +213,23 @@ $menu = array(
 			),
 		),
 
+		'netelements'=>array(
+			'name'=> trans('Net Elements'),
+			'img'=>'netdev.gif',
+			'link'=>'?m=netelements',
+			'tip'=>trans('Network Devices Management'),
+			'accesskey'=>'',
+			'prio'=>15,
+			'submenu'=>array(
+				array(
+					'name' => trans('Add'),
+					'link' => '?m=netelementsadd',
+					'tip' => trans('Network device add'),
+					'prio' => 10,
+				),
+			),
+		),
+
 		'netdevices' => array(
 			'name' => trans('Net Devices'),
 			'img' =>'netdev.gif',
