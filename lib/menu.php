@@ -222,7 +222,7 @@ $menu = array(
 			'prio'=>15,
 			'submenu'=>array(
 				array(
-					'name' => trans('Add'),
+					'name' => trans('Add Device'),
 					'link' => '?m=netelementadd',
 					'tip' => trans('Network element add'),
 					'prio' => 10,
