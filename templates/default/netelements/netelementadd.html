@@ -22,11 +22,11 @@ function clone(src){
   var ports=document.getElementById('porttable');
   var nrow=document.createElement('tr');
   var nindex=ports.childNodes.length+1;
-  nrow.innerHTML=src.parentNode.parentNode.innerHTML.replace(/netelem\[[0-9]+\]/g,'netelem['+nindex+']');
+  nrow.innerHTML=src.parentNode.parentNode.innerHTML.replace(/[0-9]+\]/g,nindex+']');
   ports.insertBefore(nrow,src.parentNode.parentNode.nextSibling);
   for(x=0; x<ports.childNodes.length; x++){
   //alert(ports.childNodes[x].innerHTML);
-    ports.childNodes[x].innerHTML=ports.childNodes[x].innerHTML.replace(/netelem\[\d+\]/g,'netelem['+x+']');
+    ports.childNodes[x].innerHTML=ports.childNodes[x].innerHTML.replace(/\d+\]/g,x+']');
   }
   ports.insertBefore(nrow,src.parentNode.parentNode.nextSibling);
 
@@ -242,8 +242,8 @@ function selectmodel(){
 			{trans("Net node:")}
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
-				<OPTION VALUE="-1">{trans("Create new")}</OPTION>
+			<SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select netnode"} >
+				<OPTION VALUE="-1">{trans("Create netnode")}</OPTION>
 				{section name=nd loop=$NNnodes}
 				<OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
 				{/section}
