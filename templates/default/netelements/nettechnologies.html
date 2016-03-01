@@ -71,9 +71,9 @@
 			{$nettechnologies[nettechnologies].downspeed}
 		</TD>
 		<TD align="right" class="nobr">
-			<a href="?m=nettechnologies&action=del&id={$nettechnologies[nettechnologies].id}" onClick="return confirmLink(this, '{t a=$nettechnologies[nettechnologies].label}Are you sure, you want to remove technology \'$a\' from database?{/t}')"><IMG src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
-			<a href="?m=nettechnologies&action=edit&id={$nettechnologies[nettechnologies].id}"><IMG src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></A>
-			<a href="?m=nettechnologies&action=clone&id={$nettechnologies[nettechnologies].id}"><IMG src="img/clone.gif" alt="[ {trans("Clone")} ]" title="[ {trans("Clone")} ]"></A>
+			<a href="javascript:void(0)" onClick="return confirmLink(this, '{t a=$nettechnologies[nettechnologies].label}Are you sure, you want to remove technology \'$a\' from database?{/t}')"><IMG src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
+			<a href="javascript:void(0)" onclick="openSelectWindow('?m=nettechnologies&action=edit&id={$nettechnologies[nettechnologies].id}');"><IMG src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></A>
+			<a href="javascript:void(0)" onclick="openSelectWindow('?m=nettechnologies&action=clone&id={$nettechnologies[nettechnologies].id}');"><IMG src="img/clone.gif" alt="[ {trans("Clone")} ]" title="[ {trans("Clone")} ]"></A>
 		</TD>
 	</TR>
 	{sectionelse}
