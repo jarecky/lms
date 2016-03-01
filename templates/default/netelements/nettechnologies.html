@@ -29,7 +29,7 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD colspan="6" class="nobr">
+		<TD colspan="5" class="nobr">
 			<span class="bold">{trans("Filter:")}</span>
 			{trans("Medium type")}:
 			<SELECT SIZE="1" NAME="wiretype" ONCHANGE="document.choosefilter.submit();">
@@ -39,6 +39,9 @@
 				{/foreach}
 			</SELECT>
 		</TD>
+		<td>
+		    <a href="javascript:void(0)" onclick="openSelectWindow('?m=netechnologies&action=add');"><img src="img/add.gif">{trans('Dodaj')}</a>
+		</td>
 	</TR>
 	{if $listdata.total != 0}
 	<TR>
