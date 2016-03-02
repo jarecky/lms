@@ -245,7 +245,12 @@ $menu = array(
                                         'tip' => trans('Network technologies'),
                                         'prio' => 100,
                                 ),
-
+				array(
+                                        'name' => trans('Producers and models'),
+                                        'link' => '?m=netelemmodels',
+                                        'tip' => trans('Producers and models'),
+                                        'prio' => 100,
+                                ),
 			),
 		),
 
