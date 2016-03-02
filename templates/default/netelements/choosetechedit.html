@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--// $Id$ //-->
+<html>
+    <head>
+        <meta name="GENERATOR" content="LMS {$layout.lmsv}">
+        <meta http-equiv="Content-Language" content="{$LANGDEFS.$_ui_language.html}">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>::: LMS :{if $layout.pagetitle != ""} {$layout.pagetitle} :{/if}::</title>
+        <link href="img/style.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="img/common.js"></script>
+        <script type="text/javascript" src="img/autosuggest.js"></script>
+    </head>
+    <body class="light">
+        {$xajax}
+        <div id="overDiv" style="position:absolute; visibility:hidden; z-index:100;"></div>
+        <script type="text/javascript" language="JavaScript" src="img/overlib.js"></script>
+	<table id="searchtable" cellpadding="5" width="100%">
+                <tr class="dark">
+                    <td class="fleftu nobr">
+                        <img src="img/producer.gif" alt="">
+                        <input type="text" name="search_producer" value="" size="40" onkeyup="document.search.submit();" {tip text="Enter producer name"}>
+                    </td>
+                </tr>
+            </table>
+
+        <div id="autosuggest"><ul></ul></div>
+	<table id="lista">
+	<tr>
+	    <td>dupajasiu</td>
+	</tr>
+
+
+
+	</table>
+        <script type="text/javascript">
+            <!--
+
+            function resize_frame()
+            {
+                var st = document.getElementById('searchtable');
+                var lt = document.getElementById('lista');
+                var h = (st ? st.offsetHeight : 0) + lt.offsetHeight;
+
+                autoiframe_setsize('autoiframe', 350, Math.max(h, 160));
+            }
+
+
+            resize_frame();
+            //-->
+        </script>
+    </body>
+</html>

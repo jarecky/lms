@@ -51,6 +51,7 @@ $SMARTY->assign('start',$start);
 $SMARTY->assign("listdata", $listdata);
 $SMARTY->assign("nettechnologies", $nettechnologies);
 
-$SMARTY->display("netelements/nettechnologies.html");
+if($_GET['action']=='add' || $_GET['action']=='edit')$SMARTY->display("netelements/choosetechedit.html");
+else $SMARTY->display("netelements/nettechnologies.html");
 
 ?>
