@@ -223,7 +223,7 @@ $menu = array(
 			'submenu'=>array(
 				array(
 					'name' => trans('Add Device'),
-					'link' => '?m=netelementadd',
+					'link' => '?m=netelement&action=add',
 					'tip' => trans('Network element add'),
 					'prio' => 10,
 				),
