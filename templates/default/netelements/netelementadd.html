@@ -4,11 +4,11 @@
 {include file="calendar_js.html"}
 {$xajax}
 <script>
-function change_producer(elem)
+function change_producer(elem,type)
             {
                 //var model = document.getElementById('model');
                 //model.style.display = 'none';
-                xajax_select_producer(elem.value);
+                xajax_select_producer(elem.value, type.value);
             }
             
 function update_models(data)
@@ -89,6 +89,7 @@ function remports(row){
        
 </script>
 <H1>{$layout.pagetitle}</H1>
+TODO: uzaleznic zawartosc od typu, asygnacja zmiennych + defaulty
 <FORM NAME="netelemadd" METHOD="POST" ACTION="?m={$smarty.get.m}">
 <INPUT type="submit" class="hiddenbtn">
 <table class="lmsbox"> <!-- tabela glowna -->
@@ -111,7 +112,7 @@ function remports(row){
                   </td>
                   <td><B>{trans("Type:")}</B>
                   </td>
-                  <td><select NAME="netelem[type]" {tip text="Select device type"} VALUE="{$netelem.type}">
+                  <td><select NAME="netelem[type]" {tip text="Select device type"} VALUE="{$netelem.type}" id="type">
                                 {foreach $_NETELEMENTTYPES as $idx => $type}
                                 <OPTION VALUE="{$idx}"{if $netelem.type == $idx} selected{/if}>{$type}</OPTION>
                                 {/foreach}
@@ -123,7 +124,7 @@ function remports(row){
 		  </td>
 		  <td><B>{trans("Manufacturer:")}</B>
 		  </td>
-		  <td><select id="producer_sel" name="producerid" onchange="change_producer(this)" {tip text="Select producer"} style="width: 80%">
+		  <td><select id="producer_sel" name="producerid" onchange="change_producer(this, getElementById('type'))" {tip text="Select producer"} style="width: 80%">
                         <option value="0">{trans('None')}</option>
                         {foreach from=$producers item=item}
                         <option value="{$item.id}"{if $item.id == $data.producerid} selected{/if}>{$item.name}</option>
