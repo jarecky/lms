@@ -328,8 +328,10 @@ TODO: uzaleznic zawartosc od typu, asygnacja zmiennych + defaulty
       
       <TD WIDTH="100%" ALIGN="RIGHT" colspan=2>
 			<A HREF="javascript:document.netelemadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
-			<A HREF="?m=netelemlist">{trans("Cancel")} <IMG SRC="img/cancel.gif" alt=""></A>
-      </TD>
+			<A HREF="?m=netelemlist">{trans("Cancel")} <IMG SRC="img/cancel.gif" alt=""></A><br>
+                       <INPUT type="checkbox" name="nodedata[reuse]" id="reuse" value="ON" {if $nodedata.reuse}checked{/if}> <label for="reuse">{trans("Display this fo
+rm again, when this node is saved")}</label>
+       </TD>
   </tr>
 </tbody>
 </table><!-- EOF glowna -->

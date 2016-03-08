@@ -37,20 +37,20 @@ TODO: sortowanie, asygnacja danych, paginacja
 		<TD colspan="6" class="nobr">
 			<span class="bold">{trans("Filter:")}</span>
 			{trans("Type")}:
-			<SELECT SIZE="1" NAME="t" ONCHANGE="document.choosefilter.submit();">
+			<SELECT SIZE="1" NAME="filter[t]" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1" {if $listdata.type == -1}  SELECTED {/if}>- {trans("all")} -</OPTION>
 				{foreach $_NETELEMENTTYPES as $idx => $type}
                                 <OPTION VALUE="{$idx}"{if $listdata.type == $idx} selected{/if}>{$type}</OPTION>
                                 {/foreach}			</SELECT>			
                         {trans("Status")}:
-			<SELECT SIZE="1" NAME="s" ONCHANGE="document.choosefilter.submit();">
+			<SELECT SIZE="1" NAME="filter[s]" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1" {if $listdata.status == -1}  SELECTED {/if}>- {trans("all")} -</OPTION>
 				{foreach $_NETELEMENTSTATUSES as $idx => $status}
 					<OPTION VALUE="{$idx}"{if $listdata.status == $idx} SELECTED{/if}>{$status}</OPTION>
 				{/foreach}
 			</SELECT>
 			{trans("Project:")}
-			<SELECT SIZE="1" NAME="p" ONCHANGE="document.choosefilter.submit();">
+			<SELECT SIZE="1" NAME="filter[p]" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1"{if $listdata.invprojectid == -1} selected{/if}>- {trans("all")} -</OPTION>
 				<OPTION VALUE="-2"{if $listdata.invprojectid == -2} selected{/if}>- {trans("without project")} -</OPTION>
 				{section name=project loop=$NNprojects}
@@ -58,7 +58,7 @@ TODO: sortowanie, asygnacja danych, paginacja
 				{/section}
 			</SELECT>
 			{trans("Network node:")}
-			<SELECT SIZE="1" NAME="n" ONCHANGE="document.choosefilter.submit();">
+			<SELECT SIZE="1" NAME="filter[n]" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1"{if $listdata.netnode == -1} selected{/if}>- {trans("all")} -</OPTION>
 				<OPTION VALUE="-2"{if $listdata.netnode == -2} selected{/if}>- {trans("none")} -</OPTION>
 				{foreach $netnodes as $netnode}
@@ -66,7 +66,7 @@ TODO: sortowanie, asygnacja danych, paginacja
 				{/foreach}
 			</SELECT>
 			{trans("Producer:")}
-			<SELECT SIZE="1" NAME="producer" ONCHANGE="document.choosefilter.submit();">
+			<SELECT SIZE="1" NAME="filter[producer]" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1"{if $listdata.producer == -1} selected{/if}>- {trans("all")} -</OPTION>
 				<OPTION VALUE="-2"{if $listdata.producer == -2} selected{/if}>- {trans("none")} -</OPTION>
 				{foreach $producers as $producer}
@@ -74,7 +74,7 @@ TODO: sortowanie, asygnacja danych, paginacja
 				{/foreach}
 			</SELECT>
 			{trans("Model:")}
-			<SELECT SIZE="1" NAME="model" ONCHANGE="document.choosefilter.submit();">
+			<SELECT SIZE="1" NAME="filter[model]" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1"{if $listdata.model == -1} selected{/if}>- {trans("all")} -</OPTION>
 				<OPTION VALUE="-2"{if $listdata.model == -2} selected{/if}>- {trans("none")} -</OPTION>
 				{foreach $models as $model}
