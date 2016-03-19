@@ -21,9 +21,18 @@
  *
  */
 
+/**
+ * @author Maciej_Wawryk
+ */
+
+
 $this->BeginTrans();
 
-$this->Execute("UPDATE dbinfo SET keyvalue = ? WHERE keytype = ?", array('2016020503', 'dbversion'));
+define('CONFIG_TYPE_BOOLEAN', 1);
+
+$this->Execute("INSERT INTO uiconfig (section, var, value, type) VALUES('phpui', 'cache_documents', 'false', ?)", array(CONFIG_TYPE_BOOLEAN));
+
+$this->Execute("UPDATE dbinfo SET keyvalue = ? WHERE keytype = ?", array('2016030700', 'dbversion'));
 
 $this->CommitTrans();
 
