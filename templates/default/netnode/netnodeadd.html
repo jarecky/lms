@@ -107,7 +107,6 @@
 				<OPTION VALUE="{$idx}"{if $netnode.ownership == $idx} selected{/if}>{$ownership}</OPTION>
 				{/foreach}
 			</SELECT>
-<<<<<<< HEAD
 			<INPUT TYPE="TEXT" NAME="netnode[coowner]" VALUE={$netnode.coowner}"" {tip trigger="coowner" text="Enter co-owner identifier"} ID="NNcoowner" SIZE="25"/>
 			<SELECT NAME="netnode[ownerid]" {tip trigger="ownerid" text="Choose owner from list"} ID="NNownerid">
 				{foreach $ownerlist as $id => $owner}
@@ -136,9 +135,6 @@
 				{/foreach}
 			</SELECT>
 			//jesli puste wezel systemowy
-=======
-			<INPUT TYPE="TEXT" NAME="netnode[coowner]" VALUE="{$netnode.coowner}" {tip trigger="coowner" text="Enter co-owner identifier"} ID="NNcoowner" SIZE="25"/>
->>>>>>> upstream/master
 		</TD>
 	</TR>
 	<TR>
