@@ -77,6 +77,7 @@ switch ($action) {
 }
 
 
-$SMARTY->display("netelements/".$template);
+if($_GET['action']=='add' || $_GET['action']=='edit')$SMARTY->display("netelements/choosetechedit.html");
+else $SMARTY->display("netelements/nettechnologies.html");
 
 ?>

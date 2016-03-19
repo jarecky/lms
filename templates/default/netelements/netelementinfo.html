@@ -1,0 +1,26 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+{$xajax}
+<H1>{$layout.pagetitle}</H1>
+TODO: calosc
+{block name=netdevinfobox}
+	{include file="netdev/netdevinfobox.html"}
+{/block}
+{block name=netdevipbox}
+	{include file="netdev/netdevipbox.html"}
+{/block}
+{block name=netdevmanagementurl}
+	{include file="managementurl/managementurls.html"}
+{/block}
+{block name=netdevconnbox}
+	{include file="netdev/netdevconnbox.html"}
+{/block}
+{block name=netdevnodes}
+	{include file="netdev/netdevnodes.html"}
+{/block}
+{block name=netdevradiosectors}
+	{include file="netdev/radiosectors.html"}
+{/block}
+{/block}
