@@ -347,6 +347,44 @@ $LINKTYPES = array(
 	MEDIUM_FIBER	=> trans('fiber'),
 );
 
+$NETTECHNOLOGIES = array(
+	1 => array('name'=>'ADSL','medium'=>'1,2,3,4,5,6,7,8','speed'=>0,'connector'=>6),
+	2 => array('name'=>'ADSL2','medium'=>'1,2,3,4,5,6,7,8','speed'=>1,'connector'=>6),
+	3 => array('name'=>'ADSL2+','medium'=>'1,2,3,4,5,6,7,8','speed'=>2,'connector'=>6),
+	4 => array('name'=>'VDSL','medium'=>'1,2,3,4,5,6,7,8','speed'=>3,'connector'=>3),
+	5 => array('name'=>'VDSL2','medium'=>'1,2,3,4,5,6,7,8','speed'=>4,'connector'=>3),
+	6 => array('name'=>'HDSL','medium'=>'1,2,3,4,5,6,7,8','speed'=>5,'connector'=>3),
+	7 => array('name'=>'PDH','medium'=>'1,2,3,4,5,6,7,8','speed'=>5,'connector'=>3),
+	8 => array('name'=>'POTS/ISDN','medium'=>'1,2,3,4,5,6,7,8','speed'=>6,'connector'=>6),
+	9 => array('name'=>'10 Mb/s Ethernet','medium'=>'5,6,7,8','speed'=>7,'connector'=>2),
+	10 => array('name'=>'100 Mb/s Ethernet','medium'=>'5,6,7,8','speed'=>8,'connector'=>2),
+	11 => array('name'=>'1 Gigabit Ethernet','medium'=>'6,7,8','speed'=>9,'connector'=>1),
+	12 => array('name'=>'10 Gigabit Ethernet','medium'=>'7,8','speed'=>10,'connector'=>1),
+	13 => array('name'=>'(EURO)DOCSIS 1.x)','medium'=>'51','speed'=>11,'connector'=>8),
+	14 => array('name'=>'(EURO)DOCSIS 2.x)','medium'=>'51','speed'=>12,'connector'=>8),
+	15 => array('name'=>'(EURO)DOCSIS 3.x)','medium'=>'51','speed'=>13,'connector'=>8),
+
+#	1 => array('name'=>'','medium'=>MEDIUM_COPPER,'speed'=>'','connector'=>'1'),
+	
+);
+
+$NETSPEEDS = array(
+	0 => array(8,1),
+	1 => array(12,1),
+	2 => array(24,3.5),
+	3 => array(52,16),
+	4 => array(200,200),
+	5 => array(2,2),
+	6 => array(1,1),
+	7 => array(10,10),
+	8 => array(100,100),
+	9 => array(1000,1000),
+	10 => array(10000,10000),
+	11 => array(50,10),
+	12 => array(50,30),
+	13 => array(1600,216),
+);
+
 $LINKTECHNOLOGIES = array(
 	MEDIUM_COPPER => array(
 		1 => 'ADSL',
@@ -463,38 +501,34 @@ $NETPORTTYPES = array(
 );
 
 $NETCONNECTORS = array(
-	MEDIUM_COPPER => array(
-		1 => '8P8C',
-		2 => '8P4C',
-		3 => '8P2C',
-		4 => '6P4C',
-		5 => '4P4C',
-		6 => '4P2C',
-		7 => 'BNC',
-		8 => 'F',
-	),
-	MEDIUM_FIBER => array(
-		100 => 'SC/FLAT',
-		101 => 'SC/PC',
-		102 => 'SC/UPC',
-		103 => 'SC/APC',
-		110 => 'LC/FLAT',
-		111 => 'LC/PC',
-		112 => 'LC/UPC',
-		113 => 'LC/APC',
-		120 => 'FC/FLAT',
-		121 => 'FC/PC',
-		122 => 'FC/UPC',
-		123 => 'FC/APC',
-		130 => 'ST/FLAT',
-		131 => 'ST/PC',
-		132 => 'ST/UPC',
-		133 => 'ST/APC',
-		140 => 'E2000/FLAT',
-		141 => 'E2000/PC',
-		142 => 'E2000/UPC',
-		143 => 'E2000/APC',
-	),
+	1 => '8P8C',
+	2 => '8P4C',
+	3 => '8P2C',
+	4 => '6P4C',
+	5 => '4P4C',
+	6 => '4P2C',
+	7 => 'BNC',
+	8 => 'F',
+	100 => 'SC/FLAT',
+	101 => 'SC/PC',
+	102 => 'SC/UPC',
+	103 => 'SC/APC',
+	110 => 'LC/FLAT',
+	111 => 'LC/PC',
+	112 => 'LC/UPC',
+	113 => 'LC/APC',
+	120 => 'FC/FLAT',
+	121 => 'FC/PC',
+	122 => 'FC/UPC',
+	123 => 'FC/APC',
+	130 => 'ST/FLAT',
+	131 => 'ST/PC',
+	132 => 'ST/UPC',
+	133 => 'ST/APC',
+	140 => 'E2000/FLAT',
+	141 => 'E2000/PC',
+	142 => 'E2000/UPC',
+	143 => 'E2000/APC',
 );
 
 $NETCABLETYPES = array (
