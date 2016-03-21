@@ -1250,6 +1250,7 @@ $_LANG['Specify format of verbal amounts representation (on invoices). e.g. for 
 $_LANG['Specify time (in seconds), after which node will be marked offline. It should match with frequency of running nodes activity script (i.e. lms-fping). Default: 600.'] = 'Określ czas (w sekundach) po jakim komputer będzie uważany za wyłączony. Powinno się to pokrywać z częstotliwością uruchamiania skryptu dokonującego sprawdzenia aktywności komputerów (np lms-fping). Domyślnie: 600.';
 $_LANG['SQL query executed while reload, if reload_type = sql. Default: empty. You can use \'%TIME%\' as replacement to current unix timestamp. WARNING! Semicolon is handled as query separator, which means that you can enter couple of SQL queries separated by semicolon sign.'] = 'Zapytanie SQL wykonywane pod czas przeładownia jeżeli reload_type = sql. Domyślnie: pusta. W zapytaniu może być użyta zmienna \'%TIME%\' jako zastępstwo właściwego czasu zapisanego w formacie UNIX_TIMESTAMP. UWAGA! Średnik jest interpretowany jako znak rozdzielający zapytania. Oznacza to, że możesz wpisać kilka zapytań SQL oddzielonych średnikami.';
 $_LANG['SSL Enforcing. Setting this option to 1 will effect with that LMS will enforce SSL connection with redirect to \'https://\'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI] at every request without SSL. Default: 0 (off).'] = 'Wymuszanie SSL. Ustawienie tej opcji na 1 sprawi, że LMS wymusi przekierowanie do połączenia SSL poprzez wykonanie przekierowania do \'https://\'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI] Przy każdej próbie dostępu z wyjątkiem SSL. Domyślnie: 0 (off).';
+$_LANG['Force SSL:'] = 'Wymuś SSL:';
 $_LANG['SSN'] = 'PESEL';
 $_LANG['SSN:'] = 'PESEL:';
 $_LANG['Stamp:'] = 'Pieczęć';
@@ -3157,6 +3158,23 @@ $_LANG['with connected nodes'] = 'z aktywnymi komputerami';
 $_LANG['with nodes'] = 'z komputerami';
 
 $_LANG['debt collection'] = 'windykacja należności';
-$_LANG['Debt collection:'] = 'Windykacja należności:';
+$_LANG['Debt Collection:<!summary>'] = 'Windykacja należności:';
+
+$_LANG['All sessions'] = 'Wszystkie sesje';
+$_LANG['Node Sessions'] = 'Sesje komputerów';
+$_LANG['There are no sessions matching defined filter.'] = 'Brak sesji pasujących do zdefiniowanego filtra.';
+$_LANG['Allows you to view node sessions'] = 'Przeglądanie sesji komputerów';
+
+$_LANG['Add Note'] = 'Dodaj notatkę';
+
+$_LANG['Search device'] = 'Szukaj urządzenia';
+
+$_LANG['Timetable for today: '] = 'Terminarz na dziś: ';
+$_LANG['LMS timetable for today'] = 'LMS terminarz na dziś';
+$_LANG['have $a events'] = 'ma $a zdarzeń';
+$_LANG['customer contacts: '] = 'numery telefonów klienta:';
+
+$_LANG['All users'] = 'Wszyscy użytkownicy';
+$_LANG['Determine GPS coordinates automatically'] = 'Wyznacz automatycznie współrzędne GPS';
 
 ?>
