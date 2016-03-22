@@ -25,6 +25,24 @@ $this->BeginTrans();
 
 $this->Execute("ALTER TABLE netnodes ADD ownerid int(11) NOT NULL DEFAULT '0'");
 
+$this->Execute("ALTER TABLE netdevicemodels ADD type int(11) NOT NULL DEFAULT '1' AFTER netdeviceproducerid");
+
+$this->Execute("CREATE TABLE netdeviceschema (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  model int(11) NOT NULL,
+  label varchar(20) COLLATE utf8_bin NOT NULL,
+  port_type tinyint(1) NOT NULL,
+  portcount tinyint(4) NOT NULL,
+  continous tinyint(1) NOT NULL DEFAULT '0',
+  connector tinyint(1) NOT NULL,
+  PRIMARY KEY (id),
+  KEY model (model)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
+
+$this->Execute("ALTER TABLE netdeviceschema
+  ADD CONSTRAINT netdeviceschema_ibfk_1 FOREIGN KEY (model)
+  REFERENCES netdevicemodels (id) ON DELETE CASCADE ON UPDATE CASCADE");
+
 $this->Execute("CREATE TABLE netelements (
   id            int(11)         NOT NULL auto_increment,
   name          varchar(32)     NOT NULL DEFAULT '',
