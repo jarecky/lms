@@ -364,7 +364,6 @@ $NETTECHNOLOGIES = array(
 	50 => array('name'=>'(EURO)DOCSIS 1.x)','medium'=>'51','speed'=>11,'connector'=>8),
 	51 => array('name'=>'(EURO)DOCSIS 2.x)','medium'=>'51','speed'=>12,'connector'=>8),
 	52 => array('name'=>'(EURO)DOCSIS 3.x)','medium'=>'51','speed'=>13,'connector'=>8),
-
 //RADIO
 
 //FIBER
@@ -511,6 +510,7 @@ $NETPORTTYPES = array(
 );
 
 $NETCONNECTORS = array(
+	// COPPER
 	1 => '8P8C',
 	2 => '8P4C',
 	3 => '8P2C',
@@ -519,6 +519,9 @@ $NETCONNECTORS = array(
 	6 => '4P2C',
 	7 => 'BNC',
 	8 => 'F',
+	// RADIO
+
+	// FIBER
 	200 => 'SC/FLAT',
 	201 => 'SC/PC',
 	202 => 'SC/UPC',
@@ -556,53 +559,48 @@ $NETCABLETYPES = array (
 );
 
 $NETWIRETYPES = array (
-//        MEDIUM_COPPER => array (
-                1 => trans('UTP cat. 1'),
-                2 => trans('UTP cat. 2'),
-                3 => trans('UTP cat. 3'),
-                4 => trans('UTP cat. 4'),
-                5 => trans('UTP cat. 5'),
-                6 => trans('UTP cat. 5a'),
-                7 => trans('UTP cat. 7'),
-                8 => trans('UTP cat. 7a'),
-
-		50 => trans('thicknet'),
-		51 => trans('thinnet'),
-//      ),
-//      MEDIUM_WIRELESS => array(
-                101 => trans('802.11b/g'),
-                102 => trans('802.11a/an/ac'),
-                103 => trans('Microwave'),
-                104 => trans('WiMax'),
-                105 => trans('GSM'),
-//        ),
-//        MEDIUM_FIBER => array (
-		200 => trans('single-mode G.652.A'),
-		202 => trans('single-mode G.652.B'),
-		203 => trans('single-mode G.652.C'),
-		204 => trans('single-mode G.652.D'),
-		205 => trans('single-mode G.653.A'),
-		205 => trans('single-mode G.653.B'),
-		206 => trans('single-mode G.654.A'),
-		207 => trans('single-mode G.654.B'),
-		208 => trans('single-mode G.654.C'),
-		209 => trans('single-mode G.655.A'),
-		210 => trans('single-mode G.655.B'),
-		211 => trans('single-mode G.655.C'),
-		212 => trans('single-mode G.655.D'),
-		213 => trans('single-mode G.655.E'),
-		214 => trans('single-mode G.656'),
-		215 => trans('single-mode G.657.A1'),
-		216 => trans('single-mode G.657.A2'),
-		217 => trans('single-mode G.657.B2'),
-		218 => trans('single-mode G.657.B3'),
-
-		250 => trans('multi-mode FFDI'),
-		251 => trans('multi-mode OM1'),
-		252 => trans('multi-mode OM2'),
-		253 => trans('multi-mode OM3'),
-		254 => trans('multi-mode OM4'),
-//	),
+	// COPPER
+        1 => trans('UTP cat. 1'),
+        2 => trans('UTP cat. 2'),
+        3 => trans('UTP cat. 3'),
+        4 => trans('UTP cat. 4'),
+        5 => trans('UTP cat. 5'),
+        6 => trans('UTP cat. 5a'),
+        7 => trans('UTP cat. 7'),
+        8 => trans('UTP cat. 7a'),
+	50 => trans('thicknet'),
+	51 => trans('thinnet'),
+	// RADIO
+        101 => trans('802.11b/g'),
+        102 => trans('802.11a/an/ac'),
+        103 => trans('Microwave'),
+        104 => trans('WiMax'),
+        105 => trans('GSM'),
+	// FIBE
+	200 => trans('single-mode G.652.A'),
+	202 => trans('single-mode G.652.B'),
+	203 => trans('single-mode G.652.C'),
+	204 => trans('single-mode G.652.D'),
+	205 => trans('single-mode G.653.A'),
+	205 => trans('single-mode G.653.B'),
+	206 => trans('single-mode G.654.A'),
+	207 => trans('single-mode G.654.B'),
+	208 => trans('single-mode G.654.C'),
+	209 => trans('single-mode G.655.A'),
+	210 => trans('single-mode G.655.B'),
+	211 => trans('single-mode G.655.C'),
+	212 => trans('single-mode G.655.D'),
+	213 => trans('single-mode G.655.E'),
+	214 => trans('single-mode G.656'),
+	215 => trans('single-mode G.657.A1'),
+	216 => trans('single-mode G.657.A2'),
+	217 => trans('single-mode G.657.B2'),
+	218 => trans('single-mode G.657.B3'),
+	250 => trans('multi-mode FFDI'),
+	251 => trans('multi-mode OM1'),
+	252 => trans('multi-mode OM2'),
+	253 => trans('multi-mode OM3'),
+	254 => trans('multi-mode OM4'),
 );		
 
 $COPERCOLORSSCHEMAS = array (
