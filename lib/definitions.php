@@ -368,7 +368,7 @@ $NETTECHNOLOGIES = array(
 //RADIO
 
 //FIBER
-	301 => array('name'=>'','medium'=>'','speed'=>201,'connector'=>1),
+	200 => array('name'=>'CWDM','medium'=>'101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,150,151,152,153,154','speed'=>10,'connector'=>'101,102,103,110,111,112,113,120,121,122,123,130,131,132,133,140,141,142,143'),
 #	1 => array('name'=>'','medium'=>MEDIUM_COPPER,'speed'=>'','connector'=>'1'),
 	
 );
