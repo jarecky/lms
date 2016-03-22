@@ -348,6 +348,7 @@ $LINKTYPES = array(
 );
 
 $NETTECHNOLOGIES = array(
+//COPPER
 	1 => array('name'=>'ADSL','medium'=>'1,2,3,4,5,6,7,8','speed'=>0,'connector'=>6),
 	2 => array('name'=>'ADSL2','medium'=>'1,2,3,4,5,6,7,8','speed'=>1,'connector'=>6),
 	3 => array('name'=>'ADSL2+','medium'=>'1,2,3,4,5,6,7,8','speed'=>2,'connector'=>6),
@@ -364,6 +365,10 @@ $NETTECHNOLOGIES = array(
 	14 => array('name'=>'(EURO)DOCSIS 2.x)','medium'=>'51','speed'=>12,'connector'=>8),
 	15 => array('name'=>'(EURO)DOCSIS 3.x)','medium'=>'51','speed'=>13,'connector'=>8),
 
+//RADIO
+
+//FIBER
+	301 => array('name'=>'','medium'=>'','speed'=>201,'connector'=>1),
 #	1 => array('name'=>'','medium'=>MEDIUM_COPPER,'speed'=>'','connector'=>'1'),
 	
 );
@@ -470,13 +475,13 @@ $PASSWDEXPIRATIONS = array(
 	62	=> trans('2 months'),
 	93	=> trans('quarter'),
 	183	=> trans('half year'),
-	365	=> trans('year'),
+	365	=> trans('year')
 );
 
 $NETELEMENTSTATUSES = array(
 	0	=> trans('existing'),
 	1	=> trans('under construction'),
-	2	=> trans('planned'),
+	2	=> trans('planned')
 );
 
 $NETELEMENTTYPES = array(
@@ -497,7 +502,7 @@ $NETPORTTYPES = array(
 	4	=> trans('in'),
 	5	=> trans('out'),
 	6	=> trans('SFP'),
-	7	=> trans('SFP+'),
+	7	=> trans('SFP+')
 );
 
 $NETCONNECTORS = array(
@@ -528,7 +533,7 @@ $NETCONNECTORS = array(
 	140 => 'E2000/FLAT',
 	141 => 'E2000/PC',
 	142 => 'E2000/UPC',
-	143 => 'E2000/APC',
+	143 => 'E2000/APC'
 );
 
 $NETCABLETYPES = array (
@@ -546,7 +551,7 @@ $NETCABLETYPES = array (
 );
 
 $NETWIRETYPES = array (
-        MEDIUM_COPPER => array (
+//        MEDIUM_COPPER => array (
                 1 => trans('UTP cat. 1'),
                 2 => trans('UTP cat. 2'),
                 3 => trans('UTP cat. 3'),
@@ -558,41 +563,41 @@ $NETWIRETYPES = array (
 
 		50 => trans('thicknet'),
 		51 => trans('thinnet'),
-        ),
-        MEDIUM_FIBER => array (
-		1 => trans('single-mode G.652.A'),
-		2 => trans('single-mode G.652.B'),
-		3 => trans('single-mode G.652.C'),
-		4 => trans('single-mode G.652.D'),
-		5 => trans('single-mode G.653.A'),
-		5 => trans('single-mode G.653.B'),
-		6 => trans('single-mode G.654.A'),
-		7 => trans('single-mode G.654.B'),
-		8 => trans('single-mode G.654.C'),
-		9 => trans('single-mode G.655.A'),
-		10 => trans('single-mode G.655.B'),
-		11 => trans('single-mode G.655.C'),
-		12 => trans('single-mode G.655.D'),
-		13 => trans('single-mode G.655.E'),
-		14 => trans('single-mode G.656'),
-		15 => trans('single-mode G.657.A1'),
-		16 => trans('single-mode G.657.A2'),
-		17 => trans('single-mode G.657.B2'),
-		18 => trans('single-mode G.657.B3'),
+//        ),
+//        MEDIUM_FIBER => array (
+		100 => trans('single-mode G.652.A'),
+		102 => trans('single-mode G.652.B'),
+		103 => trans('single-mode G.652.C'),
+		104 => trans('single-mode G.652.D'),
+		105 => trans('single-mode G.653.A'),
+		105 => trans('single-mode G.653.B'),
+		106 => trans('single-mode G.654.A'),
+		107 => trans('single-mode G.654.B'),
+		108 => trans('single-mode G.654.C'),
+		109 => trans('single-mode G.655.A'),
+		110 => trans('single-mode G.655.B'),
+		111 => trans('single-mode G.655.C'),
+		112 => trans('single-mode G.655.D'),
+		113 => trans('single-mode G.655.E'),
+		114 => trans('single-mode G.656'),
+		115 => trans('single-mode G.657.A1'),
+		116 => trans('single-mode G.657.A2'),
+		117 => trans('single-mode G.657.B2'),
+		118 => trans('single-mode G.657.B3'),
 
-		50 => trans('multi-mode FFDI'),
-		51 => trans('multi-mode OM1'),
-		52 => trans('multi-mode OM2'),
-		53 => trans('multi-mode OM3'),
-		54 => trans('multi-mode OM4'),
-	),
-	MEDIUM_WIRELESS => array(
-		1 => trans('802.11b/g'),
-		2 => trans('802.11a/an/ac'),
-		3 => trans('Microwave'),
-		4 => trans('WiMax'),
-		5 => trans('GSM'),
-	),
+		150 => trans('multi-mode FFDI'),
+		151 => trans('multi-mode OM1'),
+		152 => trans('multi-mode OM2'),
+		153 => trans('multi-mode OM3'),
+		154 => trans('multi-mode OM4'),
+//	),
+//	MEDIUM_WIRELESS => array(
+		201 => trans('802.11b/g'),
+		202 => trans('802.11a/an/ac'),
+		203 => trans('Microwave'),
+		204 => trans('WiMax'),
+		205 => trans('GSM'),
+//	),
 );		
 
 $COPERCOLORSSCHEMAS = array (
