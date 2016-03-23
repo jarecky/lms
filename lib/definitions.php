@@ -365,6 +365,21 @@ $NETTECHNOLOGIES = array(
 	51 => array('name'=>'(EURO)DOCSIS 2.x)','medium'=>'51','speed'=>12,'connector'=>8),
 	52 => array('name'=>'(EURO)DOCSIS 3.x)','medium'=>'51','speed'=>13,'connector'=>8),
 //RADIO
+        100 => array('name'=>'WiFi - 2,4 GHz','medium'=>'100','speed'=>'14','connector'=>''),
+        101 => array('name'=>'WiFi - 5 GHz','medium'=>'102','speed'=>'15','connector'=>''),
+        102 => array('name'=>'WiMAX','medium'=>'101,102','speed'=>'','connector'=>''),
+        103 => array('name'=>'LMDS','medium'=>'104','speed'=>'','connector'=>''),
+        104 => array('name'=>'radiolinia','medium'=>'103,104','speed'=>'','connector'=>''),
+        105 => array('name'=>'CDMA','medium'=>'151','speed'=>'','connector'=>''),
+        106 => array('name'=>'GPRS','medium'=>'151','speed'=>'','connector'=>''),
+        107 => array('name'=>'EDGE','medium'=>'151','speed'=>'','connector'=>''),
+        108 => array('name'=>'HSPA','medium'=>'151','speed'=>'','connector'=>''),
+        109 => array('name'=>'HSPA+','medium'=>'151','speed'=>'','connector'=>''),
+        110 => array('name'=>'DC-HSPA+','medium'=>'151','speed'=>'','connector'=>''),
+        111 => array('name'=>'MC-HSPA+','medium'=>'151','speed'=>'','connector'=>''),
+        112 => array('name'=>'LTE','medium'=>'151','speed'=>'','connector'=>''),
+        113 => array('name'=>'UMTS','medium'=>'151','speed'=>'','connector'=>''),
+        114 => array('name'=>'DMS','medium'=>'151','speed'=>'','connector'=>''),
 
 //FIBER
 	200 => array('name'=>'CWDM', 
@@ -392,6 +407,8 @@ $NETSPEEDS = array(
 	11 => array(50,10),
 	12 => array(50,30),
 	13 => array(1600,216),
+	14 => array(54,54),
+	15 => array(300,300),
 );
 
 $LINKTECHNOLOGIES = array(
@@ -520,7 +537,12 @@ $NETCONNECTORS = array(
 	7 => 'BNC',
 	8 => 'F',
 	// RADIO
-
+	100 => '2,4GHz',
+	101 => '3GHz,'
+	102 => '5GHz',
+	103 => '10GHz',
+	104 => '24GHz', 
+	151 => 'GSM';
 	// FIBER
 	200 => 'SC/FLAT',
 	201 => 'SC/PC',
