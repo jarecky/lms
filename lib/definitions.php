@@ -568,11 +568,11 @@ $NETCONNECTORS = array(
 	8 => 'F',
 	// RADIO
 	100 => '2,4GHz',
-	101 => '3GHz,'
+	101 => '3GHz,',
 	102 => '5GHz',
 	103 => '10GHz',
 	104 => '24GHz', 
-	151 => 'GSM';
+	151 => 'GSM',
 	// FIBER
 	200 => 'SC/FLAT',
 	201 => 'SC/PC',
