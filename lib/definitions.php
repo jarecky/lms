@@ -364,6 +364,7 @@ $NETTECHNOLOGIES = array(
 	50 => array('name'=>'(EURO)DOCSIS 1.x)','medium'=>'51','speed'=>11,'connector'=>8),
 	51 => array('name'=>'(EURO)DOCSIS 2.x)','medium'=>'51','speed'=>12,'connector'=>8),
 	52 => array('name'=>'(EURO)DOCSIS 3.x)','medium'=>'51','speed'=>13,'connector'=>8),
+	70 => array('name'=>'POTS','medium'=>'3','speed'=>100,'connector'=>6)
 //RADIO
         100 => array('name'=>'WiFi - 2,4 GHz','medium'=>'100','speed'=>'14','connector'=>''),
         101 => array('name'=>'WiFi - 5 GHz','medium'=>'102','speed'=>'15','connector'=>''),
@@ -439,6 +440,7 @@ $NETSPEEDS = array(
 	21 => array(622,622),
 	22 => array(800,800),
 	23 => array(45,45),
+	100 => array(0,0)
 );
 
 $LINKTECHNOLOGIES = array(
@@ -458,6 +460,7 @@ $LINKTECHNOLOGIES = array(
 		50 => '(EURO)DOCSIS 1.x',
 		51 => '(EURO)DOCSIS 2.x',
 		52 => '(EURO)DOCSIS 3.x',
+		70 => 'POTS',
 	),
 	MEDIUM_WIRELESS => array(
 		100 => 'WiFi - 2,4 GHz',
@@ -553,7 +556,8 @@ $NETPORTTYPES = array(
 	4	=> trans('in'),
 	5	=> trans('out'),
 	6	=> trans('SFP'),
-	7	=> trans('SFP+')
+	7	=> trans('SFP+'),
+	8	=> trans('POTS')
 );
 
 $NETCONNECTORS = array(
