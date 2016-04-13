@@ -80,16 +80,6 @@ $this->Execute("CREATE TABLE netdevices (
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE restrict ON UPDATE CASCADE
 ) ENGINE=InnoDB");
 
-$this->Execute("CREATE TABLE nettechnologies (
-  id            int(11)         NOT NULL auto_increment,
-  label         varchar(32)     NOT NULL,
-  uke_label     varchar(32)     NOT NULL default '',
-  wiretype      tinyint(3)      NOT NULL default '0',
-  upspeed       int(11)         NOT NULL DEFAULT '0',
-  downspeed     int(11)         NOT NULL DEFAULT '0',
-  PRIMARY KEY (id)
-) ENGINE=InnoDB");
-
 $this->Execute("CREATE TABLE netports (
   id            int(11)         UNSIGNED ZEROFILL NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
@@ -101,7 +91,6 @@ $this->Execute("CREATE TABLE netports (
   PRIMARY KEY (id),
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE restrict ON UPDATE CASCADE,
-  FOREIGN KEY (technology) REFERENCES nettechnologies (id) ON DELETE restrict ON UPDATE CASCADE,
   UNIQUE KEY label (label, netelemid)
 ) ENGINE=InnoDB");
 
