@@ -3,26 +3,23 @@
 $devices=$DB->GetAll("SELECT * FROM netdevices_old");
 
 foreach ($devices AS $dev) {
-	echo $dev['id'].' '.$dev['name'].': ';
 	if ($dev['netnodeid']>0) {
-		echo "Jest netnode! ";
+		#echo "Jest netnode! ";
+	} elseif ($dev['location']=='') {
+		#echo 'Brak lokacji!';
 	} else {
-		$nodes=$DB->GetAll("SELECT * FROM nodes WHERE netdev=".$dev['id']." AND ownerid>0");
-		if (count($nodes)==0) {
-			echo 'Backbone ';
+		echo $dev['id'].' '.$dev['name'].': ';
+		$nodes=$DB->GetAll("SELECT * FROM nodes WHERE netdev=".$dev['id']." AND ownerid>0 GROUP BY ownerid");
+		if (count($nodes)==1) {
+			echo 'Węzeł kliencki ';
 		} else {
-			echo 'Klient '.count($nodes).' komputer(ów) ';
+			echo 'Węzeł backbone ';
 		}
-		echo "Brak netnode! ";
-		if ($dev['location']!='') {
-			echo "Lokacja: ".$dev['location']." ";
-		} else {
-			echo 'Brak lokacji!';
-		}
+		echo "Lokacja: ".$dev['location']." ";
+		echo '<BR>';
 	}
 
 
-	echo '<BR>';
 }
 
 ?>
