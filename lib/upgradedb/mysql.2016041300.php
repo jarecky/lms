@@ -23,6 +23,8 @@
 
 $this->BeginTrans();
 
+$this->Execute("SET foreign_key_checks = 0");
+
 $this->Execute("ALTER TABLE netnodes ADD ownerid int(11) NOT NULL DEFAULT '0'");
 
 $this->Execute("ALTER TABLE netdevicemodels ADD type int(11) NOT NULL DEFAULT '1' AFTER netdeviceproducerid");
@@ -173,7 +175,7 @@ $this->Execute("CREATE TABLE netconnections (
 #$this->Execute("DROP TABLE netradiosectors_old");
 #$this->Execute("DROP TABLE netdevices_old");
 #$this->Execute("DROP TABLE netlinks");
-#$this->Execute("UPDATE dbinfo SET keyvalue = ? WHERE keytype = ?", array('2016xxxx00', 'dbversion'));
+$this->Execute("UPDATE dbinfo SET keyvalue = ? WHERE keytype = ?", array('2016041300', 'dbversion'));
 
 $this->CommitTrans();
 
