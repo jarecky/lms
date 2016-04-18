@@ -25,7 +25,7 @@ $this->BeginTrans();
 
 $this->Execute("SET foreign_key_checks = 0");
 
-$this->Execute("ALTER TABLE netnodes ADD ownerid int(11) NOT NULL DEFAULT '0'");
+$this->Execute("ALTER TABLE netnodes ADD ownerid int(11) DEFAULT NULL");
 
 $this->Execute("ALTER TABLE netdevicemodels ADD type int(11) NOT NULL DEFAULT '1' AFTER netdeviceproducerid");
 

@@ -632,6 +632,7 @@ CREATE TABLE netnodes (
 	longitude decimal(10,6) DEFAULT NULL,
 	latitude decimal(10,6) DEFAULT NULL,
 	ownership tinyint(1) DEFAULT 0,
+	ownerid int(11) DEFAULT NULL,
 	coowner varchar(255) DEFAULT '',
 	uip tinyint(1) DEFAULT 0,
 	miar tinyint(1) DEFAULT 0,
