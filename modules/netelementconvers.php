@@ -1,5 +1,9 @@
 <?
 
+// *******************************************************************
+// Tworzymy rekordy dla urządzeń które nie mają odniesień do netnodes
+// Etap 1. - dla pełnych rekordów TERYT
+// *******************************************************************
 $devices=$DB->GetAll("SELECT * FROM netdevices_old where netnodeid is NULL and location_city is not null group by location_city,location_street,location_house,location_flat");
 if (is_array($devices)) foreach ($devices AS $dev) {
 	echo $dev['id'].' '.$dev['name'].': ';
@@ -44,6 +48,10 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 	}
 	echo '<BR>';
 }
+// *******************************************************************
+// Tworzymy rekordy dla urządzeń które nie mają odniesień do netnodes
+// Etap 2. - dla urządzeń bez poprawnego TERYT
+// *******************************************************************
 $devices=$DB->GetAll("SELECT * FROM netdevices_old where netnodeid is NULL group by location");
 if (is_array($devices)) foreach ($devices AS $dev) {
 	echo $dev['id'].' '.$dev['name'].': '.$dev['location'];
@@ -81,7 +89,40 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 	echo '<BR>';
 }
 
+// *******************************************************************
+// Przeniesienie informacji u urządzeniach
+// Etap 1. - przeniesienie danych z netdevices_old do netelements
+// *******************************************************************
 
+$devices=$DB->GetAll("SELECT * FROM netdevices_old WHERE name like '%-ap' ORDER BY id ASC LIMIT 0,10");
+if (is_array($devices)) foreach ($devices AS $dev) {
+	echo $dev['name'].' '.$dev['producer'].' '.$dev['model'].'<BR>';
+	$DB->Execute("INSERT INTO netelements VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",array(null,$dev['name'],0,$dev['description'],$dev['producer'],$dev['model'],$dev['serialnumber'],$dev['purchasetime'],$dev['guaranteeperiod'],$dev['netnodeid'],$dev['invprojectid'],$dev['netdevicemodelid'],$dev['status']));
+	$netelemid = $DB->GetLastInsertID('netelements');
+	$DB->Execute("INSERT INTO netdevices VALUES (?,?,?,?,?,?,?,?,?)",array(null,$netelemid,$dev['shortname'],$dev['nastype'],$dev['clients'],'',$dev['secret'],$dev['community'],$dev['channelid']));
+	echo '<font color="green">Ilość portów: '.$dev['ports'].'</fonts><BR>';
+	$nls=$DB->GetAll("SELECT * FROM netlinks WHERE src=".$dev['id']." OR dst=".$dev['id']);
+	if (is_array($nls)) foreach ($nls AS $ls) {
+		
+	}
+	$rss=$DB->GetAll("SELECT * FROM netradiosectors_old WHERE netdev=".$dev['id']);
+	if (is_array($rss)) foreach ($rss AS $rs) {
+		
+	}
+
+	echo '<BR>';
+}
+
+
+
+
+function netelementadd($dev) {
+
+
+}
+// *******************************************************************
+// Dodawanie do netnodes na podstawie rekordu z netdevices_old
+// *******************************************************************
 function netnodeadd($dev,$location) {
 	global $DB;
 	$city=$DB->GetAll("SELECT * FROM location_cities WHERE id=".$dev['location_city']);
