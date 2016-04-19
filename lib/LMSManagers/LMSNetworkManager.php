@@ -213,7 +213,7 @@ class LMSNetworkManager extends LMSManager implements LMSNetworkManagerInterface
 			WHERE netdev=0 ORDER BY name ASC');
     }
 
-    public function GetNetDevIPs($id)
+    public function GetNetElemIPs($id)
     {
         return $this->db->GetAll('SELECT n.id, n.name, mac, ipaddr, inet_ntoa(ipaddr) AS ip, 
 			ipaddr_pub, inet_ntoa(ipaddr_pub) AS ip_pub, access, info, port, n.netid, net.name AS netname, authtype

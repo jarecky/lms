@@ -1,7 +1,7 @@
 <!--// $Id$ //-->
 <TABLE class="lmsbox">
     <THEAD>
-	<TR{if $devicepanel} class="hand" onClick="showOrHide('devicepanel');"{/if}>
+	<TR{if $elementpanel} class="hand" onClick="showOrHide('elementpanel');"{/if}>
 		<TD WIDTH="1%">
 			<IMG SRC="img/netdev.gif" ALT="">
 		</TD>
@@ -11,8 +11,8 @@
 	</TR>
     </THEAD>
     <TBODY>
-	<TR{if $devicepanel} id="devicepanel" style="display:none;"{/if}>
-	    <TD WIDTH="100%" COLSPAN="2"{if $devicepanel} CLASS="container" ALIGN="RIGHT"{else}CLASS="container"{/if}>
+	<TR{if $elementpanel} id="elementpanel" style="display:none;"{/if}>
+	    <TD WIDTH="100%" COLSPAN="2"{if $elementpanel} CLASS="container" ALIGN="RIGHT"{else}CLASS="container"{/if}>
 			<TABLE WIDTH="100%" CELLPADDING="0">
 				<TR>
 					<TD WIDTH="100%" style="vertical-align:top;">
@@ -152,24 +152,24 @@
 				
 				</TR>
 			</TABLE>
-{if !$devicepanel}
+{if !$elementpanel}
     		</TD>
 	</TR>
 	<TR>
 	        <TD WIDTH="100%" COLSPAN="2" ALIGN="RIGHT">
 {/if}
 			<A href="?m=netnodeedit&id={$nodeinfo.id}" ACCESSKEY="E">{trans("Edit")} <IMG src="img/edit.gif" ALT="[ {trans("Edit")} ]"></A>
-			<A href="?m=netnodedel&id={$nodeinfo.id}" OnClick="return confirmLink(this, '{t a=$nodeinfo.name}Are you sure, you want to remove net device node \'$a\' from database?{/t}');">{trans("Delete")} <img src="img/delete.gif" ALT=""></A>
+			<A href="?m=netnodedel&id={$nodeinfo.id}" OnClick="return confirmLink(this, '{t a=$nodeinfo.name}Are you sure, you want to remove net element node \'$a\' from database?{/t}');">{trans("Delete")} <img src="img/delete.gif" ALT=""></A>
 		</TD>
 	</TR>
     </TBODY>
 </TABLE>
-{if $devicepanel}
+{if $elementpanel}
 <SCRIPT type="text/javascript">
 <!--
-if (getCookie('devicepanel') == '1')
+if (getCookie('elementpanel') == '1')
 {
-	document.getElementById('devicepanel').style.display = '';
+	document.getElementById('elementpanel').style.display = '';
 }
 //-->
 </SCRIPT>

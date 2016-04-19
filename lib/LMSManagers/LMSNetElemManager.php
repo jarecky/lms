@@ -25,14 +25,14 @@
  */
 
 /**
- * LMSNetDevManager
+ * LMSNetElemManager
  *
  * @author Maciej Lew <maciej.lew.1987@gmail.com>
  */
-class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
+class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 {
 
-    public function GetNetDevLinkedNodes($id)
+    public function GetNetElemLinkedNodes($id)
     {
         return $this->db->GetAll('SELECT n.id AS id, n.name AS name, linktype, rs.name AS radiosector,
         		linktechnology, linkspeed,
@@ -54,7 +54,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
 			ORDER BY n.name ASC', array($id));
     }
 
-    public function NetDevLinkNode($id, $devid, $link = NULL)
+    public function NetElemLinkNode($id, $devid, $link = NULL)
     {
         global $SYSLOG_RESOURCE_KEYS;
 
@@ -93,7 +93,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
         return $res;
     }
 
-    public function SetNetDevLinkType($dev1, $dev2, $link = NULL)
+    public function SetNetElemLinkType($dev1, $dev2, $link = NULL)
     {
 	global $SYSLOG_RESOURCE_KEYS;
 
@@ -148,13 +148,13 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
 	return $res;
     }
 
-    public function IsNetDevLink($dev1, $dev2)
+    public function IsNetElemLink($dev1, $dev2)
     {
         return $this->db->GetOne('SELECT COUNT(id) FROM netlinks 
 			WHERE (src=? AND dst=?) OR (dst=? AND src=?)', array($dev1, $dev2, $dev1, $dev2));
     }
 
-    public function NetDevLink($dev1, $dev2, $link)
+    public function NetElemLink($dev1, $dev2, $link)
     {
         global $SYSLOG_RESOURCE_KEYS;
 
@@ -169,7 +169,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
 	$dport = $link['dstport'];
 
         if ($dev1 != $dev2)
-            if (!$this->IsNetDevLink($dev1, $dev2)) {
+            if (!$this->IsNetElemLink($dev1, $dev2)) {
                 $args = array(
                     'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev1,
                     'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev2,
@@ -198,7 +198,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
         return FALSE;
     }
 
-    public function NetDevUnLink($dev1, $dev2)
+    public function NetElemUnLink($dev1, $dev2)
     {
         global $SYSLOG_RESOURCE_KEYS;
 
@@ -217,7 +217,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
         $this->db->Execute('DELETE FROM netlinks WHERE (src=? AND dst=?) OR (dst=? AND src=?)', array($dev1, $dev2, $dev1, $dev2));
     }
 
-    public function NetDevUpdate($data)
+    public function NetElemUpdate($data)
     {
         global $SYSLOG_RESOURCE_KEYS;
 
@@ -259,7 +259,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
             $this->syslog->AddMessage(SYSLOG_RES_NETDEV, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV]));
     }
 
-    public function NetDevAdd($data)
+    public function NetElemAdd($data)
     {
         global $SYSLOG_RESOURCE_KEYS;
 
@@ -326,29 +326,29 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
             return FALSE;
     }
 
-    public function NetDevExists($id)
+    public function NetElemExists($id)
     {
-        return ($this->db->GetOne('SELECT * FROM netdevices WHERE id=?', array($id)) ? TRUE : FALSE);
+        return ($this->db->GetOne('SELECT * FROM netelements WHERE id=?', array($id)) ? TRUE : FALSE);
     }
 
-    public function GetNetDevIDByNode($id)
+    public function GetNetElemIDByNode($id)
     {
         return $this->db->GetOne('SELECT netdev FROM vnodes WHERE id=?', array($id));
     }
 
-    public function CountNetDevLinks($id)
+    public function CountNetElemLinks($id)
     {
         return $this->db->GetOne('SELECT COUNT(*) FROM netlinks WHERE src = ? OR dst = ?', array($id, $id)) + $this->db->GetOne('SELECT COUNT(*) FROM vnodes WHERE netdev = ? AND ownerid > 0', array($id));
     }
 
-    public function GetNetDevLinkType($dev1, $dev2)
+    public function GetNetElemLinkType($dev1, $dev2)
     {
         return $this->db->GetRow('SELECT type, technology, speed FROM netlinks
 			WHERE (src=? AND dst=?) OR (dst=? AND src=?)',
 			array($dev1, $dev2, $dev1, $dev2));
     }
 
-    public function GetNetDevConnectedNames($id)
+    public function GetNetElemConnectedNames($id)
     {
         return $this->db->GetAll('SELECT d.id, d.name, d.description,
 			d.location, d.producer, d.ports, l.type AS linktype,
@@ -377,7 +377,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
 			ORDER BY name', array($id, $id, $id, $id, $id, $id, $id));
     }
 
-    public function GetNetDevList($order = 'name,asc', $search = array())
+    public function GetNetElemList($order = 'name,asc', $search = array())
     {
         list($order, $direction) = sscanf($order, '%[^,],%s');
 
@@ -416,63 +416,68 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
 	$where = array();
 	foreach ($search as $key => $value)
 		switch ($key) {
+			case 'type':
+				if ($value != -1)
+					$where[] = 'e.type = '. intval($value);
+				break;
 			case 'status':
 				if ($value != -1)
-					$where[] = 'd.status = ' . intval($value);
+					$where[] = 'e.status = ' . intval($value);
 				break;
 			case 'project':
 				if ($value > 0)
-					$where[] = '(d.invprojectid = ' . intval($value)
-						. ' OR (d.invprojectid = ' . INV_PROJECT_SYSTEM . ' AND n.invprojectid = ' . intval($value) . '))';
+					$where[] = '(e.invprojectid = ' . intval($value)
+						. ' OR (e.invprojectid = ' . INV_PROJECT_SYSTEM . ' AND n.invprojectid = ' . intval($value) . '))';
 				elseif ($value == -2)
-					$where[] = '(d.invprojectid IS NULL OR (d.invprojectid = ' . INV_PROJECT_SYSTEM . ' AND n.invprojectid IS NULL))';
+					$where[] = '(e.invprojectid IS NULL OR (e.invprojectid = ' . INV_PROJECT_SYSTEM . ' AND n.invprojectid IS NULL))';
 				break;
 			case 'netnode':
 				if ($value > 0)
-					$where[] = 'd.netnodeid = ' . intval($value);
+					$where[] = 'e.netnodeid = ' . intval($value);
 				elseif ($value == -2)
-					$where[] = 'd.netnodeid IS NULL';
+					$where[] = 'e.netnodeid IS NULL';
 				break;
 			case 'producer':
 			case 'model':
 				if (!preg_match('/^-[0-9]+$/', $value))
 					$where[] = "UPPER(TRIM(d.$key)) = UPPER(" . $this->db->Escape($value) . ")";
 				elseif ($value == -2)
-					$where[] = "d.$key = ''";
+					$where[] = "e.$key = ''";
 				break;
 		}
 
-	$netdevlist = $this->db->GetAll('SELECT d.id, d.name, d.location,
-			d.description, d.producer, d.model, d.serialnumber, d.ports,
-			(SELECT COUNT(*) FROM nodes WHERE ipaddr <> 0 AND netdev=d.id AND ownerid > 0)
-			+ (SELECT COUNT(*) FROM netlinks WHERE src = d.id OR dst = d.id)
-			AS takenports, d.netnodeid, n.name AS netnode,
+	$netelemlist = $this->db->GetAll('SELECT e.id, e.name, n.location,
+			e.description, e.producer, e.model, e.serialnumber,
+			(SELECT COUNT(*) FROM netports WHERE netelemid=e.id) AS ports,
+			(SELECT COUNT(*) FROM nodes WHERE ipaddr <> 0 AND netdev=e.id AND ownerid > 0)
+			+ (SELECT COUNT(*) FROM netlinks WHERE src = e.id OR dst = e.id)
+			AS takenports, e.netnodeid, n.name AS netnode,
 			lb.name AS borough_name, lb.type AS borough_type,
 			ld.name AS district_name, ls.name AS state_name
-			FROM netdevices d
-			LEFT JOIN invprojects p ON p.id = d.invprojectid
-			LEFT JOIN netnodes n ON n.id = d.netnodeid
-			LEFT JOIN location_cities lc ON lc.id = d.location_city
+			FROM netelements e
+			LEFT JOIN invprojects p ON p.id = e.invprojectid
+			LEFT JOIN netnodes n ON n.id = e.netnodeid
+			LEFT JOIN location_cities lc ON lc.id = n.location_city
 			LEFT JOIN location_boroughs lb ON lb.id = lc.boroughid
 			LEFT JOIN location_districts ld ON ld.id = lb.districtid
 			LEFT JOIN location_states ls ON ls.id = ld.stateid '
 			. (!empty($where) ? ' WHERE ' . implode(' AND ', $where) : '')
                 . ($sqlord != '' ? $sqlord . ' ' . $direction : ''));
 
-        $netdevlist['total'] = sizeof($netdevlist);
-        $netdevlist['order'] = $order;
-        $netdevlist['direction'] = $direction;
+        $netelemlist['total'] = sizeof($netelemlist);
+        $netelemlist['order'] = $order;
+        $netelemlist['direction'] = $direction;
 
-        return $netdevlist;
+        return $netelemlist;
     }
 
-    public function GetNetDevNames()
+    public function GetNetElemNames()
     {
         return $this->db->GetAll('SELECT id, name, location, producer 
 			FROM netdevices ORDER BY name');
     }
 
-    public function GetNotConnectedDevices($id)
+    public function GetNotConnectedElements($id)
     {
         return $this->db->GetAll('SELECT d.id, d.name, d.description,
 			d.location, d.producer, d.ports
@@ -485,26 +490,28 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
 			ORDER BY name', array($id, $id, $id, $id));
     }
 
-    public function GetNetDev($id)
+    public function GetNetElem($id)
     {
-        $result = $this->db->GetRow('SELECT d.*, t.name AS nastypename, c.name AS channel,
+        $result = $this->db->GetRow('SELECT e.*, d.*, t.name AS nastypename, c.name AS channel,
 				(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
+				(SELECT COUNT(*) FROM netports WHERE netelemid=e.id) AS ports,
 				lt.name AS street_type,
 				lc.name AS city_name,
 				lb.name AS borough_name, lb.type AS borough_type,
 				ld.name AS district_name, ls.name AS state_name
-			FROM netdevices d
+			FROM netelements e
+			LEFT JOIN netnodes n ON (n.id = e.netnodeid)
+			LEFT JOIN netdevices d ON (d.netelemid = e.id) 
 			LEFT JOIN nastypes t ON (t.id = d.nastype)
 			LEFT JOIN ewx_channels c ON (d.channelid = c.id)
-			LEFT JOIN location_cities lc ON (lc.id = d.location_city)
-			LEFT JOIN location_streets lst ON (lst.id = d.location_street)
+			LEFT JOIN location_cities lc ON (lc.id = n.location_city)
+			LEFT JOIN location_streets lst ON (lst.id = n.location_street)
 			LEFT JOIN location_street_types lt ON (lt.id = lst.typeid)
 			LEFT JOIN location_boroughs lb ON (lb.id = lc.boroughid)
 			LEFT JOIN location_districts ld ON (ld.id = lb.districtid)
 			LEFT JOIN location_states ls ON (ls.id = ld.stateid)
-			WHERE d.id = ?', array($id));
-
-        $result['takenports'] = $this->CountNetDevLinks($id);
+			WHERE e.id = ?', array($id));
+        $result['takenports'] = $this->CountNetElemLinks($id);
 	$result['radiosectors'] = $this->db->GetAll('SELECT * FROM netradiosectors WHERE netdev = ? ORDER BY name', array($id));
 
         if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
@@ -515,7 +522,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
         return $result;
     }
 
-    public function NetDevDelLinks($id)
+    public function NetElemDelLinks($id)
     {
         global $SYSLOG_RESOURCE_KEYS;
 
@@ -549,7 +556,7 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
 				WHERE netdev=? AND ownerid>0', array($id));
     }
 
-    public function DeleteNetDev($id)
+    public function DeleteNetElem($id)
     {
         global $SYSLOG_RESOURCE_KEYS;
 

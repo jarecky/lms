@@ -84,7 +84,7 @@
 				<OPTION value="-2" {if ($netnode.invprojectid == '-2' ) } selected="selected" {/if} >- {trans("none")} -</OPTION>
 				<OPTION value="-1" {if ($netnode.invprojectid == '-1' ) } selected="selected" {/if}>{trans("New project")}</OPTION>
 				<!--
-				<OPTION value="1" {if ($netnode.invprojectid == '1' ) } selected="selected" {/if}>{trans("Inherited from root device")}</OPTION>
+				<OPTION value="1" {if ($netnode.invprojectid == '1' ) } selected="selected" {/if}>{trans("Inherited from root element")}</OPTION>
 				-->
 				{section name=project loop=$NNprojects}
 				<OPTION VALUE="{$NNprojects[project].id}" {if ($netnode.invprojectid == $NNprojects[project].id ) } selected="selected" {/if} >{$NNprojects[project].name}</OPTION>

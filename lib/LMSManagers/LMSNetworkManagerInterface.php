@@ -57,7 +57,7 @@ interface LMSNetworkManagerInterface
 
     public function GetUnlinkedNodes();
 
-    public function GetNetDevIPs($id);
+    public function GetNetElemIPs($id);
 
     public function GetNetworkList($order = 'id,asc');
 

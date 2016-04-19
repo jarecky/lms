@@ -24,15 +24,19 @@
  *  $Id$
  */
 $id = intval($_GET['id']);
-$did = intval($_GET['did']);
-
-
-if (!empty($id)) {
-	$DB->Execute("UPDATE netdevices SET netnodeid=NULL,location='',location_city=NULL,
-			location_street=NULL,location_house=NULL,location_flat=NULL,longitude=NULL,latitude=NULL WHERE id=".$did);
-	header('Location: ?m=netnodeinfo&id='.$id);	
-} else {
-	header('Location: ?m=netnodelist');
+$row = $DB->GetRow('SELECT * FROM netnodes WHERE id=?',array($id));
+if (!$row)
+	$SESSION->redirect('?m=netnodelist');
+$list = $_GET['list'];
+if (!empty($list)) {
+	$items = explode(',',$list);
+	foreach($items as $it) {
+		$DB->Execute("UPDATE netelements SET netnodeid=? WHERE id=?", array($id,$it));
+	}
 }
+
+
+
+header('Location: ?m=netnodeinfo&id='.$id);
 		
 ?>

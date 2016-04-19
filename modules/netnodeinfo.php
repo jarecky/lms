@@ -3,7 +3,7 @@
 /*
  * LMS version 1.11-git
  *
- *  (C) Copyright 2001-2016 LMS Developers
+ *  (C) Copyright 2001-2016 LMS Elemelopers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -42,17 +42,17 @@ if (!$result)
 	$SESSION->redirect('?m=netnodelist');
 
 
-//$netdevinfo = $LMS->GetNetDev($_GET['id']);
+//$neteleminfo = $LMS->GetNetElem($_GET['id']);
 
 $SESSION->save('backto', $_SERVER['QUERY_STRING']);
 
-$layout['pagetitle'] = trans('Net Device Node Info: $a', $info['name']);
+$layout['pagetitle'] = trans('Net Element Node Info: $a', $info['name']);
 
 $SMARTY->assign('nodeinfo', $result);
 $SMARTY->assign('objectid', $result['id']);
 
-$nlist = $DB->GetAll("SELECT * FROM netdevices WHERE netnodeid=".$id." ORDER BY NAME");
-$SMARTY->assign('netdevlist', $nlist);
+$nlist = $DB->GetAll("SELECT * FROM netelements WHERE netnodeid=".$id." ORDER BY NAME");
+$SMARTY->assign('netelemlist', $nlist);
 
 
 $SMARTY->display('netnode/netnodeinfo.html');

@@ -227,11 +227,17 @@ $menu = array(
 			'accesskey'=>'',
 			'prio'=>15,
 			'submenu'=>array(
+                                array(
+                                        'name' => trans('List'),
+                                        'link' => '?m=netelemlist',
+                                        'tip' => trans('Network element list'),
+                                        'prio' => 10,
+                                ),				
 				array(
 					'name' => trans('Add Device'),
 					'link' => '?m=netelement&action=add',
 					'tip' => trans('Network element add'),
-					'prio' => 10,
+					'prio' => 20,
 				),
 				array(
 					'name' => trans('Nodes list'),

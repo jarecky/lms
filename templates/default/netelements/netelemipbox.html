@@ -1,0 +1,85 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+        <TR>
+	        <TD width="99%" class="hand" align="left" nowrap="nowrap" onClick="showOrHide('elementips');">
+			<IMG SRC="img/ip.gif" ALT="">
+			<B>{t a=$netelemips|@count}IP addresses ($a):{/t}</B>
+		</TD>
+	        <TD width="1%" class="text-right nobr">
+			<A HREF="?m=netelemedit&action=addip&id={$neteleminfo.id}">{trans("New address")} &raquo;</A>
+		</TD>	
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR id="elementips" style="display:none;">
+	        <TD WIDTH="100%" colspan="2">
+		        <TABLE class="lmsbox-inner">
+                            <THEAD>
+	<TR>
+	        <TD WIDTH="95%"><B>{trans("Name:")}</B></TD>
+		<TD WIDTH="1%" align="right">{trans("ID:")}</TD>
+		<TD WIDTH="1%" align="right">{trans("Address:")}</TD>
+		<TD WIDTH="1%" align="right">{trans("MAC:")}</TD>
+		<TD WIDTH="1%" align="right">{trans("Network")}</TD>
+		<TD WIDTH="1%">&nbsp;</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	{if $netelemips}
+	{cycle values="light,lucid" print=false}
+	{section name=list loop=$netelemips}
+	<TR class="highlight {cycle}{if ! $netelemips[list].access} blend{/if}"  >
+		<TD WIDTH="95%" onClick="return self.location.href='?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';" class="nobr">
+			<B>{$netelemips[list].name}</B>
+			{if $netelemips[list].location}<BR>
+			    {$netelemips[list].info|truncate:50:"...":true}
+			{/if}
+		</TD>
+		<TD WIDTH="1%" onClick="return self.location.href='?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';">
+			({$netelemips[list].id|string_format:"%04d"})
+		</TD>
+		<TD WIDTH="1%" align="right" onClick="return self.location.href='?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';" NOWRAP>
+			{$netelemips[list].ip}{if $netelemips[list].ip_pub!="0.0.0.0"} ({$netelemips[list].ip_pub}){/if}<BR>
+		</TD>
+		<TD WIDTH="1%" onClick="return self.location.href='?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';">
+			{$netelemips[list].mac|replace:",":"<BR>"}
+		</TD>
+		<TD class="bold" WIDTH="1%" align="right" NOWRAP>
+			<a href="?m=netinfo&id={$netelemips[list].netid}">{$netelemips[list].netname|truncate:"20":"...":true}</a>
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<A href="?m=netelemedit&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&action=ipset&ip={$netelemips[list].id}"><IMG src="img/{if ! $netelemips[list].access}no{/if}access.gif" ALT="" {if ! $netelemips[list].access}{tip text="Connect"}{else}{tip text="Disconnect"}{/if}></A>
+			<A HREF="?m=netelemedit&action=ipdel&id={$neteleminfo.id}&ip={$netelemips[list].id}" onClick="return confirmLink(this, '{t a=$netelemips[list].name}Are you sure, you want to delete address \'$a\' from database?{/t}')"><IMG SRC="img/delete.gif" ALT="" {tip text="Delete"}></A>
+			<A HREF="?m=netelemedit&action=editip&id={$neteleminfo.id}&ip={$netelemips[list].id}"><IMG SRC="img/edit.gif" ALT="" {tip text="Edit"}></A>
+			<A HREF="?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}"><IMG SRC="img/info.gif" ALT="" {tip text="Info"}></A>
+		</TD>
+	</TR>
+	{/section}
+	{else}
+        <TR>
+    		<TD colspan="6" class="empty-table">
+			<p>{trans("No IP addresses on element.")}</p>
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD WIDTH="100%" COLSPAN="6">
+			<IMG SRC="img/access.gif">
+			<A HREF="?m=netelemedit&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&action=ipset&access=1">{trans("Connect")}</A>/<A HREF="?m=netelemedit&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&action=ipset">{trans("Disconnect")}</A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+<SCRIPT type="text/javascript">
+<!--
+if (getCookie('elementips') == '1')
+{
+	document.getElementById('elementips').style.display = '';
+}
+//-->
+</SCRIPT>

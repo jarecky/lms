@@ -274,7 +274,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 			if (isset($radiosector)) {
 				$radiosector['netportid']=$DB->GetLastInsertID('netports');
 				$DB->Execute("INSERT INTO netradiosectors VALUES (?,?,?,?,?,?,?,?,?,?,?)",array_values($radiosector));
-				echo '<FONT COLOR="violet">'.$radiosector['name'].'</FONT>';
+				echo '<FONT COLOR="violet">['.$radiosector['name'].'] </FONT>';
 			}
 		}
 		echo '<BR>';
@@ -285,10 +285,6 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 
 
 
-function netelementadd($dev) {
-
-
-}
 // *******************************************************************
 // Dodawanie do netnodes na podstawie rekordu z netdevices_old
 // *******************************************************************

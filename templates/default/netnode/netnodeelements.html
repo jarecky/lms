@@ -5,17 +5,17 @@
 		<TD style="width: 100%; text-align: left; white-space: nowrap;" class="hand" >
 		<table style="width:100%;"> 
 			<tr>
-			<td style="width:50%;text-align:left;" class="bold" onClick="showOrHide('devicenodes');">
-				<IMG SRC="img/node.gif" ALT="">{t a=$netdevlist|@count}Assigned net devices ($a):{/t}</td>
+			<td style="width:50%;text-align:left;" class="bold" onClick="showOrHide('elementnodes');">
+				<IMG SRC="img/node.gif" ALT="">{t a=$netelemlist|@count}Assigned net elements ($a):{/t}</td>
 			<td style="width:50%;text-align:right;">
-				<a href="#" onclick="popup('?m=choosenetdev&id={$objectid}',1,1,-50,-40);autoiframe_setsize('autoiframe',500,290);return false;">
-					<IMG SRC="img/netdev.gif" ALT=""> {trans("Add devices to node")}</a></td>
+				<a href="#" onclick="popup('?m=choosenetelem&id={$objectid}',1,1,-50,-40);autoiframe_setsize('autoiframe',500,290);return false;">
+					<IMG SRC="img/netdev.gif" ALT=""> {trans("Add elements to node")}</a></td>
 		</table>
 		</TD>
 	</TR>
     </THEAD>
     <TBODY>
-	<TR id="devicenodes" style="display:none;">
+	<TR id="elementnodes" style="display:none;">
 		<TD style="width: 100%;">
 			<TABLE class="lmsbox-inner">
                             <THEAD>
@@ -35,27 +35,27 @@
                             </THEAD>
                             <TBODY>
 				{cycle values="light,lucid" print=false}
-				{section name=netdevlist loop=$netdevlist start=$start}
-				<tr class="highlight {cycle}"  id="ndsp{$netdevlist[netdevlist].id}" onclick="window.location='?m=netdevinfo&id={$netdevlist[netdevlist].id}'" >
+				{section name=netelemlist loop=$netelemlist start=$start}
+				<tr class="highlight {cycle}"  id="ndsp{$netelemlist[netelemlist].id}" onclick="window.location='?m=neteleminfo&id={$netelemlist[netelemlist].id}'" >
 					<td width="95%" style="vertical-align: top;" class="nobr">
-						<img src="img/netdev.gif" alt=""><b>{$netdevlist[netdevlist].name}</b><br/>
-							<img src="img/producer.gif" alt="">{$netdevlist[netdevlist].producer} / {$netdevlist[netdevlist].model} /	{if $netdevlist[netdevlist].location} {$netdevlist[netdevlist].location|truncate:60:"...":true}	{/if}
+						<img src="img/netdev.gif" alt=""><b>{$netelemlist[netelemlist].name}</b><br/>
+							<img src="img/producer.gif" alt="">{$netelemlist[netelemlist].producer} / {$netelemlist[netelemlist].model} /	{if $netelemlist[netelemlist].location} {$netelemlist[netelemlist].location|truncate:60:"...":true}	{/if}
 			 		</td>
 					<td>
-					 	{$netdevlist[netdevlist].id|string_format:"%04d"}
+					 	{$netelemlist[netelemlist].id|string_format:"%04d"}
 					</td>
 					<td>
-						{$netdevlist[netdevlist].serialnumber}
+						{$netelemlist[netelemlist].serialnumber}
 					</td>
 					<td class="nobr">
-						<A href="?m=netnodedeldev&id={$objectid}&did={$netdevlist[netdevlist].id}" OnClick="return confirmLink(this, '{t a=$netdevlist[netdevlist].name}Are you sure, you want to remove net device  \'$a\' from node?{/t}');"><img src="img/delete.gif"  alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
-						<a href="?m=netdevinfo&id={$netdevlist[netdevlist].id}"><img src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></A>
+						<A href="?m=netnodedelelem&id={$objectid}&did={$netelemlist[netelemlist].id}" OnClick="return confirmLink(this, '{t a=$netelemlist[netelemlist].name}Are you sure, you want to remove net element  \'$a\' from node?{/t}');"><img src="img/delete.gif"  alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
+						<a href="?m=neteleminfo&id={$netelemlist[netelemlist].id}"><img src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></A>
 					</td>
 				</tr>
 				{sectionelse}
 				<TR>
 					<TD colspan="4" style="text-align: center;">
-						<b>{trans("No assigned devices.")}</b>
+						<b>{trans("No assigned elements.")}</b>
 					</TD>
 				</TR>
 				{/section}
@@ -70,7 +70,7 @@
 <!--
 function change_nodelinktype(linktype) {
 	linktype = parseInt(linktype);
-	var options = document.getElementById('devnodeslinktechnology').options;
+	var options = document.getElementById('elemnodeslinktechnology').options;
 	while (options.length)
 		options.remove(0);
 	options.add(new Option('{trans("- unknown -")}', 0));
@@ -93,7 +93,7 @@ function change_nodelinktype(linktype) {
 	}
 }
 
-if (getCookie('devicenodes') == '1')
-	document.getElementById('devicenodes').style.display = '';
+if (getCookie('elementnodes') == '1')
+	document.getElementById('elementnodes').style.display = '';
 //-->
 </SCRIPT>

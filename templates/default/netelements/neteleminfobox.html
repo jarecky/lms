@@ -1,0 +1,315 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR{if $elementpanel} class="hand" onClick="showOrHide('elementpanel');"{/if}>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD WIDTH="99%">
+			<B>{$neteleminfo.name} ({$neteleminfo.id|string_format:"%04d"})</B>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR{if $elementpanel} id="elementpanel" style="display:none;"{/if}>
+	    <TD WIDTH="100%" COLSPAN="2" {if $elementpanel}CLASS="container" ALIGN="RIGHT"{else}CLASS="container"{/if}>
+			<TABLE WIDTH="100%" CELLPADDING="0">
+				<TR>
+					<TD WIDTH="50%" style="vertical-align:top;">
+						<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+		        <B>{trans("Status:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$_NETELEMENTSTATUSES[$neteleminfo.status]}
+		</TD>
+	</TR>
+        {if $neteleminfo.producer}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+		        <B>{trans("Producer:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.producer}
+		</TD>
+	</TR>
+	{/if}
+	{if $neteleminfo.model}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev_model.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+		        <B>{trans("Model:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.model}
+		</TD>
+	</TR>
+	{/if}
+	{if $neteleminfo.serialnumber}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/serialnumber.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Serial number:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.serialnumber}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/port.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Number of ports:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.ports}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev_takenports.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Ports used:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.takenports}
+		</TD>
+	</TR>
+	{if $neteleminfo.location}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Location:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.location}{if $neteleminfo.borough_name} ({$neteleminfo.state_name} / {$neteleminfo.district_name} / {$_BOROUGHTYPES[$neteleminfo.borough_type]} {$neteleminfo.borough_name}){/if}
+		</TD>
+	</TR>
+	{/if}
+	{if $neteleminfo.longitude || $neteleminfo.latitude}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("GPS longitude:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT ID="longitude" TYPE="hidden" VALUE="{$neteleminfo.longitude}">
+			{$neteleminfo.longitude}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/home.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("GPS latitude:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<INPUT ID="latitude" TYPE="hidden" VALUE="{$neteleminfo.latitude}">
+			{$neteleminfo.latitude}
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="2%" COLSPAN="2">
+		</TD>
+		<TD WIDTH="98%">
+			<a HREF="?m=netdevmap&netdevid={$neteleminfo.id}"><img src="img/network.gif" alt=""> {trans("Show on map")} &raquo;&raquo;&raquo;</a>
+		</TD>
+	</TR>
+	{/if}
+{if ConfigHelper::checkConfig('phpui.radius')}
+	{if $neteleminfo.shortname}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Shortname:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.shortname}
+		</TD>
+	</TR>
+	{/if}
+	{if $neteleminfo.nastype}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Type:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.nastypename}
+		</TD>
+	</TR>
+	{/if}
+	{if $neteleminfo.clients}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Max clients:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.clients}
+		</TD>
+	</TR>
+	{/if}
+	{if $neteleminfo.secret}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Secret:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.secret}
+		</TD>
+	</TR>
+	{/if}
+	{if $neteleminfo.community}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Community:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.community}
+		</TD>
+	</TR>
+	{/if}
+{/if}
+	{if $neteleminfo.channelid}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/channel.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Channel:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        <a href="?m=ewxchinfo&id={$neteleminfo.channelid}">{$neteleminfo.channel} ({$neteleminfo.channelid|string_format:"%04d"})</a>
+		</TD>
+	</TR>
+	{/if}
+	                        	</TABLE>
+				</TD>
+				<TD WIDTH="50%" style="vertical-align:top;">
+				        <TABLE WIDTH="100%" CELLPADDING="3">
+	{if $neteleminfo.purchasetime}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/calendar.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Purchase date:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+		        {$neteleminfo.purchasetime|date_format:"%Y/%m/%d"}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/guarantee.png" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+		        <B>{trans("Guarantee:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			{if !$neteleminfo.guaranteeperiod}
+				{trans("no guarantee")}
+			{elseif $neteleminfo.guaranteeperiod == -1}
+				{trans("lifetime")}
+			{else}
+				{assign var=periodid value=$neteleminfo.guaranteeperiod}
+				{$_GUARANTEEPERIODS.$periodid}
+		        	({if $neteleminfo.guaranteetime-$smarty.now < 0}{trans("expired<!guarantee>")}{else}{$neteleminfo.guaranteetime|date_format:"%Y/%m/%d"}{/if})
+			{/if}
+		</TD>
+	</TR>
+        {if $neteleminfo.description}
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/desc.gif" ALT="">
+                </TD>
+                <TD WIDTH="99%" COLSPAN="2">
+                        <TABLE WIDTH="100%" CELLPADDING="5">
+                                <TR>
+                                        <TD class="fall superlight">
+						{$neteleminfo.description|escape|replace:"\n":"<BR>"}
+                                        </TD>
+                                </TR>
+                        </TABLE>
+                </TD>
+        </TR>
+        {/if}
+	<TR>
+		<TD colspan="2" NOWRAP>
+			<b>{trans("Investment project:")}</b>	
+		</TD>
+		<TD>
+			{$neteleminfo.projectname}
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="2" NOWRAP>
+			<b>{trans("Net node:")}</b>	
+		</TD>
+		<TD>
+			{if $neteleminfo.netnodeid}<a href="?m=netnodeinfo&id={$neteleminfo.netnodeid}" class="bold">{$neteleminfo.nodename}</a>
+			{else}-{/if}
+		</TD>
+	</TR>
+
+	                                        </TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+{if !$elementpanel}
+    		</TD>
+	</TR>
+	<TR>
+	        <TD WIDTH="100%" COLSPAN="2" ALIGN="RIGHT">
+{/if}
+			<a href="?m=netelemadd&id={$neteleminfo.id}">{trans("Clone")} <img src="img/clone.gif" alt="[ {trans("Clone")} ]"</a>
+			<A href="javascript:void(0);" onclick="javascript:openSelectWindow('?m=choosenetelemreplace&id={$neteleminfo.id}', 'Replace netelem', 600, 290, 1, 1);">{trans("Replace")} <img src="img/alias.gif" ALT="[ {trans("Replace")} ]"></A>
+			<A href="?m=netelemedit&id={$neteleminfo.id}" ACCESSKEY="E">{trans("Edit")} <IMG src="img/edit.gif" ALT="[ {trans("Edit")} ]"></A>
+			<A href="?m=netelemdel&id={$neteleminfo.id}" OnClick="return confirmLink(this, '{t a=$neteleminfo.name}Are you sure, you want to remove element \'$a\' from database?{/t}');">{trans("Delete")} <img src="img/delete.gif" ALT=""></A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+{if $elementpanel}
+<SCRIPT type="text/javascript">
+<!--
+if (getCookie('elementpanel') == '1')
+{
+	document.getElementById('elementpanel').style.display = '';
+}
+//-->
+</SCRIPT>
+{/if}

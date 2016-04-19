@@ -25,47 +25,47 @@
  */
 
 /**
- * LMSNetDevManagerInterface
+ * LMSNetElemManagerInterface
  * 
  * @author Maciej Lew <maciej.lew.1987@gmail.com>
  */
-interface LMSNetDevManagerInterface
+interface LMSNetElemManagerInterface
 {
-    public function GetNetDevLinkedNodes($id);
+    public function GetNetElemLinkedNodes($id);
 
-    public function NetDevLinkNode($id, $devid, $link = NULL);
+    public function NetElemLinkNode($id, $devid, $link = NULL);
 
-    public function SetNetDevLinkType($dev1, $dev2, $link = NULL);
+    public function SetNetElemLinkType($dev1, $dev2, $link = NULL);
     
-    public function IsNetDevLink($dev1, $dev2);
+    public function IsNetElemLink($dev1, $dev2);
     
-    public function NetDevLink($dev1, $dev2, $link);
+    public function NetElemLink($dev1, $dev2, $link);
     
-    public function NetDevUnLink($dev1, $dev2);
+    public function NetElemUnLink($dev1, $dev2);
     
-    public function NetDevUpdate($data);
+    public function NetElemUpdate($data);
     
-    public function NetDevAdd($data);
+    public function NetElemAdd($data);
     
-    public function DeleteNetDev($id);
+    public function DeleteNetElem($id);
     
-    public function NetDevDelLinks($id);
+    public function NetElemDelLinks($id);
     
-    public function GetNetDev($id);
+    public function GetNetElem($id);
     
-    public function GetNotConnectedDevices($id);
+    public function GetNotConnectedElements($id);
     
-    public function GetNetDevNames();
+    public function GetNetElemNames();
     
-    public function GetNetDevList($order = 'name,asc');
+    public function GetNetElemList($order = 'name,asc');
     
-    public function GetNetDevConnectedNames($id);
+    public function GetNetElemConnectedNames($id);
     
-    public function GetNetDevLinkType($dev1, $dev2);
+    public function GetNetElemLinkType($dev1, $dev2);
     
-    public function CountNetDevLinks($id);
+    public function CountNetElemLinks($id);
     
-    public function GetNetDevIDByNode($id);
+    public function GetNetElemIDByNode($id);
     
-    public function NetDevExists($id);
+    public function NetElemExists($id);
 }

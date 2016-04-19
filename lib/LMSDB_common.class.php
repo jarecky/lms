@@ -24,7 +24,7 @@
  *  $Id$
  */
 
-define('DBVERSION', '2016041300'); // here should be always the newest version of database!
+define('DBVERSION', '2016041900'); // here should be always the newest version of database!
 				 // it placed here to avoid read disk every time when we call this file.
 
 /**
@@ -695,6 +695,7 @@ abstract class LMSDB_common implements LMSDBInterface
 
 				$pendingupgrades = array();
 				$upgradelist = getdir($libdir . DIRECTORY_SEPARATOR . 'upgradedb', '^' . $filename_prefix . '\.[0-9]{10}\.php$');
+				print_r($upgradelist);
 				if (!empty($upgradelist))
 					foreach ($upgradelist as $upgrade) {
 						$upgradeversion = preg_replace('/^' . $filename_prefix . '\.([0-9]{10})\.php$/', '\1', $upgrade);

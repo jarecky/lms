@@ -49,7 +49,7 @@ class LMS
     protected $network_manager;
     protected $node_manager;
     protected $node_group_manager;
-    protected $net_dev_manager;
+    protected $net_elem_manager;
     protected $helpdesk_manager;
     protected $finance_manager;
     protected $event_manager;
@@ -286,7 +286,7 @@ class LMS
 	public function CleanupInvprojects() {
 		if (ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.auto_remove_investment_project', true)))
 			$this->DB->Execute("DELETE FROM invprojects WHERE type <> ? AND id NOT IN
-				(SELECT DISTINCT invprojectid FROM netdevices WHERE invprojectid IS NOT NULL
+				(SELECT DISTINCT invprojectid FROM netelemices WHERE invprojectid IS NOT NULL
 					UNION SELECT DISTINCT invprojectid FROM vnodes WHERE invprojectid IS NOT NULL
 					UNION SELECT DISTINCT invprojectid FROM netnodes WHERE invprojectid IS NOT NULL)",
 				array(INV_PROJECT_SYSTEM));
@@ -733,10 +733,10 @@ class LMS
         return $manager->NodeSetWarnU($id, $warning);
     }
 
-    public function IPSetU($netdev, $access = FALSE)
+    public function IPSetU($netelem, $access = FALSE)
     {
         $manager = $this->getNodeManager();
-        return $manager->IPSetU($netdev, $access);
+        return $manager->IPSetU($netelem, $access);
     }
 
     public function NodeAdd($nodedata)
@@ -799,22 +799,22 @@ class LMS
         return $manager->CompactNodeGroups();
     }
 
-    public function GetNetDevLinkedNodes($id)
+    public function GetNetElemLinkedNodes($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->GetNetDevLinkedNodes($id);
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemLinkedNodes($id);
     }
 
-    public function NetDevLinkNode($id, $devid, $link = NULL)
+    public function NetElemLinkNode($id, $elemid, $link = NULL)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->NetDevLinkNode($id, $devid, $link);
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemLinkNode($id, $elemid, $link);
     }
 
-    public function SetNetDevLinkType($dev1, $dev2, $link)
+    public function SetNetElemLinkType($elem1, $elem2, $link)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->SetNetDevLinkType($dev1, $dev2, $link);
+        $manager = $this->getNetElemManager();
+        return $manager->SetNetElemLinkType($elem1, $elem2, $link);
     }
 
     public function SetNodeLinkType($node, $link)
@@ -1136,103 +1136,103 @@ class LMS
     }
 
     /*
-     *   Network Devices
+     *   Network Elements
      */
 
-    public function NetDevExists($id)
+    public function NetElemExists($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->NetDevExists($id);
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemExists($id);
     }
 
-    public function GetNetDevIDByNode($id)
+    public function GetNetElemIDByNode($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->GetNetDevIDByNode($id);
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemIDByNode($id);
     }
 
-    public function CountNetDevLinks($id)
+    public function CountNetElemLinks($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->CountNetDevLinks($id);
+        $manager = $this->getNetElemManager();
+        return $manager->CountNetElemLinks($id);
     }
 
-    public function GetNetDevLinkType($dev1, $dev2)
+    public function GetNetElemLinkType($elem1, $elem2)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->GetNetDevLinkType($dev1, $dev2);
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemLinkType($elem1, $elem2);
     }
 
-    public function GetNetDevConnectedNames($id)
+    public function GetNetElemConnectedNames($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->GetNetDevConnectedNames($id);
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemConnectedNames($id);
     }
 
-    public function GetNetDevList($order = 'name,asc', $search = array())
+    public function GetNetElemList($order = 'name,asc', $search = array())
     {
-        $manager = $this->getNetDevManager();
-        return $manager->GetNetDevList($order, $search);
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemList($order, $search);
     }
 
-    public function GetNetDevNames()
+    public function GetNetElemNames()
     {
-        $manager = $this->getNetDevManager();
-        return $manager->GetNetDevNames();
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemNames();
     }
 
-    public function GetNotConnectedDevices($id)
+    public function GetNotConnectedElements($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->GetNotConnectedDevices($id);
+        $manager = $this->getNetElemManager();
+        return $manager->GetNotConnectedElements($id);
     }
 
-    public function GetNetDev($id)
+    public function GetNetElem($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->GetNetDev($id);
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElem($id);
     }
 
-    public function NetDevDelLinks($id)
+    public function NetElemDelLinks($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->NetDevDelLinks($id);
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemDelLinks($id);
     }
 
-    public function DeleteNetDev($id)
+    public function DeleteNetElem($id)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->DeleteNetDev($id);
+        $manager = $this->getNetElemManager();
+        return $manager->DeleteNetElem($id);
     }
 
-    public function NetDevAdd($data)
+    public function NetElemAdd($data)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->NetDevAdd($data);
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemAdd($data);
     }
 
-    public function NetDevUpdate($data)
+    public function NetElemUpdate($data)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->NetDevUpdate($data);
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemUpdate($data);
     }
 
-    public function IsNetDevLink($dev1, $dev2)
+    public function IsNetElemLink($elem1, $elem2)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->IsNetDevLink($dev1, $dev2);
+        $manager = $this->getNetElemManager();
+        return $manager->IsNetElemLink($elem1, $elem2);
     }
 
-    public function NetDevLink($dev1, $dev2, $link)
+    public function NetElemLink($elem1, $elem2, $link)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->NetDevLink($dev1, $dev2, $link);
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemLink($elem1, $elem2, $link);
     }
 
-    public function NetDevUnLink($dev1, $dev2)
+    public function NetElemUnLink($elem1, $elem2)
     {
-        $manager = $this->getNetDevManager();
-        return $manager->NetDevUnLink($dev1, $dev2);
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemUnLink($elem1, $elem2);
     }
 
     public function GetUnlinkedNodes()
@@ -1241,10 +1241,10 @@ class LMS
         return $manager->GetUnlinkedNodes();
     }
 
-    public function GetNetDevIPs($id)
+    public function GetNetElemIPs($id)
     {
         $manager = $this->getNetworkManager();
-        return $manager->GetNetDevIPs($id);
+        return $manager->GetNetElemIPs($id);
     }
 
     /*
@@ -2351,16 +2351,16 @@ class LMS
     }
 
     /**
-     * Returns net dev manager
+     * Returns net elem manager
      * 
-     * @return LMSNetDevManagerInterface Net dev manager
+     * @return LMSNetElemManagerInterface Net elem manager
      */
-    protected function getNetDevManager()
+    protected function getNetElemManager()
     {
-        if (!isset($this->net_dev_manager)) {
-            $this->net_dev_manager = new LMSNetDevManager($this->DB, $this->AUTH, $this->cache, $this->SYSLOG);
+        if (!isset($this->net_elem_manager)) {
+            $this->net_elem_manager = new LMSNetElemManager($this->DB, $this->AUTH, $this->cache, $this->SYSLOG);
         }
-        return $this->net_dev_manager;
+        return $this->net_elem_manager;
     }
 
     /**
@@ -2572,13 +2572,13 @@ class LMS
     }
 
     /**
-     * Sets net dev manager
+     * Sets net elem manager
      * 
-     * @param LMSNetDevManagerInterface $manager Manager
+     * @param LMSNetElemManagerInterface $manager Manager
      */
-    public function setNetDevManager(LMSNetDevManagerInterface $manager)
+    public function setNetElemManager(LMSNetElemManagerInterface $manager)
     {
-        $this->net_dev_manager = $manager;
+        $this->net_elem_manager = $manager;
     }
 
     /**

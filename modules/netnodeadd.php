@@ -121,7 +121,7 @@ $SMARTY->assign('ownerlist', $DB->GetAll("SELECT id,concat(lastname,' ',name) AS
 $nprojects = $DB->GetAll("SELECT * FROM invprojects WHERE type<>? ORDER BY name",
 	array(INV_PROJECT_SYSTEM));
 
-$layout['pagetitle'] = trans('New Net Device Node');
+$layout['pagetitle'] = trans('New Net Element Node');
 $SMARTY->assign('NNprojects',$nprojects);
 
 $SMARTY->display('netnode/netnodeadd.html');
