@@ -98,10 +98,10 @@ $devices=$DB->GetAll("SELECT * FROM netdevices_old ORDER BY id ASC");
 if (is_array($devices)) foreach ($devices AS $dev) {
 	$check=$DB->GetOne("SELECT id FROM netelements WHERE id=".$dev['id']);
 	if (!isset($check)) {
-		echo $dev['name'].' '.$dev['producer'].' '.$dev['model'].'<BR>';
+		echo $dev['name'].' '.$dev['producer'].' '.$dev['model'].' ';
 		$DB->Execute("INSERT INTO netelements VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",array($dev['id'],$dev['name'],0,$dev['description'],$dev['producer'],$dev['model'],$dev['serialnumber'],$dev['purchasetime'],$dev['guaranteeperiod'],$dev['netnodeid'],$dev['invprojectid'],$dev['netdevicemodelid'],$dev['status']));
 		$DB->Execute("INSERT INTO netdevices VALUES (?,?,?,?,?,?,?,?,?)",array(null,$dev['id'],$dev['shortname'],$dev['nastype'],$dev['clients'],'',$dev['secret'],$dev['community'],$dev['channelid']));
-		echo '<font color="green">Ilość portów: '.$dev['ports'].'</font><BR>';
+		echo '<font color="green">Ilość portów: '.$dev['ports'].'</font> ';
 		$tech=array();
 		$nls=$DB->GetAll("SELECT * FROM netlinks WHERE src=".$dev['id']." OR dst=".$dev['id']);
 		$copper=array();
@@ -142,6 +142,25 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 				}
 						
 						
+			}
+		}
+		$nps=$DB->GetAll("SELECT * FROM nodes WHERE netdev=".$dev['id']);
+		if (is_array($nps)) foreach ($nps AS $np) {
+			if ($np['linktechnology']>=100 and $np['linktechnology']<200) {
+				if ($np['linkradiosector'])
+					$tech[$np['linktechnology']][$np['linkradiosector']]=1;
+				else
+					$tech[$np['linktechnology']][0]++;
+			} else {
+				$tech[$np['linktechnology']][$np['port']]++;
+				if ($np['port']) {
+					if ($np['linktechnology']<100) {
+						$copper[$np['port']]=1;
+					} else {
+						$fiber[$np['port']]=1;
+					}
+				}
+
 			}
 		}
 		#echo '<PRE>';print_r($tech);echo '</PRE>';
@@ -243,17 +262,19 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 				echo '<FONT color="red">Nieznana technologia '.$t.'</FONT><BR>';
 			}
 		}
-		echo '<PRE>';print_r($ports);echo '</PRE>';
+		#echo '<PRE>';print_r($ports);echo '</PRE>';
 		foreach ($ports AS $port) {
 			unset($radiosector);
 			if (isset($port['radiosector'])) {
 				$radiosector=$port['radiosector'];
 				unset($port['radiosector']);
 			}
+			echo '<FONT COLOR="blue">'.$port['label'].'</FONT> ';
 			$DB->Execute("INSERT INTO netports VALUES (?,?,?,?,?,?,?)",array_values($port));
 			if (isset($radiosector)) {
 				$radiosector['netportid']=$DB->GetLastInsertID('netports');
 				$DB->Execute("INSERT INTO netradiosectors VALUES (?,?,?,?,?,?,?,?,?,?,?)",array_values($radiosector));
+				echo '<FONT COLOR="violet">'.$radiosector['name'].'</FONT>';
 			}
 		}
 		echo '<BR>';
