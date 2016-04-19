@@ -104,7 +104,7 @@
 			<td width="1%" class="fleft nobr">
 				{trans("Model type")}
 			</td>
-			<td width="1%" class="fleft nobr">
+			<td width="1%" class="nobr">
 				{trans("Model name")}
 			</td>
 			<td width="99%" class="fright">
@@ -119,7 +119,7 @@
                                 {/foreach}
                         </select>
 			</td>
-			<td class="fleft nobr valign-top">
+			<td class="nobr valign-top">
 				<input type="text" name="modeledit[name]" style="width:250px" id="id_model_name" value="{$modeledit.name}" {tip text="Enter model name" trigger="name"}>
 			</td>			<td class="fright valign-top">
 				<input type="text" name="modeledit[alternative_name]" style="width:550px" id="id_model_alternative_name" value="{$modeledit.alternative_name}">
@@ -130,6 +130,23 @@
 		  <td>&nbsp;</td>
 		  <td class="fright">&nbsp;</td>
 		</tr>
+	{for $i=1 to 24} 
+		<tr class="light">
+		<td class="fleft nobr" colspan="2">
+		      Type:<select name="modeedit[netporttype]">
+			    {foreach from=$NETPORTTYPES key=k item=val}
+			      <option value="{$k}">{$val}</option>
+			    {/foreach}
+			    </select> 
+		      Label:<input type=text> 
+		      Connector:<select name="nodeledit[netconnector]">
+			    {foreach from=$NETCONNECTORS key=k item=val}
+			      <option value="{$k}">{$val}</option>
+			    {/foreach}
+			    </select></td>
+		  <td class="fright">&nbsp;</td>
+		</tr>
+	{/for}
 		<tr class="dark">
 			<td width="100%" class="fall text-right" colspan="3">
 				<a href="javascript:void(0);" onclick="xajax_save_model(xajax.getFormValues('modeledit'));">{trans("Save")} <img src="img/add.gif" alt=""></a>
@@ -161,7 +178,7 @@
 	{/if}
 	<tr class="dark">
 		<td width="1%" class="fleft nobr bold" style="min-width:150px;">{trans("Type")}</td>
-		<td width="1%" class="fleft nobr bold" style="min-width:150px;">{trans("Name")}</td>
+		<td width="1%" class="nobr bold" style="min-width:150px;">{trans("Name")}</td>
 		<td width="97%" class="bold">{trans("Alternative name")}</td>
 		<td width="1%" class="text-center nobr bold">{trans("Network devices")}</td>
 		<td width="1%" class="fright text-right nobr">
@@ -173,7 +190,7 @@
 	{assign var="modelid" value=$modellist[modellist].id}
 	<tr id="idtr{$modelid}" class="{cycle}" onmouseover="addClass(this, 'highlight')" onmouseout="removeClass(this, 'highlight')">
 		<td width="1%" class="fleft nobr">{$_NETELEMENTTYPES[$modellist[modellist].type]}</td>
-		<td width="1%" class="fleft nobr">{$modellist[modellist].name}</td>
+		<td width="1%" class="nobr">{$modellist[modellist].name}</td>
 		<td width="97%">{$modellist[modellist].alternative_name}</td>
 		<td width="1%" class="text-center nobr">{if $modellist[modellist].netdevcount}{$modellist[modellist].netdevcount}{/if}</td>
 		<td width="1%" class="fright text-right nobr">
