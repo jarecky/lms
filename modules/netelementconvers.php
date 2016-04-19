@@ -172,7 +172,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 								'id'            => NULL,
 								'netelemid'     => $netelemid,
 								'type'          => 2,
-								'label'         => 'wireless'.$port_num++,
+								'label'         => 'wireless'.$wport_num++,
 								'connectortype' => 0,
 								'technology'    => $t,
 								'capacity'      => 1
