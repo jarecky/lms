@@ -21,6 +21,10 @@ else
 
 $listdata['pid'] = $pid; // producer id
 
+$SMARTY->assign('NETPORTTYPES',$NETPORTTYPES);
+$SMARTY->assign('NETCONNECTORS',$NETCONNECTORS);
+
+
 function cancel_producer() {
 	$obj = new xajaxResponse();
 
