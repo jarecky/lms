@@ -94,7 +94,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 // Etap 1. - przeniesienie danych z netdevices_old do netelements
 // *******************************************************************
 
-$devices=$DB->GetAll("SELECT * FROM netdevices_old WHERE name regexp '(ap|rt)$' ORDER BY id ASC LIMIT 0,10");
+$devices=$DB->GetAll("SELECT * FROM netdevices_old WHERE name regexp '(rt)$' ORDER BY id ASC LIMIT 0,10");
 if (is_array($devices)) foreach ($devices AS $dev) {
 	$check=$DB->GetOne("SELECT id FROM netelements WHERE name='".$dev['name']."'");
 	if (!isset($check)) {
@@ -105,6 +105,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 		echo '<font color="green">Ilość portów: '.$dev['ports'].'</font><BR>';
 		$tech=array();
 		$nls=$DB->GetAll("SELECT * FROM netlinks WHERE src=".$dev['id']." OR dst=".$dev['id']);
+		$lan=array();
 		if (is_array($nls)) foreach ($nls AS $ls) {
 			if ($ls['technology']>=100 and $ls['technology']<200) {
 				if ($ls['src']==$dev['id']) {
@@ -123,25 +124,33 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 			} else {
 				if ($ls['src']==$dev['id']) {
 					$tech[$ls['technology']][$ls['dstport']]++;
+					if ($ls['dstport']) $lan[$ls['dstport']]=1;
 				} else {
 					$tech[$ls['technology']][$ls['srcport']]++;
+					if ($ls['srcport']) $lan[$ls['srcport']]=1;
 				}
 			}
 		}
 		#echo '<PRE>';print_r($tech);echo '</PRE>';
+		#echo '<PRE>';print_r($lan);echo '</PRE>';
 		$ports=array();
-		$wport_num=1;
+		$wport_num=1; $lport_num=1;
 		if (is_array($tech)) foreach ($tech AS $t => $p ) {
 			if ($t<100) {
 				foreach ($p AS $nr => $i) {
 					if (preg_match('/^([0-9]+),?/',$NETTECHNOLOGIES[$t]['connector'],$c))
 						$connector=$c[1];
 					for ($x=1;$x<=$i;$x++) {
+						if ($nr) {
+							$lport_num=$nr;
+						} else {
+							for (true;isset($lan[$lport_num]);$lport_num++);
+						}
 						$port=array(
 							'id' 		=> NULL,
 							'netelemid'	=> $netelemid,
 							'type'		=> 0,
-							'label'		=> $nr ? 'copper'.$nr : 'copper'.$i,
+							'label'		=> 'copper'.$lport_num++,
 							'connectortype'	=> $connector,
 							'technology'	=> $t,
 							'capacity'	=> 1
