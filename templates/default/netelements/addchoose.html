@@ -1,0 +1,54 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="netelement" METHOD="POST" ACTION="?m=netelement&action=add">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netelem.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+			<B>{trans("Name:")}</B>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netelem[name]" VALUE="{$netelem.name}" MAXLENGTH="32" {tip trigger="name" text="Enter element name" bold=1}>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+        <TD WIDTH="100%" COLSPAN="3" CLASS="container">
+		    <TABLE WIDTH="100%" CELLPADDING="0">
+				<TR>
+					<TD WIDTH="50%" style="vertical-align:top;">
+					        <TABLE WIDTH="100%" CELLPADDING="3">
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/producer.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Type:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netelem[type]" {tip text="Select element type"} VALUE="{$netelem.type}" onchange="submit()">
+				<OPTION VALUE="-1">{trans("Select type:")}</OPTION>
+                                {foreach $_NETELEMENTTYPES as $idx => $type}
+                                <OPTION VALUE="{$idx}">{$type}</OPTION>
+                                {/foreach}
+                        </SELECT>
+                </TD>
+        </TR>
+	
+	                                        </TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

@@ -3,31 +3,32 @@
 {block name=module_content}
 <!--// $Id$ //-->
 <H1>{$layout.pagetitle}</H1>
-<FORM method="get" action="?m=netelemlist" name="choosefilter">
-<INPUT type="hidden" NAME="m" VALUE="netelemlist">
+<FORM method="get" action="?m=netelement&action=list" name="choosefilter">
+<INPUT type="hidden" NAME="m" VALUE="netelement">
+<INPUT type="hidden" NAME="action" VALUE="list">
 <INPUT type="hidden" NAME="page" VALUE="1">
 TODO: lista parametrów obiektu w zależności od typu.
 <TABLE class="lmsbox">
     <THEAD>
 	<TR {tip text="Click on column name to change sorting order"}>
 		<TD width="96%">
-			<IMG src="img/netdev.gif" ALT="">&nbsp;<A href="?m=netelemlist&amp;o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}"><B>{trans("Name:")}</B></A> {if $listdata.order == "name"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}<BR>
-			<IMG src="img/producer.gif" ALT="">&nbsp;<A href="?m=netelemlist&amp;o=producer{if $listdata.direction == "asc" && $listdata.order == "producer"},desc{/if}">{trans("Manufacturer:")}</A> {if $listdata.order == "producer"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} / 
-			<A href="?m=netelemlist&amp;o=model{if $listdata.direction == "asc" && $listdata.order == "model"},desc{/if}">{trans("Model:")}</A> {if $listdata.order == "model"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+			<IMG src="img/netdev.gif" ALT="">&nbsp;<A href="?m=netelement&action=list&o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}"><B>{trans("Name:")}</B></A> {if $listdata.order == "name"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}<BR>
+			<IMG src="img/producer.gif" ALT="">&nbsp;<A href="?m=netelement&action=list&o=producer{if $listdata.direction == "asc" && $listdata.order == "producer"},desc{/if}">{trans("Manufacturer:")}</A> {if $listdata.order == "producer"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} / 
+			<A href="?m=netelement&action=list&o=model{if $listdata.direction == "asc" && $listdata.order == "model"},desc{/if}">{trans("Model:")}</A> {if $listdata.order == "model"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
 		</TD>
 		<TD width="1%" class="nobr alift-left valign-top">
-			<A href="?m=netelemlist&amp;o=location{if $listdata.direction == "asc" && $listdata.order == "location"},desc{/if}">{trans("Location:")}</A> {if $listdata.order == "location"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+			<A href="?m=netelement&action=list&o=location{if $listdata.direction == "asc" && $listdata.order == "location"},desc{/if}">{trans("Location:")}</A> {if $listdata.order == "location"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
 		</TD>
 		<TD width="1%" class="nobr align-left valign-top">
-			<A href="?m=netelemlist&amp;o=netnode{if $listdata.direction == "asc" && $listdata.order == "netnode"},desc{/if}">{trans("Network node:")}</A> {if $listdata.order == "netnode"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+			<A href="?m=netelement&action=list&o=netnode{if $listdata.direction == "asc" && $listdata.order == "netnode"},desc{/if}">{trans("Network node:")}</A> {if $listdata.order == "netnode"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
 		</TD>
 		<TD width="1%" align="right" valign="top">
-			<A href="?m=netelemlist&amp;o=id{if $listdata.direction == "asc" && $listdata.order == "id"},desc{/if}">ID:</A> {if $listdata.order == "id"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+			<A href="?m=netelement&action=list&o=id{if $listdata.direction == "asc" && $listdata.order == "id"},desc{/if}">ID:</A> {if $listdata.order == "id"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
 		</TD>
 		<TD width="1%" NOWRAP>
-			<IMG src="img/port.gif" ALT="">&nbsp;<A href="?m=netelemlist&amp;o=ports{if $listdata.direction == "asc" && $listdata.order == "ports"},desc{/if}">{trans("Number of ports:")}</A> {if $listdata.order == "ports"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
-			(<A href="?m=netelemlist&amp;o=takenports{if $listdata.direction == "asc" && $listdata.order == "takenports"},desc{/if}">{trans("Ports used:")}</A>{if $listdata.order == "takenports"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if})<BR>
-			<IMG src="img/serialnumber.gif" ALT="">&nbsp;<A href="?m=netelemlist&amp;o=serialnumber{if $listdata.direction == "asc" && $listdata.order == "serialnumber"},desc{/if}">{trans("Serial number:")}</A> {if $listdata.order == "serialnumber"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+			<IMG src="img/port.gif" ALT="">&nbsp;<A href="?m=netelement&action=list&o=ports{if $listdata.direction == "asc" && $listdata.order == "ports"},desc{/if}">{trans("Number of ports:")}</A> {if $listdata.order == "ports"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+			(<A href="?m=netelement&action=list&o=takenports{if $listdata.direction == "asc" && $listdata.order == "takenports"},desc{/if}">{trans("Ports used:")}</A>{if $listdata.order == "takenports"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if})<BR>
+			<IMG src="img/serialnumber.gif" ALT="">&nbsp;<A href="?m=netelement&action=list&o=serialnumber{if $listdata.direction == "asc" && $listdata.order == "serialnumber"},desc{/if}">{trans("Serial number:")}</A> {if $listdata.order == "serialnumber"}<IMG src="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
 		</TD>
 		<TD width="1%" align="right" nowrap>
 			<B>{trans("Total:")} {$listdata.total|default:"0"}</B>
@@ -95,28 +96,28 @@ TODO: lista parametrów obiektu w zależności od typu.
 	{cycle values="light,lucid" print=false}
 	{section name=netelemlist loop=$netelemlist start=$start max=$pagelimit}
 	<TR class="highlight {cycle}">
-		<TD onClick="return self.location.href='?m=neteleminfo&amp;id={$netelemlist[netelemlist].id}';" VALIGN="TOP">
+		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" VALIGN="TOP">
 			<IMG src="img/netdev.gif" ALT=""> <a name="{$netelemlist[netelemlist].id}"><B>{$netelemlist[netelemlist].name}</B></A><BR>
 			<IMG src="img/producer.gif" ALT=""> {$netelemlist[netelemlist].producer} {if $netelemlist[netelemlist].model}/ {$netelemlist[netelemlist].model}{/if}
 		</TD>
-		<TD onClick="return self.location.href='?m=neteleminfo&amp;id={$netelemlist[netelemlist].id}';" class="nobr valign-top">
+		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" class="nobr valign-top">
 			{if $netelemlist[netelemlist].location}{$netelemlist[netelemlist].location} {if $netelemlist[netelemlist].borough_name} ({$netelemlist[netelemlist].state_name} / {$netelemlist[netelemlist].district_name} / {$_BOROUGHTYPES[$netelemlist[netelemlist].borough_type]} {$netelemlist[netelemlist].borough_name}){/if}{/if}
 		</TD>
-		<TD onClick="return self.location.href='?m=neteleminfo&amp;id={$netelemlist[netelemlist].id}';" class="nobr valign-top">
-			{if $netelemlist[netelemlist].netnode}<a href="?m=netnodeinfo&amp;id={$netelemlist[netelemlist].netnodeid}">{$netelemlist[netelemlist].netnode}</a>{/if}
+		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" class="nobr valign-top">
+			{if $netelemlist[netelemlist].netnode}<a href="?m=netnodeinfo&id={$netelemlist[netelemlist].netnodeid}">{$netelemlist[netelemlist].netnode}</a>{/if}
 		</TD>
-		<TD onClick="return self.location.href='?m=neteleminfo&amp;id={$netelemlist[netelemlist].id}';" align="right" VALIGN="TOP">
+		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" align="right" VALIGN="TOP">
 			({$netelemlist[netelemlist].id|string_format:"%04d"})
 		</TD>
-		<TD onClick="return self.location.href='?m=neteleminfo&amp;id={$netelemlist[netelemlist].id}';" NOWRAP>
+		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" NOWRAP>
 			<IMG src="img/port.gif" ALT=""> {$netelemlist[netelemlist].ports} ({$netelemlist[netelemlist].takenports})<BR>
 			<IMG src="img/serialnumber.gif" ALT=""> {$netelemlist[netelemlist].serialnumber}
 		</TD>
 		<TD align="right" class="nobr">
-			<a href="?m=netelemdel&amp;id={$netelemlist[netelemlist].id}" onClick="return confirmLink(this, '{t a=$netelemlist[netelemlist].name}Are you sure, you want to remove device \'$a\' from database?{/t}')"><IMG src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
-			<a href="?m=netelemedit&amp;id={$netelemlist[netelemlist].id}"><IMG src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></A>
-			<a href="?m=netelemadd&amp;id={$netelemlist[netelemlist].id}"><IMG src="img/clone.gif" alt="[ {trans("Clone")} ]" title="[ {trans("Clone")} ]"></A>
-			<a href="?m=neteleminfo&amp;id={$netelemlist[netelemlist].id}"><IMG src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></A>
+			<a href="?m=netelement&action=del&id={$netelemlist[netelemlist].id}" onClick="return confirmLink(this, '{t a=$netelemlist[netelemlist].name}Are you sure, you want to remove device \'$a\' from database?{/t}')"><IMG src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
+			<a href="?m=netelement&action=edit&id={$netelemlist[netelemlist].id}"><IMG src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></A>
+			<a href="?m=netelement&action=add&id={$netelemlist[netelemlist].id}"><IMG src="img/clone.gif" alt="[ {trans("Clone")} ]" title="[ {trans("Clone")} ]"></A>
+			<a href="?m=netelement&action=info&id={$netelemlist[netelemlist].id}"><IMG src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></A>
 		</TD>
 	</TR>
 	{if $netelemlist[netelemlist.index_next].ownerid == $netelemlist[netelemlist].ownerid && $listdata.order == "owner"}{cycle print=false}{/if}

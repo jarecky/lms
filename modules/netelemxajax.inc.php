@@ -375,6 +375,7 @@ function getRadioSectorsForNetElem($callback_name, $elemid, $technology = 0) {
 	return $result;
 }
 
+global $LMS,$SMARTY;
 $LMS->InitXajax();
 $LMS->RegisterXajaxFunction(array(
 	'getManagementUrls','addManagementUrl', 'delManagementUrl', 'updateManagementUrl',

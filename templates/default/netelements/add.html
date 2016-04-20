@@ -6,7 +6,7 @@
 <script type="text/javascript" src="img/netnodehelper.js"></script>
 <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
 <H1>{$layout.pagetitle}</H1>
-<FORM NAME="netelemadd" METHOD="POST" ACTION="?m=netelemadd">
+<FORM NAME="netelement" METHOD="POST" ACTION="?m=netelement&action=add">
 <INPUT type="submit" class="hiddenbtn">
 <TABLE class="lmsbox">
     <THEAD>
@@ -28,6 +28,18 @@
 				<TR>
 					<TD WIDTH="50%" style="vertical-align:top;">
 					        <TABLE WIDTH="100%" CELLPADDING="3">
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/producer.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Type:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+			<INPUT TYPE="hidden" NAME="netelem[type]" VALUE="{$netelem.type}">
+			{trans($_NETELEMENTTYPES[$netelem.type])}
+                </TD>
+        </TR>
 	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/producer.gif" ALT="">

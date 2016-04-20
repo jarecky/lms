@@ -610,4 +610,22 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
         $this->db->CommitTrans();
     }
 
+    public function GetModelList($pid = NULL) {
+        global $DB;
+
+        if (!$pid)
+                return NULL;
+
+        $list = $DB->GetAll('SELECT m.id, m.type, m.name, m.alternative_name,
+                        (SELECT COUNT(i.id) FROM netdevices i WHERE i.netdevicemodelid = m.id) AS netdevcount
+                        FROM netdevicemodels m
+                        WHERE m.netdeviceproducerid = ?
+                        ORDER BY m.name ASC',
+                        array($pid));
+
+        return $list;
+}
+
+
+
 }

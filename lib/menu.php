@@ -222,14 +222,14 @@ $menu = array(
 		'netelements'=>array(
 			'name'=> trans('Net Elements'),
 			'img'=>'netdev.gif',
-			'link'=>'?m=netelements',
+			'link'=>'?m=netelement',
 			'tip'=>trans('Network Elements Management'),
 			'accesskey'=>'',
 			'prio'=>15,
 			'submenu'=>array(
                                 array(
                                         'name' => trans('List'),
-                                        'link' => '?m=netelemlist',
+                                        'link' => '?m=netelement&action=list',
                                         'tip' => trans('Network element list'),
                                         'prio' => 10,
                                 ),				
@@ -252,14 +252,8 @@ $menu = array(
 					'prio' => 50,
 				),
 				array(
-                                        'name' => trans('Technologies'),
-                                        'link' => '?m=nettechnologies',
-                                        'tip' => trans('Network technologies'),
-                                        'prio' => 100,
-                                ),
-				array(
                                         'name' => trans('Producers and models'),
-                                        'link' => '?m=netelemmodels',
+                                        'link' => '?m=netelement&action=models',
                                         'tip' => trans('Producers and models'),
                                         'prio' => 100,
                                 ),
