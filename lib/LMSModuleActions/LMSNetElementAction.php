@@ -408,9 +408,9 @@ class LMSNetElemAction extends LMSModuleAction
 					}
 					$this->smarty->assign('nodeipdata', $this->lms->GetNode($_GET['ip']));
 					$this->smarty->assign('netelemauthtype', $netelemauthtype);
-					$this->smarty->display('netelements/netelemipinfo.html');
+					$this->smarty->display('netelements/ipinfo.html');
 				} else {
-					$this->smarty->display('netelements/neteleminfo.html');
+					$this->smarty->display('netelements/info.html');
 				}
 			}
 		}
