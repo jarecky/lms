@@ -244,37 +244,7 @@ $LMS->RegisterXajaxFunction(array(
 	'save_model',
 	'delete_model',
 ));
-<<<<<<< HEAD:modules/modelxajax.inc.php
-=======
 
-
-function GetModelList($pid = NULL) {
-	global $DB;
-
-	if (!$pid)
-		return NULL;
-
-	$list = $DB->GetAll('SELECT m.id, m.type, m.name, m.alternative_name,
-			"" AS netdevcount
-			FROM netdevicemodels m
-			WHERE m.netdeviceproducerid = ?
-			ORDER BY m.name ASC',
-			array($pid));
-
-	return $list;
-}
-
-$modellist = GetModelList($pid);
-
-$listdata['total'] = sizeof($modellist);
-
-$page = (!$_GET['page'] ? 1 : $_GET['page']);
-$pagelimit = ConfigHelper::getConfig('phpui.netdevmodel_pagelimit', $listdata['total']);
-$start = ($page - 1) * $pagelimit;
-
-$SESSION->save('ndlpage',$page);
-
->>>>>>> b3d327237732c4e5945c09ba2412470c9a8f68c5:modules/netelemmodels.php
 $SMARTY->assign('xajax', $LMS->RunXajax());
 
 ?>
