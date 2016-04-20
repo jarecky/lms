@@ -80,7 +80,7 @@ switch ($_GET['action']){
 //	$listdata = $LMS->netElementsManager->netElementsList($_GET['o'], $_GET['filter'])      
       //dodac asygnacje zmiennych
 //	$SMARTY->assign('listdata,$listdata');      
-      $SMARTY->display("netelements/netelementlist.html");
+      $SMARTY->display("netelements/netelemlist.html");
     break;
     }
 

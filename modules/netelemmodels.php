@@ -277,7 +277,7 @@ function GetModelList($pid = NULL) {
 		return NULL;
 
 	$list = $DB->GetAll('SELECT m.id, m.type, m.name, m.alternative_name,
-			(SELECT COUNT(i.id) FROM netdevices i WHERE i.netdevicemodelid = m.id) AS netdevcount
+			"" AS netdevcount
 			FROM netdevicemodels m
 			WHERE m.netdeviceproducerid = ?
 			ORDER BY m.name ASC',
