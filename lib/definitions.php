@@ -549,15 +549,15 @@ $NETELEMENTTYPES = array(
 
 
 $NETPORTTYPES = array( 
-	0	=> trans('copper'),
-	1	=> trans('fiber'),
-	2	=> trans('wireless'),
-	3	=> trans('tray'),
-	4	=> trans('in'),
-	5	=> trans('out'),
-	6	=> trans('SFP'),
-	7	=> trans('SFP+'),
-	8	=> trans('POTS')
+	1	=> trans('copper'),
+	2	=> trans('POTS'),
+	3	=> trans('SFP'),
+	4	=> trans('SFP+'),
+	100	=> trans('wireless'),
+	200	=> trans('fiber'),
+	201	=> trans('in'),
+	202	=> trans('out'),
+	300	=> trans('tray')
 );
 
 $NETCONNECTORS = array(
