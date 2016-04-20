@@ -28,7 +28,7 @@ $this->Execute("CREATE VIEW nas AS
         d.clients AS ports, d.secret, d.community, e.description
         FROM nodes n
 	JOIN netelements e ON (n.netdev = e.id)
-        JOIN netdevices d ON (d.id = e.netelemid)
+        JOIN netdevices d ON (e.id = d.netelemid)
         WHERE n.nas = 1");
 $this->Execute("UPDATE dbinfo SET keyvalue = ? WHERE keytype = ?", array('2016041900', 'dbversion'));
 $this->CommitTrans();
