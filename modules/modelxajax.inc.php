@@ -1,30 +1,5 @@
 <?php
 
-$layout['pagetitle'] = trans("Network device producers and models");
-$listdata = $modellist = array();
-$producerlist = $DB->GetAll('SELECT id, name FROM netdeviceproducers ORDER BY name ASC');
-
-
-if (!isset($_GET['p_id'])) 
-	$SESSION->restore('ndpid', $pid);
-else
-	$pid = intval($_GET['p_id']);
-$SESSION->save('ndpid', $pid);
-
-if (!isset($_GET['page']))
-	$SESSION->restore('ndlpage', $_GET['page']);
-
-if ($pid)
-	$producerinfo = $DB->GetRow('SELECT p.id , p.alternative_name FROM netdeviceproducers p WHERE p.id = ?', array($pid));
-else
-	$producerinfo = array();
-
-$listdata['pid'] = $pid; // producer id
-
-$SMARTY->assign('NETPORTTYPES',$NETPORTTYPES);
-$SMARTY->assign('NETCONNECTORS',$NETCONNECTORS);
-
-
 function cancel_producer() {
 	$obj = new xajaxResponse();
 
@@ -110,7 +85,7 @@ function save_producer($forms) {
 					$form['id']
 				));
 			$obj->script("xajax_cancel_producer();");
-			$obj->script("self.location.href='?m=netelemmodels&page=1&p_id=$formid';");
+			$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=$formid';");
 		} else {
 			$DB->Execute('INSERT INTO netdeviceproducers (name, alternative_name) VALUES (?, ?)',
 				array($form['name'],
@@ -118,7 +93,7 @@ function save_producer($forms) {
 				));
 
 			$obj->script("xajax_cancel_producer();");
-			$obj->script("self.location.href='?m=netelemmodels&page=1&p_id=" . $DB->getLastInsertId('netdeviceproducers') . "';");
+			$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=" . $DB->getLastInsertId('netdeviceproducers') . "';");
 		}
 	}
 
@@ -131,7 +106,7 @@ function delete_producer($id) {
 
 	$DB->Execute('DELETE FROM netdeviceproducers WHERE id = ?', array($id));
 
-	$obj->script("self.location.href='?m=netelemmodels&page=1&p_id=';");
+	$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=';");
 
 	return $obj;
 }
@@ -235,7 +210,7 @@ function save_model($forms) {
 			error_log($xx);
 			$DB->Execute($xx);
 			$obj->script("xajax_cancel_model();");
-			$obj->script("self.location.href='?m=netelemmodels&page=1&p_id=$pid';");
+			$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=$pid';");
 		} else {
 			$DB->Execute('INSERT INTO netdevicemodels (netdeviceproducerid, name, alternative_name, type) VALUES (?, ?, ?, ?)',
 				array($pid,
@@ -245,7 +220,7 @@ function save_model($forms) {
 				));
 
 			$obj->script("xajax_cancel_model();");
-			$obj->script("self.location.href='?m=netelemmodels&page=1&p_id=$pid';");
+			$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=$pid';");
 		}
 	}
 
@@ -264,11 +239,12 @@ function delete_model($id) {
 
 	$DB->Execute('DELETE FROM netdevicemodels WHERE id = ?', array($id));
 
-	$obj->script("self.location.href='?m=netelemmodels&page=1&p_id=$pid';");
+	$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=$pid';");
 
 	return $obj;
 }
 
+global $LMS,$SMARTY;
 $LMS->InitXajax();
 $LMS->RegisterXajaxFunction(array(
 	'cancel_producer',
@@ -283,41 +259,6 @@ $LMS->RegisterXajaxFunction(array(
 	'delete_model',
 ));
 
-
-function GetModelList($pid = NULL) {
-	global $DB;
-
-	if (!$pid)
-		return NULL;
-
-	$list = $DB->GetAll('SELECT m.id, m.type, m.name, m.alternative_name,
-			"" AS netdevcount
-			FROM netdevicemodels m
-			WHERE m.netdeviceproducerid = ?
-			ORDER BY m.name ASC',
-			array($pid));
-
-	return $list;
-}
-
-$modellist = GetModelList($pid);
-
-$listdata['total'] = sizeof($modellist);
-
-$page = (!$_GET['page'] ? 1 : $_GET['page']);
-$pagelimit = ConfigHelper::getConfig('phpui.netdevmodel_pagelimit', $listdata['total']);
-$start = ($page - 1) * $pagelimit;
-
-$SESSION->save('ndlpage',$page);
-
 $SMARTY->assign('xajax', $LMS->RunXajax());
-$SMARTY->assign('listdata',$listdata);
-$SMARTY->assign('producerlist',$producerlist);
-$SMARTY->assign('modellist',$modellist);
-$SMARTY->assign('producerinfo',$producerinfo);
-$SMARTY->assign('pagelimit',$pagelimit);
-$SMARTY->assign('page',$page);
-$SMARTY->assign('start',$start);
-$SMARTY->display('netelements/netelemmodels.html');
 
 ?>

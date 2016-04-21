@@ -68,4 +68,7 @@ interface LMSNetElemManagerInterface
     public function GetNetElemIDByNode($id);
     
     public function NetElemExists($id);
+
+    public function GetModelList($pid);
+
 }

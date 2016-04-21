@@ -1138,6 +1138,11 @@ class LMS
     /*
      *   Network Elements
      */
+    public function GetModelList($pid)
+    {
+	$manager = $this->getNetElemManager();
+	return $manager->GetModelList($pid);
+    }
 
     public function NetElemExists($id)
     {
@@ -2351,7 +2356,7 @@ class LMS
     }
 
     /**
-     * Returns net elem manager
+     * Returns network element manager
      * 
      * @return LMSNetElemManagerInterface Net elem manager
      */
@@ -2572,7 +2577,7 @@ class LMS
     }
 
     /**
-     * Sets net elem manager
+     * Sets network elemement manager
      * 
      * @param LMSNetElemManagerInterface $manager Manager
      */
