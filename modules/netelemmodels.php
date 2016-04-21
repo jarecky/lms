@@ -165,10 +165,16 @@ function add_model() {
 
 function edit_model($id) {
 	global $DB;
+	global $NETPORTTYPES;
+	global $NETCONNECTORS;
 	$obj = new xajaxResponse();
 
 	$model = $DB->GetRow('SELECT * FROM netdevicemodels WHERE id = ?', array($id));
+	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id);
 
+	foreach($ports as $p){
+	  $obj->call('xaddport',$p['id'],$p['label'],$p['connector'],$p['port_type'], $NETCONNECTORS[($p['connector'])], $NETPORTTYPES[($p['port_type'])]);
+	}
 	$obj->script("xajax.$('div_modeledit').style.display='';");
 	$obj->script("removeClass(xajax.$('id_model_name'),'alert');");
 	$obj->assign("id_model_action_name","innerHTML", trans('Model edit: $a', $model['name']));
@@ -220,6 +226,14 @@ function save_model($forms) {
 					$form['type'],
 					$formid,
 				));
+			$vals='';
+			foreach($form as $key=>$val){
+			  if(is_int($key)) $vals.="('".$form['id']."','".$form[$key]['label']."','".$form[$key]['netporttype']."','".$form[$key]['netconnector']."'),";
+			}
+			$DB->Execute("DELETE FROM netdeviceschema WHERE model =".$formid);
+			$xx="INSERT INTO netdeviceschema (model,label, port_type, connector) VALUES ".substr($vals,0,-1);
+			error_log($xx);
+			$DB->Execute($xx);
 			$obj->script("xajax_cancel_model();");
 			$obj->script("self.location.href='?m=netelemmodels&page=1&p_id=$pid';");
 		} else {
