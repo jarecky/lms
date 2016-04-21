@@ -7,6 +7,8 @@
 			<span class="bold">{t a=$netports|@count}Ports ($a):{/t}</span>
 		</TD>
 	</TR>
+	<tr><td>moze w ten desen ? ;) i to w glowne info o urzadzeniu (na samą górę)</td></tr>
+
     </THEAD>
     <TBODY>
 	<TR id="netports" style="display:none;">
@@ -15,9 +17,8 @@
         
 			  <TBODY>
 	<TR class="{cycle}">
-	<tr><td colspan=4>moze w ten desen ? ;)</td></tr>
 	{cycle values="light,lucid" print=false}
-	{section name=n loop=$netports start=1}
+	{section name=n loop=$netports start=0}
 	{$technology=$netports[n].technology}
 	{$speed=$_NETTECHNOLOGIES[$technology].speed}
 			{if $netports[n].connectortype}
@@ -29,11 +30,11 @@
 				{assign var=conn value=$_NETCONNECTORS[$connector[connector]]} 
 			{/section}
 
-	<TD class="highlight" style="background-image:url('img/transparent12x12.png'); width:12px; height:12px;" 
+	<TD class="highlight ftop fbottom fleft fright" style=" background-color:#ddd; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" 
 		{tip text=join("", array("Label: ", $netports[n].label, "\nType: ", $_NETPORTTYPES[$netports[n].type], 
 			      "\ntech: ", $_NETTECHNOLOGIES[$technology].name, "\nConnector: ", $conn
 			  )) }>
-			<IMG src="img/portf.png" ALT="">
+			<IMG src="img/port{if $smarty.section.n.iteration is div by 3}z{else}f{/if}.png" ALT="">
 		</TD>
 		{if $smarty.section.n.iteration is div by 4}</tr><tr>{/if}
 	{sectionelse}
