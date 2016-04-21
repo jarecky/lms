@@ -1138,6 +1138,11 @@ class LMS
     /*
      *   Network Elements
      */
+    public function GetNetElemPorts($id)
+    {
+	$manager = $this->getNetElemManager();
+	return $manager->GetNetElemPorts($id);
+    }
     public function GetModelList($pid)
     {
 	$manager = $this->getNetElemManager();

@@ -611,21 +611,25 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     }
 
     public function GetModelList($pid = NULL) {
-        global $DB;
-
         if (!$pid)
                 return NULL;
-
-        $list = $DB->GetAll('SELECT m.id, m.type, m.name, m.alternative_name,
+        $list = $this->db->GetAll('SELECT m.id, m.type, m.name, m.alternative_name,
                         (SELECT COUNT(i.id) FROM netdevices i WHERE i.netdevicemodelid = m.id) AS netdevcount
                         FROM netdevicemodels m
                         WHERE m.netdeviceproducerid = ?
                         ORDER BY m.name ASC',
                         array($pid));
+	return $list;
+    }
 
-        return $list;
-}
-
-
+    public function GetNetElemPorts($id) {
+	$ports = $this->db->GetAll('SELECT * FROM netports WHERE netelemid=?',array($id));
+	foreach ($ports AS $idx => $port) {
+	    $rss = $this->db->GetAll('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
+	    if (count($rss)) 
+		$ports[$idx]['radiosectors']=$rss;
+	}
+	return($ports);
+    }
 
 }

@@ -71,4 +71,6 @@ interface LMSNetElemManagerInterface
 
     public function GetModelList($pid);
 
+    public function GetNetElemPorts($id);
+
 }

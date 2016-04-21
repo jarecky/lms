@@ -340,6 +340,7 @@ class LMSNetElemAction extends LMSModuleAction
 			$netelemconnected = $this->lms->GetNetElemConnectedNames($_GET['id']);
 			$netcomplist = $this->lms->GetNetElemLinkedNodes($_GET['id']);
 			$netelemlist = $this->lms->GetNotConnectedElements($_GET['id']);
+			$netports = $this->lms->GetNetElemPorts($_GET['id']);
 
 			$nodelist = $this->lms->GetUnlinkedNodes();
 			$netelemips = $this->lms->GetNetElemIPs($_GET['id']);
@@ -376,6 +377,7 @@ class LMSNetElemAction extends LMSModuleAction
 			$this->smarty->assign('neteleminfo', $neteleminfo);
 			$this->smarty->assign('objectid', $neteleminfo['id']);
 			$this->smarty->assign('restnetelemlist', $netelemlist);
+			$this->smarty->assign('netports', $netports);
 			$this->smarty->assign('netelemips', $netelemips);
 			$this->smarty->assign('nodelist', $nodelist);
 			$this->smarty->assign('elemlinktype', $this->session->get('elemlinktype'));

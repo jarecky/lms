@@ -181,7 +181,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 						$port=array(
 							'id' 		=> NULL,
 							'netelemid'	=> $dev['id'],
-							'type'		=> 0,
+							'type'		=> 1,
 							'label'		=> 'copper'.$cport_num++,
 							'connectortype'	=> $connector,
 							'technology'	=> $t,
@@ -211,7 +211,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 						$port=array(
                                                         'id'            => NULL,
                                                         'netelemid'     => $dev['id'],
-                                                        'type'          => 2,
+                                                        'type'          => 100,
                                                         'label'         => 'wireless'.$wport_num++,
                                                         'connectortype' => 0,
                                                         'technology'    => $t,
@@ -225,7 +225,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 							$port=array(
 								'id'            => NULL,
 								'netelemid'     => $dev['id'],
-								'type'          => 2,
+								'type'          => 100,
 								'label'         => 'wireless'.$wport_num++,
 								'connectortype' => 0,
 								'technology'    => $t,
@@ -249,7 +249,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
                                                 $port=array(
                                                         'id'            => NULL,
                                                         'netelemid'     => $dev['id'],
-                                                        'type'          => 0,
+                                                        'type'          => 200,
                                                         'label'         => 'copper'.$fport_num++,
                                                         'connectortype' => $connector,
                                                         'technology'    => $t,

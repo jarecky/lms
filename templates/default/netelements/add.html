@@ -4,6 +4,7 @@
 <!--// $Id$ //-->
 {include file="calendar_js.html"}
 <script type="text/javascript" src="img/netnodehelper.js"></script>
+<script type="text/javascript" src="img/netelemhelper.js"></script>
 <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
 <H1>{$layout.pagetitle}</H1>
 <FORM NAME="netelement" METHOD="POST" ACTION="?m=netelement&action=add">
@@ -12,7 +13,7 @@
     <THEAD>
 	<TR>
 		<TD WIDTH="1%">
-			<IMG SRC="img/netelem.gif" ALT="">
+			<IMG SRC="img/netdev.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%">
 			<B>{trans("Name:")}</B>
@@ -68,7 +69,7 @@
 	</TR>
 	<TR>
 		<TD WIDTH="1%">
-			<IMG SRC="img/netelem_model.gif" ALT="">
+			<IMG SRC="img/netdev_model.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Model:")}</B>
@@ -91,7 +92,6 @@
 			<INPUT TYPE="TEXT" NAME="netelem[serialnumber]" VALUE="{$netelem.serialnumber}" {tip text="Enter element serial number (optional)"}>
 		</TD>
 	</TR>
-		{block name=netelem_params}{/block}
                                         </TABLE>
 				</TD>
 				<TD WIDTH="50%" style="vertical-align:top;">
@@ -172,6 +172,13 @@
 	                                        </TABLE>
 					</TD>
 				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+        	<TD WIDTH="100%" COLSPAN="3" CLASS="container">
+		  	<TABLE WIDTH="100%" CELLPADDING="0">
+				{block name=netelem_params}{/block}
 			</TABLE>
 		</TD>
 	</TR>

@@ -1,4 +1,15 @@
 {extends file="netelements/add.html"}
 {block name=netelem_params}
-
+  <tr>
+    <td colspan=2>{trans('Ports')}:<IMG src="img/add.gif" alt="" {tip text="Add"} onclick="addports();">
+    </td>
+  </tr><!-- EOF porty -->
+  <tr><!-- Porty -->
+    <td colspan=2 width="100%" class="container">
+      <table width="100%"><!-- do porttable JS wrzuca porty -->
+            <tbody id="porttable" style="text-align:left;"></tbody>
+      </table>
+    </td>
+  </tr><!-- EOF porty -->
+  <tr>
 {/block}

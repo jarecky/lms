@@ -357,8 +357,8 @@ $NETTECHNOLOGIES = array(
 	10 => array('name'=>'HDSL','medium'=>'1,2,3,4,5,6,7,8','speed'=>5,'connector'=>3),
 	11 => array('name'=>'PDH','medium'=>'1,2,3,4,5,6,7,8','speed'=>5,'connector'=>3),
 	12 => array('name'=>'POTS/ISDN','medium'=>'1,2,3,4,5,6,7,8','speed'=>6,'connector'=>6),
-	6  => array('name'=>'10 Mb/s Ethernet','medium'=>'5,6,7,8','speed'=>7,'connector'=>2),
-	7  => array('name'=>'100 Mb/s Ethernet','medium'=>'5,6,7,8','speed'=>8,'connector'=>2),
+	6  => array('name'=>'10 Mb/s Ethernet','medium'=>'5,6,7,8','speed'=>7,'connector'=>'1,2'),
+	7  => array('name'=>'100 Mb/s Ethernet','medium'=>'5,6,7,8','speed'=>8,'connector'=>'1,2'),
 	8  => array('name'=>'1 Gigabit Ethernet','medium'=>'6,7,8','speed'=>9,'connector'=>1),
 	9  => array('name'=>'10 Gigabit Ethernet','medium'=>'7,8','speed'=>10,'connector'=>1),
 	50 => array('name'=>'(EURO)DOCSIS 1.x)','medium'=>'51','speed'=>11,'connector'=>8),
@@ -877,6 +877,8 @@ if(isset($SMARTY))
 	$SMARTY->assign('_DISCOUNTTYPES', $DISCOUNTTYPES);
 	$SMARTY->assign('_DAYS', $DAYS);
 	$SMARTY->assign('_LINKTYPES', $LINKTYPES);
+	$SMARTY->assign('_NETTECHNOLOGIES', $NETTECHNOLOGIES);
+	$SMARTY->assign('_NETSPEEDS', $NETSPEEDS);
 	$SMARTY->assign('_LINKTECHNOLOGIES', $LINKTECHNOLOGIES);
 	$SMARTY->assign('_LINKSPEEDS', $LINKSPEEDS);
 	$SMARTY->assign('_BOROUGHTYPES', $BOROUGHTYPES);
