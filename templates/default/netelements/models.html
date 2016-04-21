@@ -7,14 +7,15 @@
 <H1>{$layout.pagetitle}</H1>
 <script>
 function addports(){
-  var port_types='<option value=0>{trans("Select")}</option>'	{foreach from=$NETPORTTYPES key=k item=val}
-			      +'<option value="{$k}">{$val}</option>'
-			    {/foreach}
-;
-  var connectors='<option value=0>{trans("Select")}</option>'	{foreach from=$NETCONNECTORS key=k item=val}
-			      +'<option value="{$k}">{$val}</option>'
-			    {/foreach}
-;
+  var port_types='<option value=0>{trans("Select")}</option>';
+  {foreach from=$NETPORTTYPES key=k item=val}
+			      port_types+='<option value="{$k}">{$val}</option>';
+  {/foreach}
+
+  var connectors='<option value=0>{trans("Select")}</option>';
+  {foreach from=$NETCONNECTORS key=k item=val}
+			      connectors+='<option value="{$k}">{$val}</option>';
+  {/foreach}
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');
   var d=new Date();
@@ -33,14 +34,15 @@ function addports(){
 }
 
 function xaddport(id, label, connector, port_type, cn, pn){
-  var port_types='<option value=0>{trans("Select")}</option>'	{foreach from=$NETPORTTYPES key=k item=val}
-			      +'<option value="{$k}">{$val}</option>'
-			    {/foreach}
-;
-  var connectors='<option value=0>{trans("Select")}</option>'	{foreach from=$NETCONNECTORS key=k item=val}
-			      +'<option value="{$k}">{$val}</option>'
-			    {/foreach}
-;
+  var port_types='<option value=0>{trans("Select")}</option>';
+  {foreach from=$NETPORTTYPES key=k item=val}
+			      port_types+='<option value="{$k}">{$val}</option>';
+  {/foreach}
+
+  var connectors='<option value=0>{trans("Select")}</option>';
+  {foreach from=$NETCONNECTORS key=k item=val}
+			      connectors+='<option value="{$k}">{$val}</option>';
+  {/foreach}
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');
   var index=document.getElementById('porttable').rows.length+1;
@@ -74,13 +76,6 @@ function remports(row){
   
 }  
 
-function renumerate(id){
-  var tab=document.getElementById(id);
-    for(x=0; x<tab.rows.length; x++){
-    tab.rows[x].innerHTML=tab.rows[x].innerHTML.replace(/\d+\]/g,(x+1)+']');
-  }
-
-}       
 </script>
 
 <div id="div_produceredit" style="display:none">

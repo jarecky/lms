@@ -421,7 +421,8 @@ class LMSNetElemAction extends LMSModuleAction
 	function _models() {
 
 		include(MODULES_DIR . '/modelxajax.inc.php');
-
+		global $NETPORTTYPES;
+		global $NETCONNECTORS;
 		$layout['pagetitle'] = trans("Network device producers and models");
 		$listdata = $modellist = array();
 		$producerlist = $this->db->GetAll('SELECT id, name FROM netdeviceproducers ORDER BY name ASC');
