@@ -623,7 +623,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     }
 
     public function GetNetElemPorts($id) {
-	$ports = $this->db->GetAll('SELECT * FROM netports WHERE netelemid=?',array($id));
+	$ports = $this->db->GetAll('SELECT * FROM netports WHERE netelemid=? ORDER BY label ASC',array($id));
 	foreach ($ports AS $idx => $port) {
 	    $rss = $this->db->GetAll('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
 	    if (count($rss)) 
