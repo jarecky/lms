@@ -20,7 +20,7 @@
  *  USA.
  *
  */
-
+//naniesione poprawki na kodowanie znakow powtorka w mysql.2016042100
 $this->BeginTrans();
 
 $this->Execute("SET foreign_key_checks = 0");
@@ -47,9 +47,9 @@ $this->Execute("ALTER TABLE netdeviceschema
 
 $this->Execute("CREATE TABLE netelements (
   id            int(11)         NOT NULL auto_increment,
-  name          varchar(32)     NOT NULL DEFAULT '',
+  name          varchar(32)     COLLATE utf8_general_ci NOT NULL DEFAULT '',
   type          tinyint(1)      NOT NULL DEFAULT '0',
-  description   text            NOT NULL DEFAULT '',
+  description   text            COLLATE utf8_general_ci NOT NULL DEFAULT '',
   producer      varchar(64)     NOT NULL DEFAULT '',
   model         varchar(32)     NOT NULL DEFAULT '',
   serialnumber  varchar(32)     NOT NULL DEFAULT '',
@@ -63,13 +63,13 @@ $this->Execute("CREATE TABLE netelements (
   FOREIGN KEY (netnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY (invprojectid) REFERENCES invprojects (id) ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY (netdevicemodelid) REFERENCES netdevicemodels (id) ON UPDATE CASCADE ON DELETE restrict
-) ENGINE=InnoDB");
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
 
 $this->Execute("RENAME TABLE netdevices TO netdevices_old");
 $this->Execute("CREATE TABLE netdevices (
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
-  shortname     varchar(32)     NOT NULL DEFAULT '',
+  shortname     varchar(32)     COLLATE utf8_general_ci NOT NULL DEFAULT '',
   nastype       int(11)         NOT NULL DEFAULT '0',
   clients       int(11)         NOT NULL DEFAULT '0',
   user          varchar(20)     not null default '',
@@ -80,13 +80,13 @@ $this->Execute("CREATE TABLE netdevices (
   INDEX channelid (channelid),
   FOREIGN KEY (channelid) REFERENCES ewx_channels (id) ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE restrict ON UPDATE CASCADE
-) ENGINE=InnoDB");
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
 
 $this->Execute("CREATE TABLE netports (
   id            int(11)         UNSIGNED ZEROFILL NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
-  label         varchar(32)     NOT NULL DEFAULT '',
+  label         varchar(32)     COLLATE utf8_general_ci NOT NULL DEFAULT '',
   connectortype tinyint(3)      NOT NULL DEFAULT '0',
   technology    int(11)         NOT NULL DEFAULT '0',
   capacity      int(11)         UNSIGNED NOT NULL DEFAULT '1',
@@ -94,13 +94,13 @@ $this->Execute("CREATE TABLE netports (
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE restrict ON UPDATE CASCADE,
   UNIQUE KEY label (label, netelemid)
-) ENGINE=InnoDB");
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
 
 $this->Execute("RENAME TABLE netradiosectors TO netradiosectors_old");
 $this->Execute("CREATE TABLE netradiosectors (
   id            int(11)         NOT NULL auto_increment,
   netportid     int(11)         UNSIGNED ZEROFILL NOT NULL DEFAULT '0',
-  name          varchar(64)     NOT NULL,
+  name          varchar(64)     COLLATE utf8_general_ci NOT NULL,
   azimuth       decimal(9,2)    DEFAULT 0 NOT NULL,
   width         decimal(9,2)    DEFAULT 0 NOT NULL,
   altitude      smallint        DEFAULT 0 NOT NULL,
@@ -113,7 +113,7 @@ $this->Execute("CREATE TABLE netradiosectors (
   INDEX netportid (netportid),
   FOREIGN KEY (netportid) REFERENCES netports (id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE KEY name (name, netportid)
-) ENGINE=INNODB");
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
 
 $this->Execute("CREATE TABLE netreserves (
   id            int(11)         NOT NULL auto_increment,
@@ -131,7 +131,7 @@ $this->Execute("CREATE TABLE netcables (
   id            int(11)         NOT NULL auto_increment,
   netelemid     int(11)         NOT NULL DEFAULT '0',
   type          tinyint(2)      NOT NULL DEFAULT '0',
-  label         varchar(100)    NOT NULL DEFAULT '',
+  label         varchar(100)    COLLATE utf8_general_ci NOT NULL DEFAULT '',
   capacity      smallint(4)     NOT NULL DEFAULT '0',
   distance      int(4)          UNSIGNED NOT NULL DEFAULT '0',
   colorschemaid tinyint(2)      NOT NULL DEFAULT '0',
@@ -140,7 +140,7 @@ $this->Execute("CREATE TABLE netcables (
   INDEX netelemid(netelemid),
   FOREIGN KEY (netelemid) REFERENCES netelements (id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (dstnodeid) REFERENCES netnodes (id) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB");
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
 
 $this->Execute("CREATE TABLE netwires (
   id            int(11)         UNSIGNED ZEROFILL NOT NULL auto_increment,
