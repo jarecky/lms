@@ -117,28 +117,6 @@
 	</TR>
 	<TR>
 		<TD WIDTH="1%">
-			<IMG SRC="img/customer.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Customer:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<SELECT NAME="netnode[customer]" ID="NNcustomer" VALUE="{$netnode.customerid}" {tip text="Select owner for this node"} onchange="setNNOwner();">
-				{foreach $customers as $idx => $ownership}
-				<OPTION VALUE="{$idx}"{if $netnode.ownership == $idx} selected{/if}>{$ownership}</OPTION>
-				{/foreach}
-			</SELECT>
-			<INPUT TYPE="TEXT" NAME="netnode[coowner]" VALUE={$netnode.coowner}"" {tip trigger="coowner" text="Enter co-owner identifier"} ID="NNcoowner" SIZE="25"/>
-			<SELECT NAME="netnode[ownerid]" {tip trigger="ownerid" text="Choose owner from list"} ID="NNownerid">
-				{foreach $ownerlist as $id => $owner}
-				<OPTION VALUE="{$owner.id}">{$owner.ownername}</OPTION>
-				{/foreach}
-			</SELECT>
-			//jesli puste wezel systemowy
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH="1%">
 			<IMG SRC="img/home.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
