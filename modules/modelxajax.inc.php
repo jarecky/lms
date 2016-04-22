@@ -210,6 +210,7 @@ function save_model($forms) {
 			$obj->script("xajax_cancel_model();");
 			$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=$pid';");
 		} else {
+			$DB->BeginTrans();
 			$DB->Execute('INSERT INTO netdevicemodels (netdeviceproducerid, name, alternative_name, type) VALUES (?, ?, ?, ?)',
 				array($pid,
 					$form['name'],
@@ -221,6 +222,7 @@ function save_model($forms) {
 			    if(is_int($key)) $vals.="('".$id."','".$form[$key]['label']."','".$form[$key]['netporttype']."','".$form[$key]['netconnector']."'),";
 			  }
 			$DB->Execute("INSERT INTO netdeviceschema (model,label, port_type, connector) VALUES ".substr($vals,0,-1));
+			$DB->CommitTrans();
 			$obj->script("xajax_cancel_model();");
 			$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=$pid';");
 		}

@@ -1,6 +1,7 @@
 {extends file="layout.html"}
 {block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
 {block name=module_content}
+{$xajax}
 <!--// $Id$ //-->
 {include file="calendar_js.html"}
 <script type="text/javascript" src="img/netnodehelper.js"></script>
@@ -37,8 +38,12 @@
                         <B>{trans("Type:")}</B>
                 </TD>
                 <TD WIDTH="98%">
-			<INPUT TYPE="hidden" NAME="netelem[type]" VALUE="{$netelem.type}">
-			{trans($_NETELEMENTTYPES[$netelem.type])}
+			<SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} VALUE="{$netelem.type}" onchange="xajax_getProducerByType(this.value)">
+				<OPTION VALUE="-1">{trans("Select type:")}</OPTION>
+                                {foreach $_NETELEMENTTYPES as $idx => $type}
+                                <OPTION VALUE="{$idx}">{$type}</OPTION>
+                                {/foreach}
+                        </SELECT>
                 </TD>
         </TR>
 	<TR>
@@ -56,132 +61,32 @@
 			</SELECT>
 		</TD>
 	</TR>
-	<TR>
+	<tr>
 		<TD WIDTH="1%">
 			<IMG SRC="img/producer.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Manufacturer:")}</B>
+			<B>{trans("Producer:")}</B>
 		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netelem[producer]" VALUE="{$netelem.producer}" {tip text="Enter producer name (optional)"}>
-		</TD>
-	</TR>
-	<TR>
+		<td>
+		      <select id="producer" {tip text="Select Producer"} onchange="xajax_getModelsByProducerAndType(document.getElementById('type').value, this.value)">
+		      <OPTION VALUE="-1">{trans("Select option:")}</OPTION>
+		      </select>
+		</td>
+	</tr>
+	<tr>
 		<TD WIDTH="1%">
-			<IMG SRC="img/netdev_model.gif" ALT="">
+			<IMG SRC="img/producer.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Model:")}</B>
 		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netelem[model]" VALUE="{$netelem.model}" {tip text="Enter element model (optional)"}>
-                        <A href="javascript:void(0);" onclick="return netelemmodelchoosewin('netelem', 'netelemadd', document.forms['netelemadd'].elements['netelem[netelemicemodelid]'].value, document.forms['netelemadd'].elements['netelem[producer]'].value, document.forms['netelemadd'].elements['netelem[model]'].value)" {tip text="Click to select model"}>&raquo;&raquo;&raquo;</A>
-			<BR>
-                        <INPUT type="hidden" name="netelem[netelemicemodelid]" value="{$netelem.netelemicemodelid}">
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/serialnumber.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Serial number:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netelem[serialnumber]" VALUE="{$netelem.serialnumber}" {tip text="Enter element serial number (optional)"}>
-		</TD>
-	</TR>
-                                        </TABLE>
-				</TD>
-				<TD WIDTH="50%" style="vertical-align:top;">
-					<TABLE WIDTH="100%" CELLPADDING="3">
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/calendar.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Purchase date:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netelem[purchasedate]" VALUE="{if $netelem.purchasedate}{$netelem.purchasedate}{/if}" SIZE="10" maxlength="10" {tip class="calendar" trigger="purchasedate" text="Enter element purchase date in 'yyyy/mm/dd' format or click to choose date from calendar (optional)"}>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/guarantee.png" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Guarantee period:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<SELECT SIZE="1" NAME="netelem[guaranteeperiod]" {tip text="Select element guarantee period (optional)"}>
-				{foreach from=$_GUARANTEEPERIODS key=key item=period}
-				<OPTION VALUE="{$key}"{if $netelem.guaranteeperiod == $key} SELECTED{/if}>{$period}</OPTION>
-				{/foreach}
-			</SELECT>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/desc.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Description:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<TEXTAREA NAME="netelem[description]" COLS="40" ROWS="5" {tip text="Enter additional information (optional)"}>{$netelem.description}</TEXTAREA>
-		</TD>
-	</TR>
-	<TR>
-		<TD width="1%">
-			<img src="img/money.gif" alt="">
-		</TD>
-		<TD WIDTH="1%" class="bold nobr">
-			{trans("Investment project:")}
-		</TD>
-		<TD WIDTH="98%">
-			<SELECT NAME="netelem[invprojectid]" ID="NNproject" VALUE="{$neteleminfo.invprojectid}" {tip text="Select project for this node"} onchange="setNNProject();">
-				<OPTION value="-2" {if ($neteleminfo.invprojectid == '-2' ) } selected="selected" {/if} >- {trans("none")} -</OPTION>
-				<OPTION value="-1" {if ($neteleminfo.invprojectid == '-1' ) } selected="selected" {/if}>{trans("New project")}</OPTION>
-				<OPTION value="1" {if ($neteleminfo.invprojectid == '1' ) } selected="selected" {/if}>{trans("From root element")}</OPTION>
-				{section name=project loop=$NNprojects}
-				<OPTION VALUE="{$NNprojects[project].id}" {if ($neteleminfo.invprojectid == $NNprojects[project].id ) } selected="selected" {/if} >{$NNprojects[project].name}</OPTION>
-				{/section}
-			</SELECT>
-			<INPUT TYPE="TEXT" NAME="netelem[projectname]" VALUE="{$neteleminfo.projectname}" {tip text="Enter new project name" trigger="projectname" } ID="NNprojectname">
-		</TD>
-	</TR>
-	<TR>
-		<TD width="1%">
-			<img src="img/netelem.gif" alt="">
-		</TD>
-		<TD WIDTH="1%" class="bold nobr">
-			{trans("Net node:")}
-		</TD>
-		<TD WIDTH="98%">
-			<SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
-				<OPTION VALUE="-1">{trans("None")}</OPTION>
-				{section name=nd loop=$NNnodes}
-				<OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
-				{/section}
-			</SELECT>
-		</TD>
-	</TR>
-	
-	                                        </TABLE>
-					</TD>
-				</TR>
-			</TABLE>
-		</TD>
-	</TR>
-	<TR>
-        	<TD WIDTH="100%" COLSPAN="3" CLASS="container">
-		  	<TABLE WIDTH="100%" CELLPADDING="0">
-				{block name=netelem_params}{/block}
-			</TABLE>
-		</TD>
-	</TR>
+		<td>
+		      <select id="model" {tip text="Select Producer"} onchange="void(0);">
+		      <OPTION VALUE="-1">{trans("Select option:")}</OPTION>
+		      </select>
+		</td>
+	</tr>
 	<TR>
 		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
 			<A HREF="javascript:document.netelemadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>

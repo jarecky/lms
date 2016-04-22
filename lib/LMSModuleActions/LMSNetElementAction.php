@@ -164,6 +164,7 @@ class LMSNetElemAction extends LMSModuleAction
 	}
 
 	function _add() {
+		include(MODULES_DIR . '/netelemxajax.inc.php');
 		if(isset($_POST['netelem']))
 		{
 			$netelemdata = $_POST['netelem'];
@@ -299,7 +300,7 @@ class LMSNetElemAction extends LMSModuleAction
 		if (ConfigHelper::checkConfig('phpui.ewx_support'))
 			$this->smarty->assign('channels', $this->db->GetAll('SELECT id, name FROM ewx_channels ORDER BY name'));
 
-		switch ($netelemdata['type']) {
+/*		switch ($netelemdata['type']) {
 		case '0':
 			$this->smarty->display('netelements/addactive.html');
 			break;
@@ -322,7 +323,9 @@ class LMSNetElemAction extends LMSModuleAction
                         $this->smarty->display('netelements/addchoose.html');
 			break;
 		}	
-	}	
+*/
+		$this->smarty->display("netelements/add.html");
+}	
 
 	function _edit() {
 
