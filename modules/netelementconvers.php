@@ -1,93 +1,5 @@
 <?
 
-// *******************************************************************
-// Tworzymy rekordy dla urządzeń które nie mają odniesień do netnodes
-// Etap 1. - dla pełnych rekordów TERYT
-// *******************************************************************
-$devices=$DB->GetAll("SELECT * FROM netdevices_old where netnodeid is NULL and location_city is not null group by location_city,location_street,location_house,location_flat");
-if (is_array($devices)) foreach ($devices AS $dev) {
-	echo $dev['id'].' '.$dev['name'].': ';
-	#echo '<PRE>';print_r($dev);echo '</PRE>';
-	$loc="location_city=".$dev['location_city'];
-	$loc.=" AND ";
-        $loc.=$dev['location_street']=='' ? "location_street IS NULL" : "location_street=".$dev['location_street'];
-	$loc.=" AND ";
-	$loc.="location_house='".$dev['location_house']."'";
-	$loc.=" AND ";
-	$loc.=$dev['location_flat']=='' ? "(location_flat IS NULL or location_flat='')" : "location_flat='".$dev['location_flat']."'";
-	$netnodes=$DB->GetOne("SELECT id FROM netnodes WHERE ".$loc);
-	if (is_array($netnodes)) { 
-		$netnode=$netnodes[0];
-		$DB->Execute("UPDATE netdevices_old SET netnodeid=".$netnode['id']." WHERE $loc");
-		echo ' <FONT COLOR="green">przypisany do węzła '.$netnode['name'].'</FONT>';
-	} else {
-		#echo '<BR>"'.$loc.'"<BR>';
-		$nodes=$DB->GetAll("SELECT * FROM nodes WHERE ((".$loc.") OR netdev=".$dev['id'].") AND ownerid>0 GROUP BY ownerid");
-		$ilosc=count($nodes);
-		if ($ilosc==1) {
-			$dev['type']=2;
-			$dev['ownership']=3;
-			$dev['ownerid']=$nodes[0]['ownerid'];
-			$netnodeid=netnodeadd($dev,$loc);
-			if ($netnodeid>0) 
-				$DB->Execute("UPDATE netdevices_old SET netnodeid=$netnodeid WHERE $loc");
-			else 
-				echo '<FONT COLOR="red">Błąd dodawania węzła dla '.$dev['name'].'</FONT> ';
-			echo '<FONT COLOR="green">Węzeł kliencki ['.$nodes[0]['ownerid'].']</FONT> ';
-		} else {
-			$dev['type']=4;
-			$dev['ownership']=0;
-			$dev['ownerid']=NULL;
-			$netnodeid=netnodeadd($dev,$loc);
-			if ($netnodeid>0)
-				$DB->Execute("UPDATE netdevices_old SET netnodeid=$netnodeid WHERE $loc");
-			else
-				echo '<FONT COLOR="red">Błąd dodawania węzła dla '.$dev['name'].'</FONT> ';
-			echo '<FONT COLOR="blue">Węzeł backbone ['.$ilosc.']</FONT>';
-		}
-	}
-	echo '<BR>';
-}
-// *******************************************************************
-// Tworzymy rekordy dla urządzeń które nie mają odniesień do netnodes
-// Etap 2. - dla urządzeń bez poprawnego TERYT
-// *******************************************************************
-$devices=$DB->GetAll("SELECT * FROM netdevices_old where netnodeid is NULL group by location");
-if (is_array($devices)) foreach ($devices AS $dev) {
-	echo $dev['id'].' '.$dev['name'].': '.$dev['location'];
-	$loc=" location='".$dev['location']."'";
-        $netnodes=$DB->GetOne("SELECT id FROM netnodes WHERE ".$loc);
-        if (is_array($netnodes)) {
-                $netnode=$netnodes[0];
-                $DB->Execute("UPDATE netdevices_old SET netnodeid=".$netnode['id']." WHERE $loc");
-                echo ' <FONT COLOR="green">przypisany do węzła '.$netnode['name'].'</FONT>';
-        } else {
-                $nodes=$DB->GetAll("SELECT * FROM nodes WHERE ((".$loc.") OR netdev=".$dev['id'].") AND ownerid>0 GROUP BY ownerid");
-                $ilosc=count($nodes);
-                if ($ilosc==1) {
-                        $dev['type']=2;
-                        $dev['ownership']=3;
-                        $dev['ownerid']=$nodes[0]['ownerid'];
-                        $netnodeid=netnodeadd($dev,$loc);
-                        if ($netnodeid>0)
-                                $DB->Execute("UPDATE netdevices_old SET netnodeid=$netnodeid WHERE $loc");
-                        else
-                                echo '<FONT COLOR="red">Błąd dodawania węzła dla '.$dev['name'].'</FONT> ';
-                        echo '<FONT COLOR="green">Węzeł kliencki ['.$nodes[0]['ownerid'].']</FONT> ';
-                } else {
-                        $dev['type']=4;
-                        $dev['ownership']=0;
-                        $dev['ownerid']=NULL;
-                        $netnodeid=netnodeadd($dev,$loc);
-                        if ($netnodeid>0)
-                                $DB->Execute("UPDATE netdevices_old SET netnodeid=$netnodeid WHERE $loc");
-                        else
-                                echo '<FONT COLOR="red">Błąd dodawania węzła dla '.$dev['name'].'</FONT> ';
-                        echo '<FONT COLOR="blue">Węzeł backbone ['.$ilosc.']</FONT>';
-                }
-	}	
-	echo '<BR>';
-}
 
 // *******************************************************************
 // Przeniesienie informacji u urządzeniach
@@ -96,26 +8,38 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 
 $devices=$DB->GetAll("SELECT * FROM netdevices_old ORDER BY id ASC");
 if (is_array($devices)) foreach ($devices AS $dev) {
+	echo '<B>'.$dev['name'].'</B>: <I>'.$dev['producer'].' '.$dev['model'].'</I><UL>';
+	if (!isset($dev['netnodeid'])) {
+		$location=array('devid'=>$dev['id'],'devname'=>$dev['name'],'status'=>$dev['status'],'location'=>$dev['location'],'location_city'=>$dev['location_city'],'location_street'=>$dev['location_street'],'location_house'=>$dev['location_house'],'location_flat'=>$dev['location_flat'],'latitude'=>$dev['latitude'],'longitude'=>$dev['longitude'],'invprojectid'=>$dev['invprojectid'],'divisionid'=>$dev['divisionid']);
+		$location=check_location($location);
+		if (!isset($location['netnodeid'])) {
+			$dev['netnodeid']=netnodeadd($location);
+		} else {
+			$dev['netnodeid']=$location['netnodeid'];
+		}
+	} else {
+		echo '<LI><FONT color="green">Urządzenie już przypisane do węzła</FONT></LI>';
+	}
+	next;
 	$check=$DB->GetOne("SELECT id FROM netelements WHERE id=".$dev['id']);
 	if (!isset($check)) {
-		echo $dev['name'].' '.$dev['producer'].' '.$dev['model'].' ';
 		$DB->Execute("INSERT INTO netelements VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",array($dev['id'],$dev['name'],0,$dev['description'],$dev['producer'],$dev['model'],$dev['serialnumber'],$dev['purchasetime'],$dev['guaranteeperiod'],$dev['netnodeid'],$dev['invprojectid'],$dev['netdevicemodelid'],$dev['status']));
 		$DB->Execute("INSERT INTO netdevices VALUES (?,?,?,?,?,?,?,?,?)",array(null,$dev['id'],$dev['shortname'],$dev['nastype'],$dev['clients'],'',$dev['secret'],$dev['community'],$dev['channelid']));
-		echo '<font color="green">Ilość portów: '.$dev['ports'].'</font> ';
+		echo '<LI><font color="green">Ilość portów: '.$dev['ports'].'</font><UL>';
 		$tech=array();
 		$nls=$DB->GetAll("SELECT * FROM netlinks WHERE src=".$dev['id']." OR dst=".$dev['id']);
 		$copper=array();
 		if (is_array($nls)) foreach ($nls AS $ls) {
 			if ($ls['technology']>=100 and $ls['technology']<200) {
 				if ($ls['src']==$dev['id']) {
-					if ($ls['srcradiosector']) {
-						$tech[$ls['technology']][$ls['srcradiosector']]=1;
+					if ($ls['dstradiosector']) {
+						$tech[$ls['technology']][$ls['dstradiosector']]=1;
 					} else {
 						$tech[$ls['technology']][0]++;
 					}
 				} else {
-					if ($ls['dstradiosector']) {
-						$tech[$ls['technology']][$ls['dstradiosector']]=1;
+					if ($ls['srcradiosector']) {
+						$tech[$ls['technology']][$ls['srcradiosector']]=1;
 					} else {
 						$tech[$ls['technology']][0]++;
 					}
@@ -144,7 +68,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 						
 			}
 		}
-		$nps=$DB->GetAll("SELECT * FROM nodes WHERE netdev=".$dev['id']);
+		$nps=$DB->GetAll("SELECT * FROM nodes WHERE ownerid>0 AND netdev=".$dev['id']);
 		if (is_array($nps)) foreach ($nps AS $np) {
 			if ($np['linktechnology']>=100 and $np['linktechnology']<200) {
 				if ($np['linkradiosector'])
@@ -259,7 +183,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
                                         }
                                 }	
 			} else {
-				echo '<FONT color="red">Nieznana technologia '.$t.'</FONT><BR>';
+				echo '<LI><FONT color="red">Nieznana technologia '.$t.'</FONT></LI>';
 			}
 		}
 		#echo '<PRE>';print_r($ports);echo '</PRE>';
@@ -269,65 +193,108 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 				$radiosector=$port['radiosector'];
 				unset($port['radiosector']);
 			}
-			echo '<FONT COLOR="blue">'.$port['label'].'</FONT> ';
+			echo '<LI><FONT COLOR="blue">'.$port['label'].'</FONT>';
 			$DB->Execute("INSERT INTO netports VALUES (?,?,?,?,?,?,?)",array_values($port));
 			if (isset($radiosector)) {
 				$radiosector['netportid']=$DB->GetLastInsertID('netports');
 				$DB->Execute("INSERT INTO netradiosectors VALUES (?,?,?,?,?,?,?,?,?,?,?)",array_values($radiosector));
-				echo '<FONT COLOR="violet">['.$radiosector['name'].'] </FONT>';
+				echo '<UL><LI><FONT COLOR="violet">['.$radiosector['name'].'] </FONT></LI></UL>';
 			}
+			echo '</LI>';
 		}
-		echo '<BR>';
+		echo '</UL>';
 	} else {
-		echo '<FONT COLOR="red">Urządzenie '.$dev['name'].' juz zaimportowane!</FONT><BR>';
+		echo '<LI><FONT COLOR="red"> juz zaimportowane!</FONT></LI>';
 	}
+	echo '</UL>';
 }
 
 
+// *******************************************************************
+// Sprawdzenie czy istnieje juz netnode dla podanej lokalizacji
+// *******************************************************************
+function check_location($location) {
+	global $DB;
+	$location['coowner']=NULL;
+	if (isset($location['location_city'])) {
+		$loc="location_city=".$location['location_city']." AND ";
+		$loc.=$location['location_street']=='' ? "location_street IS NULL" : "location_street=".$location['location_street'];
+		$loc.=" AND location_house='".$location['location_house']."' AND ";
+		$loc.=$location['location_flat']=='' ? "(location_flat IS NULL or location_flat='')" : "location_flat='".$location['location_flat']."'";
+	} elseif ($location['location']<>'') {
+		$loc=" location='".$location['location']."'";
+	} else {
+		$loc=" name='".$location['devname']."'";
+		echo '<LI><FONT COLOR="red">Błąd TERYT dla '.$location['devname'].'</FONT></LI>';
+	}
+	$netnodes=$DB->GetAll("SELECT * FROM netnodes WHERE ".$loc);
+	if (count($netnodes)) { 
+		echo '<LI><FONT COLOR="green">Znaleziono węzeł "'.$netnodes[0]['name'].'"</FONT></LI>';
+		$location['netnodeid']=$netnodes[0]['id'];
+	} else {
+		$nodes=$DB->GetAll("SELECT * FROM nodes WHERE ((".$loc.") OR netdev=".$location['devid'].") AND ownerid>0 GROUP BY ownerid");
+		$ilosc=count($nodes);
+		if ($ilosc==1) {
+			$location['type']=2;
+			$location['ownership']=3;
+			$location['ownerid']=$nodes[0]['ownerid'];
+			echo '<LI><FONT COLOR="violet">Węzeł kliencki ['.$nodes[0]['ownerid'].']</FONT></LI>';
+		} else {
+			$location['type']=4;
+			$location['ownership']=0;
+			$location['ownerid']=NULL;
+			echo '<LI><FONT COLOR="blue">Węzeł backbone ['.$ilosc.']</FONT></LI>';
+		}
+
+	}
+	return($location);
+}
 
 // *******************************************************************
 // Dodawanie do netnodes na podstawie rekordu z netdevices_old
 // *******************************************************************
-function netnodeadd($dev,$location) {
+function netnodeadd($location) {
 	global $DB;
-	$city=$DB->GetAll("SELECT * FROM location_cities WHERE id=".$dev['location_city']);
+	$city=$DB->GetAll("SELECT * FROM location_cities WHERE id=".$location['location_city']);
 	$name=$city[0]['name'];
 	if ($name=='') {
-		$dev['name']=$dev['location'];
+		if ($location['location']<>'')
+			$name=$location['location'];
+		else
+			$name=$location['devname'];
 	} else {
-		if ($dev['location_street']!='') {
-			$street=$DB->GetAll("SELECT * FROM location_streets WHERE id=".$dev['location_street']);
+		if ($location['location_street']!='') {
+			$street=$DB->GetAll("SELECT * FROM location_streets WHERE id=".$location['location_street']);
 			$type=$DB->GetOne("SELECT name FROM location_street_types WHERE id=".$street[0]['typeid']);
 			$street1=$street[0]['name2'] ? ' '.$street[0]['name2'] : '';
 			$name.=', '.$type.$street1.' '.$street[0]['name'];
 		}
-		$name.=' '.preg_replace('/ /','',$dev['location_house']);
-		$name.=$dev['location_flat'] ? '/'.$dev['location_flat'] : '';
-		$dev['name']=$name;
-		#$dev['location']=$name;
+		$name.=' '.preg_replace('/ /','',$location['location_house']);
+		$name.=$location['location_flat'] ? '/'.$location['location_flat'] : '';
 	}
-	$args = array('name'=>$dev['name'],
-		'type'=>$dev['type'],
-		'status'=>$dev['status'],
-		'location' => $dev['location'],
-		'location_city' => $dev['location_city'] ? $dev['location_city'] : NULL,
-		'location_street' => $dev['location_street'] ? $dev['location_street'] : NULL,
-		'location_house' => $dev['location_house'] ? $dev['location_house'] : NULL,
-		'location_flat' => $dev['location_flat'] ? $dev['location_flat'] : NULL,
-		'longitude' => !empty($dev['longitude']) ? $dev['longitude'] : NULL,
-		'latitude' => !empty($dev['latitude']) ? $dev['latitude'] : NULL,
-		'ownership'=>$dev['ownership'],
-		'ownerid'=>$dev['ownerid'],
+	$args = array('name'=>$name,
+		'type'=>$location['type'],
+		'status'=>$location['status'],
+		'location' => $location['location'],
+		'location_city' => $location['location_city'] ? $location['location_city'] : NULL,
+		'location_street' => $location['location_street'] ? $location['location_street'] : NULL,
+		'location_house' => $location['location_house'] ? $location['location_house'] : NULL,
+		'location_flat' => $location['location_flat'] ? $location['location_flat'] : NULL,
+		'longitude' => !empty($location['longitude']) ? $location['longitude'] : NULL,
+		'latitude' => !empty($location['latitude']) ? $location['latitude'] : NULL,
+		'ownership'=>$location['ownership'],
+		'ownerid'=>$location['ownerid'],
 		'coowner'=>NULL,
 		'uip'=>0,
 		'miar'=>0,
-		'divisionid' => NULL,
-		'invprojectid' => !empty($dev['invprojectid']) ? $dev['invprojectid'] : NULL
+		'divisionid' => !empty($location['divisionid']) ? $location['divisionid'] : NULL,
+		'invprojectid' => !empty($location['invprojectid']) ? $location['invprojectid'] : NULL
 	);
 
         $DB->Execute("INSERT INTO netnodes (name,type,status,location,location_city,location_street,location_house,location_flat,longitude,latitude,ownership,ownerid,coowner,uip,miar,divisionid,invprojectid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",array_values($args));
  	#echo '<PRE>';var_dump($DB->GetErrors());echo '</PRE>';
         $netnodeid = $DB->GetLastInsertID('netnodes');
+	echo '<LI><FONT COLOR="green">Utworzono węzeł "'.$args['name'].'"</FONT></LI>';
 	return($netnodeid);
 }
 
