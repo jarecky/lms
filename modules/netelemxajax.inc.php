@@ -386,7 +386,7 @@ function getProducerByType($type){
     $res->script("var d=document.getElementById('producer'); d.options.length=0;");
     $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
     foreach($producers as $p){
-      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
+      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['name']."');");
     }
     return $res;
 }
@@ -395,12 +395,12 @@ function getModelsByProducerAndType($type, $producer){
     global $DB;
     $res = new xajaxResponse();
     $q="SELECT m.id, m.name FROM netdevicemodels m WHERE m.type=".$type." AND m.netdeviceproducerid=".$producer;
-error_log($q);
+//error_log($q);
     $producers = $DB->getAll($q);
     $res->script("var d=document.getElementById('model'); d.options.length=0;");
     $res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
     foreach($producers as $p){
-      $res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
+      $res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".$p['name']."','".$p['name']."');");
     }
     return $res;
 
