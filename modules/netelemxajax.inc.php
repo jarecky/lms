@@ -386,7 +386,7 @@ function getProducerByType($type){
     $res->script("var d=document.getElementById('producer'); d.options.length=0;");
     $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
     foreach($producers as $p){
-      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['name']."');");
+      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
     }
     return $res;
 }
@@ -400,7 +400,7 @@ function getModelsByProducerAndType($type, $producer){
     $res->script("var d=document.getElementById('model'); d.options.length=0;");
     $res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
     foreach($producers as $p){
-      $res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".$p['name']."','".$p['name']."');");
+      $res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
     }
     return $res;
 
