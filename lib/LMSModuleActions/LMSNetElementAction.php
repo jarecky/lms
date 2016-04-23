@@ -141,7 +141,7 @@ class LMSNetElemAction extends LMSModuleAction
 
 		if(!isset($_GET['page']))
 			$this->session->restore('nelp', $_GET['page']);
-			
+
 		$page = (! $_GET['page'] ? 1 : $_GET['page']);
 		$pagelimit = ConfigHelper::getConfig('phpui.nodelist_pagelimit', $listdata['total']);
 		$start = ($page - 1) * $pagelimit;

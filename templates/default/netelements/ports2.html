@@ -2,16 +2,14 @@
 <TABLE class="lmsbox">
     <THEAD>
 	<TR>
-		<TD style="width: 100%;" class="hand nobr" onClick="showOrHide('netports');">
+		<TD style="width: 100%;">
 			<IMG SRC="img/mac.gif" alt="">
 			<span class="bold">{t a=$netports|@count}Ports ($a):{/t}</span>
 		</TD>
 	</TR>
-	<tr><td>moze w ten desen ? ;) i to w glowne info o urzadzeniu (na samą górę)</td></tr>
-
     </THEAD>
     <TBODY>
-	<TR id="netports" style="display:none;">
+	<TR id="netports">
 		<TD style="width: 100%;">
 			<TABLE style="border: 1px solid #000;">
         
@@ -36,7 +34,7 @@
 			  )) }>
 			<IMG src="img/port{if $smarty.section.n.iteration is div by 3}z{else}f{/if}.png" ALT="">
 		</TD>
-		{if $smarty.section.n.iteration is div by 4}</tr><tr>{/if}
+		{if $smarty.section.n.iteration is div by 12}</tr><tr>{/if}
 	{sectionelse}
 <!--		<TD class="valign-top nobr">
 			{$_NETTECHNOLOGIES[$technology].name}<BR>
@@ -181,5 +179,6 @@ xajax_getRadioSectorsForNetElem('radio_sectors_received_for_srcnetelem', {$restn
 
 if (getCookie('netports') == '1')
 	xjx.$('netports').style.display = '';
+
 //-->
 </SCRIPT>

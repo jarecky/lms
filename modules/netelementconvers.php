@@ -9,44 +9,43 @@
 $devices=$DB->GetAll("SELECT * FROM netdevices_old ORDER BY id ASC");
 if (is_array($devices)) foreach ($devices AS $dev) {
 	echo '<B>'.$dev['name'].'</B>: <I>'.$dev['producer'].' '.$dev['model'].'</I><UL>';
-	if (!isset($dev['netnodeid'])) {
-		$location=array('devid'=>$dev['id'],'devname'=>$dev['name'],'status'=>$dev['status'],'location'=>$dev['location'],'location_city'=>$dev['location_city'],'location_street'=>$dev['location_street'],'location_house'=>$dev['location_house'],'location_flat'=>$dev['location_flat'],'latitude'=>$dev['latitude'],'longitude'=>$dev['longitude'],'invprojectid'=>$dev['invprojectid'],'divisionid'=>$dev['divisionid']);
-		$location=check_location($location);
-		if (!isset($location['netnodeid'])) {
-			$dev['netnodeid']=netnodeadd($location);
-		} else {
-			$dev['netnodeid']=$location['netnodeid'];
-		}
-	} else {
-		echo '<LI><FONT color="green">Urządzenie już przypisane do węzła</FONT></LI>';
-	}
-	next;
 	$check=$DB->GetOne("SELECT id FROM netelements WHERE id=".$dev['id']);
 	if (!isset($check)) {
+		if (!isset($dev['netnodeid'])) {
+			$location=array('devid'=>$dev['id'],'devname'=>$dev['name'],'status'=>$dev['status'],'location'=>$dev['location'],'location_city'=>$dev['location_city'],'location_street'=>$dev['location_street'],'location_house'=>$dev['location_house'],'location_flat'=>$dev['location_flat'],'latitude'=>$dev['latitude'],'longitude'=>$dev['longitude'],'invprojectid'=>$dev['invprojectid'],'divisionid'=>$dev['divisionid']);
+			$location=check_location($location);
+			if (!isset($location['netnodeid'])) {
+				$dev['netnodeid']=netnodeadd($location);
+			} else {
+				$dev['netnodeid']=$location['netnodeid'];
+			}
+		} else {
+			echo '<LI><FONT color="green">Urządzenie już przypisane do węzła</FONT></LI>';
+		}
 		$DB->Execute("INSERT INTO netelements VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",array($dev['id'],$dev['name'],0,$dev['description'],$dev['producer'],$dev['model'],$dev['serialnumber'],$dev['purchasetime'],$dev['guaranteeperiod'],$dev['netnodeid'],$dev['invprojectid'],$dev['netdevicemodelid'],$dev['status']));
 		$DB->Execute("INSERT INTO netdevices VALUES (?,?,?,?,?,?,?,?,?)",array(null,$dev['id'],$dev['shortname'],$dev['nastype'],$dev['clients'],'',$dev['secret'],$dev['community'],$dev['channelid']));
 		echo '<LI><font color="green">Ilość portów: '.$dev['ports'].'</font><UL>';
 		$tech=array();
-		$nls=$DB->GetAll("SELECT * FROM netlinks WHERE src=".$dev['id']." OR dst=".$dev['id']);
+		$nls=$DB->GetAll("SELECT * FROM netlinks_old WHERE src=".$dev['id']." OR dst=".$dev['id']);
 		$copper=array();
 		if (is_array($nls)) foreach ($nls AS $ls) {
 			if ($ls['technology']>=100 and $ls['technology']<200) {
 				if ($ls['src']==$dev['id']) {
-					if ($ls['dstradiosector']) {
-						$tech[$ls['technology']][$ls['dstradiosector']]=1;
-					} else {
-						$tech[$ls['technology']][0]++;
-					}
+					#if ($ls['dstradiosector']) {
+						$tech[$ls['technology']][$ls['dstradiosector']][$ls['id']]=1;
+					#} else {
+					#	$tech[$ls['technology']][0][$ls['id']]=1;
+					#}
 				} else {
-					if ($ls['srcradiosector']) {
-						$tech[$ls['technology']][$ls['srcradiosector']]=1;
-					} else {
-						$tech[$ls['technology']][0]++;
-					}
+					#if ($ls['srcradiosector']) {
+						$tech[$ls['technology']][$ls['srcradiosector']][$ls['id']]=1;
+					#} else {
+					#	$tech[$ls['technology']][0][$ls['id']]=1;
+					#}
 				}
 			} else {
 				if ($ls['src']==$dev['id']) {
-					$tech[$ls['technology']][$ls['dstport']]++;
+					$tech[$ls['technology']][$ls['dstport']][$ls['id']]=1;
 					if ($ls['dstport']) {
 						if ($ls['technology']<100) {
 							$copper[$ls['dstport']]=1;
@@ -55,12 +54,12 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 						}
 					}
 				} else {
-					$tech[$ls['technology']][$ls['srcport']]++;
+					$tech[$ls['technology']][$ls['srcport']][$ls['id']]=1;
 					if ($ls['srcport']) {
 						if ($ls['technology']<100) {
 							$copper[$ls['srcport']]=1;
 						} else {
-							$fiber[$ls['srcport']]=1;
+						$fiber[$ls['srcport']]=1;
 						}
 					}
 				}
@@ -71,12 +70,12 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 		$nps=$DB->GetAll("SELECT * FROM nodes WHERE ownerid>0 AND netdev=".$dev['id']);
 		if (is_array($nps)) foreach ($nps AS $np) {
 			if ($np['linktechnology']>=100 and $np['linktechnology']<200) {
-				if ($np['linkradiosector'])
-					$tech[$np['linktechnology']][$np['linkradiosector']]=1;
-				else
-					$tech[$np['linktechnology']][0]++;
+				#if ($np['linkradiosector'])
+					$tech[$np['linktechnology']][$np['linkradiosector']]['n'.$np['id']]=1;
+				#else
+				#	$tech[$np['linktechnology']][0]['node'][$np['id']]=1;
 			} else {
-				$tech[$np['linktechnology']][$np['port']]++;
+				$tech[$np['linktechnology']][$np['port']]['n'.$np['id']]=1;
 				if ($np['port']) {
 					if ($np['linktechnology']<100) {
 						$copper[$np['port']]=1;
@@ -87,7 +86,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 
 			}
 		}
-		#echo '<PRE>';print_r($tech);echo '</PRE>';
+		#echo '<HR>tech:<PRE>';print_r($tech);echo '</PRE>';
 		#echo '<PRE>';print_r($copper);echo '</PRE>';
 		$ports=array();
 		$wport_num=1; $cport_num=1; $fport_num=1;
@@ -96,7 +95,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 				foreach ($p AS $nr => $i) {
 					if (preg_match('/^([0-9]+),?/',$NETTECHNOLOGIES[$t]['connector'],$c))
 						$connector=$c[1];
-					for ($x=1;$x<=$i;$x++) {
+					foreach ($i AS $link => $x) {
 						if ($nr) {
 							$cport_num=$nr;
 						} else {
@@ -111,16 +110,20 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 							'technology'	=> $t,
 							'capacity'	=> 1
 						);
-						$ports[]=$port;
+						$ports[$link]=$port;
 					}
 				}
 			} elseif ($t<200) {
 				foreach ($p AS $rs => $i) {
 					if ($rs>0) {
+						$connected=array();
+						foreach ($i AS $link => $x) {
+							$connected[$link]=1;
+						}
 						$rss=$DB->GetAll("SELECT * FROM netradiosectors_old WHERE id=".$rs);
 						$rss=$rss[0];
 						$rs=array(
-							'id'		=> NULL,
+							'id'		=> $rss['id'],
 							'netportid'	=> NULL,
 							'name'		=> $rss['name'],
 							'azimuth'	=> $rss['azimuth'],
@@ -140,12 +143,13 @@ if (is_array($devices)) foreach ($devices AS $dev) {
                                                         'connectortype' => 0,
                                                         'technology'    => $t,
                                                         'capacity'      => 100,
-							'radiosector'	=> $rs
+							'radiosector'	=> $rs,
+							'connected'	=> $connected
                                                 );
-						$ports[]=$port;
+						$ports[$rss['id']]=$port;
 
 					} else { 
-						for ($x=1;$x<=$i;$x++) {
+						foreach ($i AS $link => $x) {
 							$port=array(
 								'id'            => NULL,
 								'netelemid'     => $dev['id'],
@@ -155,7 +159,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 								'technology'    => $t,
 								'capacity'      => 1
 							);
-							$ports[]=$port;
+							$ports[$link]=$port;
 						}
 					}
 				}
@@ -164,7 +168,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
                                 foreach ($p AS $nr => $i) {
                                         if (preg_match('/^([0-9]+),?/',$NETTECHNOLOGIES[$t]['connector'],$c))
                                                 $connector=$c[1];
-                                        for ($x=1;$x<=$i;$x++) {
+					foreach ($i AS $link => $x) {
                                                 if ($nr) {
                                                         $fport_num=$nr;
                                                 } else {
@@ -179,28 +183,60 @@ if (is_array($devices)) foreach ($devices AS $dev) {
                                                         'technology'    => $t,
                                                         'capacity'      => 1
                                                 );
-                                                $ports[]=$port;
+                                                $ports[$link]=$port;
                                         }
                                 }	
 			} else {
 				echo '<LI><FONT color="red">Nieznana technologia '.$t.'</FONT></LI>';
 			}
 		}
-		#echo '<PRE>';print_r($ports);echo '</PRE>';
-		foreach ($ports AS $port) {
+		#echo '<HR>Ports:<PRE>';print_r($ports);echo '</PRE>';
+		foreach ($ports AS $link => $port) {
 			unset($radiosector);
 			if (isset($port['radiosector'])) {
 				$radiosector=$port['radiosector'];
 				unset($port['radiosector']);
+				$connected=$port['connected'];
+				unset($port['connected']);
+			} else {
+				$connected=array();
+				$connected[$link]=1;
 			}
-			echo '<LI><FONT COLOR="blue">'.$port['label'].'</FONT>';
+			echo '<LI><FONT COLOR="blue">'.$port['label'].'</FONT><UL>';
 			$DB->Execute("INSERT INTO netports VALUES (?,?,?,?,?,?,?)",array_values($port));
+			$netportid=$DB->GetLastInsertID('netports');
 			if (isset($radiosector)) {
-				$radiosector['netportid']=$DB->GetLastInsertID('netports');
+				$radiosector['netportid']=$netportid;
 				$DB->Execute("INSERT INTO netradiosectors VALUES (?,?,?,?,?,?,?,?,?,?,?)",array_values($radiosector));
-				echo '<UL><LI><FONT COLOR="violet">['.$radiosector['name'].'] </FONT></LI></UL>';
+				echo '<LI><FONT COLOR="violet">['.$radiosector['name'].'] </FONT></LI>';
 			}
-			echo '</LI>';
+			if (is_array($connected)) {
+				echo '<LI><FONT COLOR="purple">Podłączenia:</LI><UL>';
+				foreach ($connected AS $linkid => $x) {
+					echo '<LI>';
+					if (preg_match('/^n([0-9]+)$/',$linkid,$nodeid)) {
+						$nodeid=$nodeid[1];
+						$DB->Execute("UPDATE nodes SET netport=? WHERE id=?",array($netportid,$nodeid));
+						echo ' podłączono node #'.$nodeid;
+					} else {
+						$l=$DB->GetAll("SELECT * FROM netlinks WHERE id=?",array($linkid));
+						$lo=$DB->GetAll("SELECT * FROM netlinks_old WHERE id=?",array($linkid));
+						$lo=$lo[0];
+						if (!count($l)) {	
+							$DB->Execute("INSERT INTO netlinks VALUES (?,?,?,?,?,?)",array($linkid,$netportid,NULL,$lo['type'],$lo['speed'],$lo['technology']));
+							echo ' podłączono jako src';
+						} else {
+							$l=$l[0];
+							$DB->Execute("UPDATE netlinks SET dstport=? WHERE id=?",array($netportid,$linkid));
+							echo ' podłączono jako dst do netport #'.$l['srcport'];
+						}
+					}	
+					
+					echo '</LI>';	
+				}
+				echo '</UL></FONT></LI>';
+			}
+			echo '</UL></LI>';
 		}
 		echo '</UL>';
 	} else {

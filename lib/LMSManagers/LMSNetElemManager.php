@@ -333,7 +333,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     public function GetNetElemIDByNode($id)
     {
-        return $this->db->GetOne('SELECT netdev FROM vnodes WHERE id=?', array($id));
+        return $this->db->GetOne('SELECT netelements FROM vnodes WHERE id=?', array($id));
     }
 
     public function CountNetElemLinks($id)
@@ -448,9 +448,9 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
 	$netelemlist = $this->db->GetAll('SELECT e.id, e.name, n.location,
 			e.description, e.producer, e.model, e.serialnumber,
-			(SELECT COUNT(*) FROM netports WHERE netelemid=e.id) AS ports,
-			(SELECT COUNT(*) FROM nodes WHERE ipaddr <> 0 AND netdev=e.id AND ownerid > 0)
-			+ (SELECT COUNT(*) FROM netlinks WHERE src = e.id OR dst = e.id)
+			(SELECT COUNT(*) FROM netports WHERE netelemid = e.id) AS ports,
+			(SELECT COUNT(*) FROM nodes LEFT JOIN netports n ON (netport = n.id) WHERE ipaddr <> 0 AND n.netelemid = e.id AND ownerid > 0)
+			+ (SELECT COUNT(*) FROM netlinks LEFT JOIN netports n ON (srcport = n.id OR dstport = n.id) WHERE n.netelemid = e.id)
 			AS takenports, e.netnodeid, n.name AS netnode,
 			lb.name AS borough_name, lb.type AS borough_type,
 			ld.name AS district_name, ls.name AS state_name
@@ -628,6 +628,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	    $rss = $this->db->GetAll('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
 	    if (count($rss)) 
 		$ports[$idx]['radiosectors']=$rss;
+	    $ports[$idx]['taken']=$this->db->GetOne('SELECT COUNT(*) FROM nodes WHERE netport = ? AND ipaddr <> 0 AND ownerid > 0',array($port['id'])) + $this->db->GetOne('SELECT COUNT(*) FROM netlinks WHERE srcport = ? OR dstport = ?',array($port['id'],$port['id']));
 	}
 	return($ports);
     }
