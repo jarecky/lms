@@ -27,12 +27,20 @@
 			{section name=connector loop=$connector}
 				{assign var=conn value=$_NETCONNECTORS[$connector[connector]]} 
 			{/section}
+	{if $netports[n].technology<100}
+		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name,"\nConnector: ",$conn))}
+		{if $netports[n].taken}{$port_img="img/ethernet.png"}{else}{$port_img="img/ethernet.png"}{/if}
+	{elseif $netports[n].technology<200}
+		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name, "\nRadiosector: ",$netports[n].radiosectors.0.name,"\nUtilization: ",$netports[n].taken,'/',$netports[n].capacity))}
+		{if $netports[n].radiosectors}{$port_img="img/radiosector.png"}{else}{$port_img="img/radio_cpe.png"}{/if}
 
-	<TD class="highlight ftop fbottom fleft fright" style=" background-color:#ddd; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" 
-		{tip text=join("", array("Label: ", $netports[n].label, "\nType: ", $_NETPORTTYPES[$netports[n].type], 
-			      "\ntech: ", $_NETTECHNOLOGIES[$technology].name, "\nConnector: ", $conn
-			  )) }>
-			<IMG src="img/port{if $smarty.section.n.iteration is div by 3}z{else}f{/if}.png" ALT="">
+	{elseif $netports[n].technology<300}
+	
+	{else}
+
+	{/if}
+	<TD class="highlight ftop fbottom fleft fright" style=" background-color:#ddd; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
+			<IMG src="{$port_img}" ALT="">
 		</TD>
 		{if $smarty.section.n.iteration is div by 12}</tr><tr>{/if}
 	{sectionelse}
