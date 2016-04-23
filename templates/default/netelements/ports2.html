@@ -29,17 +29,41 @@
 			{/section}
 	{if $netports[n].technology<100}
 		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name,"\nConnector: ",$conn))}
-		{if $netports[n].taken}{$port_img="img/ethernet.png"}{else}{$port_img="img/ethernet.png"}{/if}
+		{if $netports[n].taken}
+			  {$port_color="lightgreen"}
+		{else}
+			  {$port_color="red"}
+		{/if}
+		{if $netports[n].connectortype<=3}
+			  {$port_img="img/ethernet.png"}
+		{else}
+			  {$port_img="img/ethernet.png"}
+		{/if}
 	{elseif $netports[n].technology<200}
 		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name, "\nRadiosector: ",$netports[n].radiosectors.0.name,"\nUtilization: ",$netports[n].taken,'/',$netports[n].capacity))}
-		{if $netports[n].radiosectors}{$port_img="img/radiosector.png"}{else}{$port_img="img/radio_cpe.png"}{/if}
-
+		{if $netports[n].radiosectors}
+			{if $netports[n].taken/$netports[n].capacity<0.4}
+				  {$port_color="lightgreen"}
+			{elseif $netports[n].taken/$netports[n].capacity<0.8}
+				  {$port_color="yellow"}
+			{else}
+				  {$port_color="red"}
+			{/if}
+			{$port_img="img/radiosector.png"}
+		{else}
+			{if $netports[n].taken}
+				  {$port_color="lightgreen"}
+			{else}
+				  {$port_color="red"}
+			{/if}
+			{$port_img="img/radio_cpe.png"}
+		{/if}
 	{elseif $netports[n].technology<300}
 	
 	{else}
 
 	{/if}
-	<TD class="highlight ftop fbottom fleft fright" style=" background-color:#ddd; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
+	<TD class="highlight ftop fbottom fleft fright" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
 			<IMG src="{$port_img}" ALT="">
 		</TD>
 		{if $smarty.section.n.iteration is div by 12}</tr><tr>{/if}
