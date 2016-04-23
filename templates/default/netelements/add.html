@@ -29,64 +29,70 @@
 		    <TABLE WIDTH="100%" CELLPADDING="0">
 				<TR>
 					<TD WIDTH="50%" style="vertical-align:top;">
-					        <TABLE WIDTH="100%" CELLPADDING="3">
-        <TR>
-                <TD WIDTH="1%">
-                        <IMG SRC="img/producer.gif" ALT="">
-                </TD>
-                <TD WIDTH="1%" NOWRAP>
-                        <B>{trans("Type:")}</B>
-                </TD>
-                <TD WIDTH="98%">
-			<SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} VALUE="{$netelem.type}" onchange="xajax_getProducerByType(this.value)">
-				<OPTION VALUE="-1">{trans("Select type:")}</OPTION>
-                                {foreach $_NETELEMENTTYPES as $idx => $type}
-                                <OPTION VALUE="{$idx}">{$type}</OPTION>
-                                {/foreach}
-                        </SELECT>
-                </TD>
-        </TR>
-	<TR>
-		<TD WIDTH="1%">
-			<IMG SRC="img/producer.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Status:")}</B>
-		</TD>
-		<TD WIDTH="98%">
-			<SELECT NAME="netelem[status]" {tip text="Select element status"} VALUE="{$netelem.status}">
-				{foreach $_NETELEMENTSTATUSES as $idx => $status}
-				<OPTION VALUE="{$idx}"{if $netelem.status == $idx} selected{/if}>{$status}</OPTION>
-				{/foreach}
-			</SELECT>
-		</TD>
-	</TR>
-	<tr>
-		<TD WIDTH="1%">
-			<IMG SRC="img/producer.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Producer:")}</B>
-		</TD>
-		<td>
-		      <select name="netelem[producer]" id="producer" {tip text="Select Producer"} onchange="xajax_getModelsByProducerAndType(document.getElementById('type').value, this.value)">
-		      <OPTION VALUE="-1">{trans("Select option:")}</OPTION>
-		      </select>
+					    <TABLE WIDTH="100%" CELLPADDING="3">
+							<TR>
+								<TD WIDTH="1%">
+									<IMG SRC="img/producer.gif" ALT="">
+								</TD>
+								<TD WIDTH="1%" NOWRAP>
+									<B>{trans("Type:")}</B>
+								</TD>
+								<TD WIDTH="98%">
+									<SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} VALUE="{$netelem.type}" onchange="xajax_getProducerByType(this.value)">
+										<OPTION VALUE="-1">{trans("Select type:")}</OPTION>
+										{foreach $_NETELEMENTTYPES as $idx => $type}
+										<OPTION VALUE="{$idx}">{$type}</OPTION>
+										{/foreach}
+									</SELECT>
+								</TD>
+							</TR>
+							<TR>
+								<TD WIDTH="1%">
+									<IMG SRC="img/producer.gif" ALT="">
+								</TD>
+								<TD WIDTH="1%" NOWRAP>
+									<B>{trans("Status:")}</B>
+								</TD>
+								<TD WIDTH="98%">
+									<SELECT NAME="netelem[status]" {tip text="Select element status"} VALUE="{$netelem.status}">
+									{foreach $_NETELEMENTSTATUSES as $idx => $status}
+									<OPTION VALUE="{$idx}"{if $netelem.status == $idx} selected{/if}>{$status}</OPTION>
+									{/foreach}
+									</SELECT>
+								</TD>
+							</TR>
+							<tr>
+								<TD WIDTH="1%">
+									<IMG SRC="img/producer.gif" ALT="">
+								</TD>
+								<TD WIDTH="1%" NOWRAP>
+									<B>{trans("Producer:")}</B>
+								</TD>
+								<td>
+									<select name="netelem[producer]" id="producer" {tip text="Select Producer"} onchange="xajax_getModelsByProducerAndType(document.getElementById('type').value, this.value)">
+										<OPTION VALUE="-1">{trans("Select option:")}</OPTION>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<TD WIDTH="1%">
+									<IMG SRC="img/producer.gif" ALT="">
+								</TD>
+								<TD WIDTH="1%" NOWRAP>
+									<B>{trans("Model:")}</B>
+								</TD>
+								<td>
+									<select name="netelem[model]" id="model" {tip text="Select Model"} onchange="void(0);">
+										<OPTION VALUE="-1">{trans("Select option:")}</OPTION>
+									</select>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
 		</td>
-	</tr>
-	<tr>
-		<TD WIDTH="1%">
-			<IMG SRC="img/producer.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Model:")}</B>
-		</TD>
-		<td>
-		      <select name="netelem[model]" id="model" {tip text="Select Model"} onchange="void(0);">
-		      <OPTION VALUE="-1">{trans("Select option:")}</OPTION>
-		      </select>
-		</td>
-	</tr>
+	</tr>	
 	<TR>
 		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
 			<A HREF="javascript:document.netelemadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
