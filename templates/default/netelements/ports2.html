@@ -42,9 +42,9 @@
 	{elseif $netports[n].technology<200}
 		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name, "\nRadiosector: ",$netports[n].radiosectors.0.name,"\nUtilization: ",$netports[n].taken,'/',$netports[n].capacity))}
 		{if $netports[n].radiosectors}
-			{if $netports[n].taken/$netports[n].capacity<0.4}
+			{if $netports[n].taken/$netports[n].capacity<=0.4}
 				  {$port_color="lightgreen"}
-			{elseif $netports[n].taken/$netports[n].capacity<0.8}
+			{elseif $netports[n].taken/$netports[n].capacity<=0.8}
 				  {$port_color="yellow"}
 			{else}
 				  {$port_color="red"}
