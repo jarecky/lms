@@ -440,7 +440,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 			case 'producer':
 			case 'model':
 				if (!preg_match('/^-[0-9]+$/', $value))
-					$where[] = "UPPER(TRIM(d.$key)) = UPPER(" . $this->db->Escape($value) . ")";
+					$where[] = "UPPER(TRIM(e.$key)) = UPPER(" . $this->db->Escape($value) . ")";
 				elseif ($value == -2)
 					$where[] = "e.$key = ''";
 				break;
@@ -449,9 +449,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	$netelemlist = $this->db->GetAll('SELECT e.id, e.name, n.location,
 			e.description, e.producer, e.model, e.serialnumber,
 			(SELECT COUNT(*) FROM netports WHERE netelemid = e.id) AS ports,
-			(SELECT COUNT(*) FROM nodes LEFT JOIN netports n ON (netport = n.id) WHERE ipaddr <> 0 AND n.netelemid = e.id AND ownerid > 0)
-			+ (SELECT COUNT(*) FROM netlinks LEFT JOIN netports n ON (srcport = n.id OR dstport = n.id) WHERE n.netelemid = e.id)
-			AS takenports, e.netnodeid, n.name AS netnode,
+			(SELECT COUNT(*) FROM netlinks LEFT JOIN netports n ON (srcport = n.id OR dstport = n.id) WHERE n.netelemid = e.id) AS takenports, 
+			e.netnodeid, n.name AS netnode,
 			lb.name AS borough_name, lb.type AS borough_type,
 			ld.name AS district_name, ls.name AS state_name
 			FROM netelements e
@@ -463,11 +462,10 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 			LEFT JOIN location_states ls ON ls.id = ld.stateid '
 			. (!empty($where) ? ' WHERE ' . implode(' AND ', $where) : '')
                 . ($sqlord != '' ? $sqlord . ' ' . $direction : ''));
-
+	echo '<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
         $netelemlist['total'] = sizeof($netelemlist);
         $netelemlist['order'] = $order;
         $netelemlist['direction'] = $direction;
-
         return $netelemlist;
     }
 
