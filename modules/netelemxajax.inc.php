@@ -389,9 +389,29 @@ error_log($q.MODULES_DIR.'/../templates/default/netelements/addactive.inc.html')
     foreach($producers as $p){
       $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
     }
+    return $res;
+}
+
+function changeNetElementType($type) {
+    $res = new xajaxResponse();
+    $res->assign('elem_type_active','style.display', 'none');
+    $res->assign('elem_type_cable','style.display', 'none');
     switch($type){
       case '0':
-	$res->assign("elem_type","innerHTML", file_get_contents(MODULES_DIR.'/../templates/default/netelements/addactive.inc.html'));
+	$res->assign('elem_type_active','style.display', 'block');
+	break;
+      case '1':
+	break;
+      case '2':
+	$res->assign('elem_type_cable','style.display', 'block');
+	break;
+      case '3':
+        break;
+      case '4':
+        break;
+      case '99':
+        break;
+	
     }
     return $res;
 }
@@ -417,6 +437,7 @@ $LMS->RegisterXajaxFunction(array(
 	'getManagementUrls','addManagementUrl', 'delManagementUrl', 'updateManagementUrl',
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
 	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
+	'changeNetElementType',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 

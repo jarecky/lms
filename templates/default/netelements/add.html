@@ -88,7 +88,7 @@
 			<B>{trans("Type:")}</B>
 		</TD>
 		<TD WIDTH="8%">
-			<SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} VALUE="{$netelem.type}" onchange="xajax_getProducerByType(this.value)">
+			<SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} VALUE="{$netelem.type}" onchange="xajax_changeNetElementType(this.value)">
 			  <OPTION VALUE="-1">{trans("Select type:")}</OPTION>
 			{foreach $_NETELEMENTTYPES as $idx => $type}
 			  <OPTION VALUE="{$idx}">{$type}</OPTION>
@@ -159,9 +159,123 @@
 		</TD>
 
 	      </tr>
-	      <tbody id="elem_type">
-	      <!-- tu includowane via xajax pliki add*.inc.html -->
+	</table>
+	</td></tr>
+	      <tr>
+	       <TD WIDTH="100%" COLSPAN="6" CLASS="container fright ftop">
+                   <TABLE WIDTH="100%" CELLPADDING="0">
+
+<!-- start active -->
+	      <tbody id="elem_type_active" style="display:block">
+{if ConfigHelper::checkConfig('phpui.radius')}
+	      <tr>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Shortname:")}</B>
+		</TD>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[shortname]" VALUE="{$netdev.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
+		</TD>
+		</tr><tr>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Type:")}</B>
+		</TD>
+		<TD WIDTH="8%">
+			<SELECT NAME="netelem[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
+				<OPTION VALUE="0"></OPTION>
+				{foreach from=$nastype item=item key=key}
+				<OPTION VALUE="{$key}" {if $key==$netdevices.nastype} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	      </tr>
+	      <tr>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Max clients:")}</B>
+		</TD>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[clients]" VALUE="{if $netdev.clients}{$netdev.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
+		</TD>
+		</tr><tr>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Secret:")}</B>
+		</TD>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[secret]" VALUE="{$netdev.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
+		</TD>
+	      </tr>
+	      <tr>
+		<TD WIDTH="1%">
+			<IMG SRC="img/radius.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Community:")}</B>
+		</TD>
+		<TD WIDTH="8%" colspan="4">
+			<INPUT TYPE="TEXT" NAME="netelem[community]" VALUE="{$netdev.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
+		</TD>
+	      </tr>
+{/if}
+{if isset($channels)}
+	      <TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/channel.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Channel:")}</B>
+		</TD>
+		<TD WIDTH="8%" colspan="4">
+			<SELECT NAME="netelem[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
+				<OPTION VALUE="">- {trans("none")} -</OPTION>
+				{foreach from=$channels item=item}
+				<OPTION VALUE="{$item.id}" {if $item.id == $netdev.channelid} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	      </TR>
+{/if}
+        <tr>
+                <td colspan=3>
+                        {trans('Ports')}<img src="img/add.gif">
+                </td>
+        </tr>
+        <tbody id="portlist">
+        </tbody>
+
 	      </tbody>
+<!-- end of active -->
+<!-- start cable -->
+	      <tbody id="elem_type_cable" style="display:none">
+              <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Beginning network node:")}</B>
+                </TD>
+                <TD WIDTH="8%" colspan="4">
+                        <SELECT NAME="netelem[]" {tip text="Select channel (optional)" trigger="channelid"}>
+                                <OPTION VALUE="">- {trans("none")} -</OPTION>
+                                {foreach from=$channels item=item}
+                                <OPTION VALUE="{$item.id}" {if $item.id == $netdev.channelid} SELECTED{/if}>{$item.name}</OPTION>
+                                {/foreach}
+                        </SELECT>
+                </TD>
+              </TR>
+		      
+	      </tbody>
+<!-- end of cable -->
 
 	      </table>
 	</td>
@@ -215,13 +329,6 @@
 			</table>
 		</td>
 	</tr>	
-	<tr>
-		<td colspan=3>
-			{trans('Ports')}<img src="img/add.gif">
-		</td>
-	</tr>
-	<tbody id="portlist">
-	</tbody>
 	<TR>
 		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
 			<A HREF="javascript:document.netelemadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>

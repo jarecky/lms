@@ -55,7 +55,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 						if ($ls['technology']<100) {
 							$copper[$ls['srcport']]=1;
 						} else {
-						$fiber[$ls['srcport']]=1;
+							$fiber[$ls['srcport']]=1;
 						}
 					}
 				}
@@ -85,7 +85,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 		#echo '<HR>tech:<PRE>';print_r($tech);echo '</PRE>';
 		#cho '<PRE>copper:';print_r($copper);echo '</PRE>';
 		$ports=array();
-		$wport_num=1; $cport_num=0; $fport_num=1;
+		$wport_num=1; $cport_num=0; $fport_num=0;
 		if (is_array($tech)) foreach ($tech AS $t => $p ) {
 			if ($t<100) {
 				foreach ($p AS $nr => $i) {
