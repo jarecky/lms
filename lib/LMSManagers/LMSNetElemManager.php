@@ -462,7 +462,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 			LEFT JOIN location_states ls ON ls.id = ld.stateid '
 			. (!empty($where) ? ' WHERE ' . implode(' AND ', $where) : '')
                 . ($sqlord != '' ? $sqlord . ' ' . $direction : ''));
-	echo '<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
+
         $netelemlist['total'] = sizeof($netelemlist);
         $netelemlist['order'] = $order;
         $netelemlist['direction'] = $direction;
