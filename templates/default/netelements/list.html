@@ -101,10 +101,15 @@ TODO: lista parametrów obiektu w zależności od typu.
 			<IMG src="img/producer.gif" ALT=""> {$netelemlist[netelemlist].producer} {if $netelemlist[netelemlist].model}/ {$netelemlist[netelemlist].model}{/if}
 		</TD>
 		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" class="nobr valign-top">
-			{if $netelemlist[netelemlist].location}{$netelemlist[netelemlist].location} {if $netelemlist[netelemlist].borough_name} ({$netelemlist[netelemlist].state_name} / {$netelemlist[netelemlist].district_name} / {$_BOROUGHTYPES[$netelemlist[netelemlist].borough_type]} {$netelemlist[netelemlist].borough_name}){/if}{/if}
 		</TD>
+		{if $netelemlist[netelemlist].borough_name}{$tiptext=join("",array($netelemlist[netelemlist].location,"\n",$_BOROUGHTYPES[$netelemlist[netelemlist].borough_type]," ",$netelemlist[netelemlist].borough_name,"\nPowiat ",$netelemlist[netelemlist].district_name,"\nWojewództwo ",$netelemlist[netelemlist].state_name))}
+		{elseif $netelemlist[netelemlist].location}{$tiptext=$netelemlist[netelemlist].location}
+		{else}{$tiptext="aaaa"}
+		{/if}
+			
 		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" class="nobr valign-top">
-			{if $netelemlist[netelemlist].netnode}<a href="?m=netnodeinfo&id={$netelemlist[netelemlist].netnodeid}">{$netelemlist[netelemlist].netnode}</a>{/if}
+			{if $netelemlist[netelemlist].netnode}<a href="?m=netnodeinfo&id={$netelemlist[netelemlist].netnodeid}" title="{$tiptext}">{$netelemlist[netelemlist].netnode}</a>{/if}
+
 		</TD>
 		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" align="right" VALIGN="TOP">
 			({$netelemlist[netelemlist].id|string_format:"%04d"})

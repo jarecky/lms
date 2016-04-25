@@ -167,15 +167,16 @@ if (is_array($devices)) foreach ($devices AS $dev) {
                                                 $connector=$c[1];
 					foreach ($i AS $link => $x) {
                                                 if ($nr) {
-                                                        $fport_num=$nr;
+                                                        $fport_num=$fport;
                                                 } else {
-                                                        for (true;isset($fiber[$fport_num]);$fport_num++);
+                                                        for ($port_num++;isset($fiber[$fport_num]);$fport_num++);
+							$fport=$fport_num;
                                                 }
                                                 $port=array(
                                                         'id'            => NULL,
                                                         'netelemid'     => $dev['id'],
                                                         'type'          => 200,
-                                                        'label'         => 'copper'.$fport_num++,
+                                                        'label'         => 'fiber'.$fport,
                                                         'connectortype' => $connector,
                                                         'technology'    => $t,
                                                         'capacity'      => 1
