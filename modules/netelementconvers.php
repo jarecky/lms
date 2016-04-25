@@ -7,7 +7,7 @@
 // *******************************************************************
 
 $netlinkid=$DB->GetOne("SELECT MAX(id) FROM netlinks_old");
-echo "max: $netlinkid<BR>";
+#echo "max: $netlinkid<BR>";
 echo '<H1>Import urządzeń aktywnych i połączeń logicznych</H1>';
 #$devices=$DB->GetAll("SELECT * FROM netdevices_old WHERE name='tarpno4-ap' ORDER BY id ASC");
 $devices=$DB->GetAll("SELECT * FROM netdevices_old  ORDER BY id ASC");
