@@ -64,6 +64,7 @@
 
 	{/if}
 	<TD class="highlight ftop fbottom fleft fright" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
+			{$netports[n].label}<br>
 			<IMG src="{$port_img}" ALT="">
 		</TD>
 		{if $smarty.section.n.iteration is div by 12}</tr><tr>{/if}
