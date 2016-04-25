@@ -175,7 +175,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
                                                         'id'            => NULL,
                                                         'netelemid'     => $dev['id'],
                                                         'type'          => 200,
-                                                        'label'         => 'copper'.$fport_num++,
+                                                        'label'         => 'fiber'.$fport_num++,
                                                         'connectortype' => $connector,
                                                         'technology'    => $t,
                                                         'capacity'      => 1
