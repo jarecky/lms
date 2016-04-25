@@ -6,7 +6,11 @@
 // Etap 1. - przeniesienie danych z netdevices_old do netelements
 // *******************************************************************
 
-$devices=$DB->GetAll("SELECT * FROM netdevices_old ORDER BY id ASC");
+$netlinkid=$DB->GetOne("SELECT MAX(id) FROM netlinks_old");
+echo "max: $netlinkid<BR>";
+echo '<H1>Import urządzeń aktywnych i połączeń logicznych</H1>';
+#$devices=$DB->GetAll("SELECT * FROM netdevices_old WHERE name='tarpno4-ap' ORDER BY id ASC");
+$devices=$DB->GetAll("SELECT * FROM netdevices_old  ORDER BY id ASC");
 if (is_array($devices)) foreach ($devices AS $dev) {
 	echo '<B>'.$dev['name'].'</B>: <I>'.$dev['producer'].' '.$dev['model'].'</I><UL>';
 	$check=$DB->GetOne("SELECT id FROM netelements WHERE id=".$dev['id']);
@@ -31,17 +35,9 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 		if (is_array($nls)) foreach ($nls AS $ls) {
 			if ($ls['technology']>=100 and $ls['technology']<200) {
 				if ($ls['src']==$dev['id']) {
-					#if ($ls['dstradiosector']) {
-						$tech[$ls['technology']][$ls['dstradiosector']][$ls['id']]=1;
-					#} else {
-					#	$tech[$ls['technology']][0][$ls['id']]=1;
-					#}
+					$tech[$ls['technology']][$ls['dstradiosector']][$ls['id']]=1;
 				} else {
-					#if ($ls['srcradiosector']) {
-						$tech[$ls['technology']][$ls['srcradiosector']][$ls['id']]=1;
-					#} else {
-					#	$tech[$ls['technology']][0][$ls['id']]=1;
-					#}
+					$tech[$ls['technology']][$ls['srcradiosector']][$ls['id']]=1;
 				}
 			} else {
 				if ($ls['src']==$dev['id']) {
@@ -87,9 +83,9 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 			}
 		}
 		#echo '<HR>tech:<PRE>';print_r($tech);echo '</PRE>';
-		#echo '<PRE>';print_r($copper);echo '</PRE>';
+		#cho '<PRE>copper:';print_r($copper);echo '</PRE>';
 		$ports=array();
-		$wport_num=1; $cport_num=1; $fport_num=1;
+		$wport_num=1; $cport_num=0; $fport_num=1;
 		if (is_array($tech)) foreach ($tech AS $t => $p ) {
 			if ($t<100) {
 				foreach ($p AS $nr => $i) {
@@ -97,15 +93,16 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 						$connector=$c[1];
 					foreach ($i AS $link => $x) {
 						if ($nr) {
-							$cport_num=$nr;
+							$num=$nr;
 						} else {
-							for (true;isset($copper[$cport_num]);$cport_num++);
+							for ($cport_num++;isset($copper[$cport_num]);$cport_num++);
+							$num=$cport_num;
 						}
 						$port=array(
 							'id' 		=> NULL,
 							'netelemid'	=> $dev['id'],
 							'type'		=> 1,
-							'label'		=> 'copper'.$cport_num++,
+							'label'		=> 'copper'.$num,
 							'connectortype'	=> $connector,
 							'technology'	=> $t,
 							'capacity'	=> 1
@@ -192,7 +189,6 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 		}
 		#echo '<HR>Ports:<PRE>';print_r($ports);echo '</PRE>';
 		foreach ($ports AS $link => $port) {
-			unset($radiosector);
 			if (isset($port['radiosector'])) {
 				$radiosector=$port['radiosector'];
 				unset($port['radiosector']);
@@ -201,6 +197,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 			} else {
 				$connected=array();
 				$connected[$link]=1;
+				unset($radiosector);
 			}
 			echo '<LI><FONT COLOR="blue">'.$port['label'].'</FONT><UL>';
 			$DB->Execute("INSERT INTO netports VALUES (?,?,?,?,?,?,?)",array_values($port));
@@ -208,6 +205,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 			if (isset($radiosector)) {
 				$radiosector['netportid']=$netportid;
 				$DB->Execute("INSERT INTO netradiosectors VALUES (?,?,?,?,?,?,?,?,?,?,?)",array_values($radiosector));
+				#echo '<PRE>';print_r($DB->GetErrors());echo '</PRE>';
 				echo '<LI><FONT COLOR="violet">['.$radiosector['name'].'] </FONT></LI>';
 			}
 			if (is_array($connected)) {
@@ -216,14 +214,18 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 					echo '<LI>';
 					if (preg_match('/^n([0-9]+)$/',$linkid,$nodeid)) {
 						$nodeid=$nodeid[1];
-						$DB->Execute("UPDATE nodes SET netport=? WHERE id=?",array($netportid,$nodeid));
+						$nodes=$DB->GetALL("SELECT * FROM nodes WHERE id=?",array($nodeid));
+						$node=$nodes[0];
+						#$DB->Execute("UPDATE nodes SET netport=? WHERE id=?",array($netportid,$nodeid));
+						$DB->Execute("INSERT INTO netlinks VALUES (?,?,?,?,?,?,?)",array($netlinkid++,$netportid,NULL,$node['id'],$node['linktype'],$node['linkspeed'],$node['linktechnology']));
+						#echo '<PRE>';print_r($DB->GetErrors());echo '</PRE>';
 						echo ' podłączono node #'.$nodeid;
 					} else {
 						$l=$DB->GetAll("SELECT * FROM netlinks WHERE id=?",array($linkid));
 						$lo=$DB->GetAll("SELECT * FROM netlinks_old WHERE id=?",array($linkid));
 						$lo=$lo[0];
 						if (!count($l)) {	
-							$DB->Execute("INSERT INTO netlinks VALUES (?,?,?,?,?,?)",array($linkid,$netportid,NULL,$lo['type'],$lo['speed'],$lo['technology']));
+							$DB->Execute("INSERT INTO netlinks VALUES (?,?,?,?,?,?,?)",array($linkid,$netportid,NULL,NULL,$lo['type'],$lo['speed'],$lo['technology']));
 							echo ' podłączono jako src';
 						} else {
 							$l=$l[0];
@@ -244,6 +246,19 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 	}
 	echo '</UL>';
 }
+
+echo '<H1>Import połączeń logicznych do połączeń fizycznych</H1>';
+$netlinks = $DB->GetAll("SELECT * FROM netlinks ORDER BY id ASC");
+if (is_array($netlinks)) foreach ($netlinks AS $link) {
+	if (isset($link['dstport']))
+		$dst=$link['dstport'];
+	else
+		$dst='n'.$link['node'];
+	$DB->Execute("INSERT INTO netconnections VALUES (?,?,?,?,?)",array(NULL,'',$link['srcport'].":".$dst,'',''));
+	$connid=$DB->GetLastInsertID('netconnections');
+	$DB->Execute("INSERT INTO netlinkassingments VALUES (?,?,?)",array(NULL,$connid,$link['id']));
+}
+echo 'Zaimportowano '.count($netlinks).' połączeń między urządzeniami<BR>';
 
 
 // *******************************************************************
