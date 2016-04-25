@@ -394,27 +394,72 @@ error_log($q.MODULES_DIR.'/../templates/default/netelements/addactive.inc.html')
 
 function changeNetElementType($type) {
     $res = new xajaxResponse();
+    $res->assign('elem_main','style.display','table-row-group');	      
     $res->assign('elem_type_active','style.display', 'none');
+    $res->assign('elem_type_passive','style.display', 'none');
     $res->assign('elem_type_cable','style.display', 'none');
+    $res->assign('elem_type_splitter','style.display', 'none');
+    $res->assign('elem_type_multiplexer','style.display', 'none');
+    $res->assign('elem_type_computer','style.display', 'none');
     switch($type){
       case '0':
-	$res->assign('elem_type_active','style.display', 'block');
+	$res->assign('elem_type_active','style.display', 'table-row-group');
 	break;
       case '1':
+	$res->assign('elem_type_passive','style.display', 'table-row-group');
 	break;
       case '2':
-	$res->assign('elem_type_cable','style.display', 'block');
+	$res->assign('elem_type_cable','style.display', 'table-row-group');
 	break;
       case '3':
+	$res->assign('elem_type_splitter','style.display', 'table-row-group');
         break;
       case '4':
+	$res->assign('elem_type_multiplexer','style.display', 'table-row-group');
         break;
       case '99':
+	$res->assign('elem_type_computer','style.display', 'table-row-group');
         break;
-	
+      case 'default':
+        $res->assign('elem_main','style.display','none');      
     }
     return $res;
 }
+
+function changeWireType($type) {
+   global $COPPERCOLORSCHEMAS,$FIBEROPTICCOLORSCHEMAS,$NETWIRETYPES;
+   $res = new xajaxResponse();
+   $req = new xajaxRequest();
+   if ($type<100) {
+      $colorschema=$COPPERCOLORSCHEMAS;
+      if ($type<50) {
+         $start=0;$end=50;
+      } else {
+         $start=50;$end=100;
+      }
+   } else {
+      $colorschema=$FIBEROPTICCOLORSCHEMAS;
+      $start=200;$end=300;
+   }
+   $cselect='';
+   foreach ($colorschema AS $id => $schema) {
+      $cselect.='<OPTION VALUE="'.$id.'">'.$schema['label'].'</OPTION>';
+   }
+   $tselect='';
+   # TODO - dorobic selected :)
+   #$ttype=$req->getFormValues('netcable[wiretype]');
+   foreach ($NETWIRETYPES AS $id => $type) {
+      if ($id>$start AND $id<=$end) {
+	      $tselect.='<OPTION VALUE="'.$id.'"';
+	      if ($id==$ttype) $tselect.=' SELECTED';
+	      $tselect.='>'.$type.'</OPTION>';
+      }
+   }
+   $res->assign('colorschema','innerHTML',$cselect);
+   $res->assign('wiretype','innerHTML',$tselect);
+   return $res;
+}
+
 
 function getModelsByProducerAndType($type, $producer){
     global $DB;
@@ -437,7 +482,7 @@ $LMS->RegisterXajaxFunction(array(
 	'getManagementUrls','addManagementUrl', 'delManagementUrl', 'updateManagementUrl',
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
 	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
-	'changeNetElementType',
+	'changeNetElementType','changeWireType',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 

@@ -169,11 +169,6 @@ class LMSNetElemAction extends LMSModuleAction
 		{
 			$netelemdata = $_POST['netelem'];
 
-			if($netelemdata['ports'] == '')
-				$netelemdata['ports'] = 0;
-			else
-				$netelemdata['ports'] = intval($netelemdata['ports']);
-
 			if(empty($netelemdata['clients']))
 				$netelemdata['clients'] = 0;
 			else
@@ -225,59 +220,61 @@ class LMSNetElemAction extends LMSModuleAction
 				}
 			}
 
-		    if(!$error)
-		    {
+			if ($netelemdata['type']==0) {
+			// AKTYWNE
+				$netdevdata=$_POST['netdev'];
+                                if(!isset($netdevdata['shortname'])) $netdevdata['shortname'] = '';
+                                if(!isset($netdevdata['secret'])) $netdevdata['secret'] = '';
+                                if(!isset($netdevdata['community'])) $netdevdata['community'] = '';
+                                if(!isset($netdevdata['nastype'])) $netdevdata['nastype'] = 0;
+				
+				$this->smarty->assign('netdev', $netdevdata);
+			} elseif ($netelemdata['type']==1) {
+			// PASYWNE
+			} elseif ($netelemdata['type']==2) {
+			// KABEL
+				echo '<PRE>';print_r($netcabledata);echo '</PRE>';
+				$netcabledata=$_POST['netcable'];
+				if (!is_integer($netcabledata['distance']))
+					$error['distance']=trans('Distance must be integer number!');
+				if (!is_integer($netcabledata['capacity']))
+					$error['capacity']=trans('Number of wires must be integer number!');
+				#elseif ($netcabledata['capacity']%12!=0 AND $netcabledata['type']==201) 
+				#	$error['capacity']=trans('Wrong number of wires');
+				if ($netcabledata['srcnodeid']==$netcabledata['dstnodeid'])
+					$error['dstnodeid']=trans('Begin and end node must be different!');
+
+				$this->smarty->assign('netcable', $netcabledata);
+			} elseif ($netelemdata['type']==3) {
+			// SPLITTER
+			} elseif ($netelemdata['type']==4) {
+			// MULTIPLEXER
+			} elseif ($netelemdata['type']==99) {
+			// COMPUTER
+			} else {
+				$error['type']=trans('Error');
+			}
+			if(!$error) {
 				if($netelemdata['guaranteeperiod'] == -1)
 					$netelemdata['guaranteeperiod'] = NULL;
 
-				if(!isset($netelemdata['shortname'])) $netelemdata['shortname'] = '';
-			if(!isset($netelemdata['secret'])) $netelemdata['secret'] = '';
-			if(!isset($netelemdata['community'])) $netelemdata['community'] = '';
-			if(!isset($netelemdata['nastype'])) $netelemdata['nastype'] = 0;
-
-			if (empty($netelemdata['teryt'])) {
-			    $netelemdata['location_city'] = null;
-			    $netelemdata['location_street'] = null;
-			    $netelemdata['location_house'] = null;
-			    $netelemdata['location_flat'] = null;
-			}
-			$ipi = $netelemdata['invprojectid'];
-			if ($ipi == '-1') {
-				$this->db->BeginTrans();
-				$this->db->Execute("INSERT INTO invprojects (name, type) VALUES (?, ?)",
-					array($netelemdata['projectname'], INV_PROJECT_REGULAR));
-				$ipi = $this->db->GetLastInsertID('invprojects');
-				$this->db->CommitTrans();
-			} 
-			if ($netelemdata['invprojectid'] == '-1' || intval($ipi)>0)
-				$netelemdata['invprojectid'] = intval($ipi);
-			else
-				$netelemdata['invprojectid'] = NULL;
-			if ($netelemdata['netnodeid']=="-1") {
-				$netelemdata['netnodeid']=NULL;
-			}
-			else {
-				/* dziedziczenie lokalizacji */
-				$dev = $this->db->GetRow("SELECT * FROM netnodes WHERE id = ?", array($netelemdata['netnodeid']));
-				if ($dev) {
-					if (!strlen($netelemdata['location'])) {
-						$netelemdata['location'] = $dev['location'];
-						$netelemdata['location_city'] = $dev['location_city'];
-						$netelemdata['location_street'] = $dev['location_street'];
-						$netelemdata['location_house'] = $dev['location_house'];
-						$netelemdata['location_flat'] = $dev['location_flat'];
-					}
-					if (!strlen($netelemdata['longitude']) || !strlen($netelemdata['longitude'])) {
-						$netelemdata['longitude'] = $dev['longitude'];
-						$netelemdata['latitude'] = $dev['latitude'];
-					}
-				}
-			}
+				$ipi = $netelemdata['invprojectid'];
+				if ($ipi == '-1') {
+					$this->db->BeginTrans();
+					$this->db->Execute("INSERT INTO invprojects (name, type) VALUES (?, ?)",
+						array($netelemdata['projectname'], INV_PROJECT_REGULAR));
+					$ipi = $this->db->GetLastInsertID('invprojects');
+					$this->db->CommitTrans();
+				} 
+				if ($netelemdata['invprojectid'] == '-1' || intval($ipi)>0)
+					$netelemdata['invprojectid'] = intval($ipi);
+				else
+					$netelemdata['invprojectid'] = NULL;
 
 				$netelemid = $this->lms->NetElemAdd($netelemdata);
 
 				$this->session->redirect('?m=netelement&action=info&id='.$netelemid);
-		    }
+			}
 
 			$this->smarty->assign('error', $error);
 			$this->smarty->assign('netelem', $netelemdata);
@@ -300,30 +297,6 @@ class LMSNetElemAction extends LMSModuleAction
 		if (ConfigHelper::checkConfig('phpui.ewx_support'))
 			$this->smarty->assign('channels', $this->db->GetAll('SELECT id, name FROM ewx_channels ORDER BY name'));
 
-/*		switch ($netelemdata['type']) {
-		case '0':
-			$this->smarty->display('netelements/addactive.html');
-			break;
-		case '1':
-			$this->smarty->display('netelements/addpassive.html');
-			break;
-		case '2':
-			$this->smarty->display('netelements/addcable.html');
-			break;
-                case '3':
-                        $this->smarty->display('netelements/addsplitter.html');
-                        break;
-                case '4':
-                        $this->smarty->display('netelements/addmultiplexer.html');
-                        break;
-                case '99':
-                        $this->smarty->display('netelements/addcomputer.html');
-                        break;
-		default:
-                        $this->smarty->display('netelements/addchoose.html');
-			break;
-		}	
-*/
 		$this->smarty->display("netelements/add.html");
 }	
 

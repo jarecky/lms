@@ -5,330 +5,458 @@
 <!--// $Id$ //-->
 {include file="calendar_js.html"}
 <script type="text/javascript" src="img/netnodehelper.js"></script>
-<script type="text/javascript" src="img/netelemhelper.js"></script>
-<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
 <H1>{$layout.pagetitle}</H1>
-<FORM NAME="netelement" METHOD="POST" ACTION="?m=netelement&action=add">
+<FORM NAME="netelemadd" METHOD="POST" ACTION="?m=netelement&action=add">
 <INPUT type="submit" class="hiddenbtn">
 <TABLE class="lmsbox">
     <THEAD>
 	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
 			<B>{trans("Name:")}</B>
-			<INPUT TYPE="TEXT" NAME="netelem[name]" VALUE="{$netelem.name}" MAXLENGTH="32" {tip trigger="name" text="Enter element name" bold=1}>
-		</TD><td colspan=5 class="fright">&nbsp;//wymyslic sposob na parsowanie smarty wewnatrz php</td>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netelem[name]" VALUE="{$netelem.name}" MAXLENGTH="32" {tip trigger="name" text="Enter device name" bold=1}>
+		</TD>
 	</TR>
     </THEAD>
     <TBODY>
-    <TR>
-        <TD WIDTH="100%" COLSPAN="6" CLASS="container fright">
-	    <TABLE WIDTH="100%" CELLPADDING="0">
-	      <tr>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%">
+                        <B>{trans("Type:")}</B>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} VALUE="{$netelem.type}" onchange="xajax_changeNetElementType(this.value)">
+                          <OPTION VALUE="-1">{trans("Select type:")}</OPTION>
+                        {foreach $_NETELEMENTTYPES as $idx => $type}
+                          <OPTION VALUE="{$idx}" {if $idx==$netelem.type} SELECTED{/if}>{$type}</OPTION>
+                        {/foreach}
+                        </SELECT>
+			
+                </TD>
+        </TR>
+    </TBODY>
+    <TBODY ID="elem_main" style="display:none">
+	<TR>
+        <TD WIDTH="100%" COLSPAN="3" CLASS="container">
+		    <TABLE WIDTH="100%" CELLPADDING="0">
+				<TR>
+					<TD WIDTH="50%" style="vertical-align:top;">
+					        <TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
 		<TD WIDTH="1%">
-		  <IMG SRC="img/producer.gif" ALT="">
+			<IMG SRC="img/producer.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Status:")}</B>
 		</TD>
-		<TD WIDTH="48%">
-			<SELECT NAME="netelem[status]" {tip text="Select element status"} VALUE="{$netelem.status}">
-			{foreach $_NETELEMENTSTATUSES as $idx => $status}
+		<TD WIDTH="98%">
+			<SELECT NAME="netelem[status]" {tip text="Select device status"} VALUE="{$netelem.status}">
+				{foreach $_NETELEMENTSTATUSES as $idx => $status}
 				<OPTION VALUE="{$idx}"{if $netelem.status == $idx} selected{/if}>{$status}</OPTION>
-			{/foreach}
+				{/foreach}
 			</SELECT>
 		</TD>
-		<TD WIDTH="1%">
-			<IMG SRC="img/calendar.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Purchase date:")}</B>
-		</TD>
-		<TD WIDTH="48%">
-			<INPUT TYPE="TEXT" NAME="netelem[purchasedate]" VALUE="{if $netdev.purchasedate}{$netdev.purchasedate}{/if}" SIZE="10" maxlength="10" {tip class="calendar" trigger="purchasedate" text="Enter device purchase date in 'yyyy/mm/dd' format or click to choose date from calendar (optional)"}>
-		</TD>
-	      </tr>
-	      <tr>
-		<TD width="1%">
-			<img src="img/money.gif" alt="">
-		</TD>
-		<TD WIDTH="1%" class="bold nobr">
-			{trans("Investment project:")}
-		</TD>
-		<TD WIDTH="1%">
-			<SELECT NAME="netelem[invprojectid]" ID="NNproject" VALUE="{$netdevinfo.invprojectid}" {tip text="Select project for this node"} onchange="setNNProject();">
-				<OPTION value="-2" {if ($netdevinfo.invprojectid == '-2' ) } selected="selected" {/if} >- {trans("none")} -</OPTION>
-				<OPTION value="-1" {if ($netdevinfo.invprojectid == '-1' ) } selected="selected" {/if}>{trans("New project")}</OPTION>
-				<OPTION value="1" {if ($netdevinfo.invprojectid == '1' ) } selected="selected" {/if}>{trans("From root device")}</OPTION>
-				{section name=project loop=$NNprojects}
-				<OPTION VALUE="{$NNprojects[project].id}" {if ($netdevinfo.invprojectid == $NNprojects[project].id ) } selected="selected" {/if} >{$NNprojects[project].name}</OPTION>
-				{/section}
-			</SELECT>
-			<INPUT TYPE="TEXT" NAME="netelem[projectname]" VALUE="{$netdevinfo.projectname}" {tip text="Enter new project name" trigger="projectname" } ID="NNprojectname">
-		</TD>
-		<TD WIDTH="1%">
-			<IMG SRC="img/guarantee.png" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Guarantee period:")}</B>
-		</TD>
-		<TD WIDTH="1%">
-			<SELECT SIZE="1" NAME="netelem[guaranteeperiod]" {tip text="Select device guarantee period (optional)"}>
-			{foreach from=$_GUARANTEEPERIODS key=key item=period}
-				<OPTION VALUE="{$key}"{if $netdev.guaranteeperiod == $key} SELECTED{/if}>{$period}</OPTION>
-			{/foreach}
-			</SELECT>
-		</TD>
-	      </tr>
-	      <tr>
+	</TR>
+	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/producer.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Type:")}</B>
+			<B>{trans("Manufacturer:")}</B>
 		</TD>
-		<TD WIDTH="8%">
-			<SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} VALUE="{$netelem.type}" onchange="xajax_changeNetElementType(this.value)">
-			  <OPTION VALUE="-1">{trans("Select type:")}</OPTION>
-			{foreach $_NETELEMENTTYPES as $idx => $type}
-			  <OPTION VALUE="{$idx}">{$type}</OPTION>
-			{/foreach}
-			</SELECT>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netelem[producer]" VALUE="{$netelem.producer}" {tip text="Enter producer name (optional)"}>
 		</TD>
-		<TD WIDTH="1%" rowspan="3">
-			<IMG SRC="img/desc.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" rowspan="3" NOWRAP>
-			<B>{trans("Description:")}</B>
-		</TD>
-		<TD WIDTH="8%" rowspan="3">
-			<TEXTAREA NAME="netelem[description]" COLS="40" ROWS="5" {tip text="Enter additional information (optional)"}>{$netdev.description}</TEXTAREA>
-		</TD>
-	      </tr>
-	      <tr>
+	</TR>
+	<TR>
 		<TD WIDTH="1%">
-			<IMG SRC="img/producer.gif" ALT="">
-		</TD>
-		<TD WIDTH="1%" NOWRAP>
-			<B>{trans("Producer:")}</B>
-		</TD>
-		<td>
-			<select name="netelem[producer]" id="producer" {tip text="Select Producer"} onchange="xajax_getModelsByProducerAndType(document.getElementById('type').value, this.value)">
-				<OPTION VALUE="-1">{trans("Select option:")}</OPTION>
-			</select>
-		</td>
-	      </tr>
-	      <tr>
-		<TD WIDTH="1%">
-			<IMG SRC="img/producer.gif" ALT="">
+			<IMG SRC="img/netdev_model.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Model:")}</B>
 		</TD>
-		<td>
-			<select name="netelem[model]" id="model" {tip text="Select Model"} onchange="void(0);">
-				<OPTION VALUE="-1">{trans("Select option:")}</OPTION>
-			</select>
-		</td>
-
-	      </tr>
-
-	      <tr>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netelem[model]" VALUE="{$netelem.model}" {tip text="Enter device model (optional)"}>
+                        <A href="javascript:void(0);" onclick="return netelemmodelchoosewin('netelem', 'netelemadd', document.forms['netelemadd'].elements['netelem[netelemicemodelid]'].value, document.forms['netelemadd'].elements['netelem[producer]'].value, document.forms['netelemadd'].elements['netelem[model]'].value)" {tip text="Click to select model"}>&raquo;&raquo;&raquo;</A>
+			<BR>
+                        <INPUT type="hidden" name="netelem[netelemicemodelid]" value="{$netelem.netelemicemodelid}">
+		</TD>
+	</TR>
+	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/serialnumber.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Serial number:")}</B>
 		</TD>
-		<TD WIDTH="8%">
-			<INPUT TYPE="TEXT" NAME="netelem[serialnumber]" VALUE="{$netdev.serialnumber}" {tip text="Enter device serial number (optional)"}>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netelem[serialnumber]" VALUE="{$netelem.serialnumber}" {tip text="Enter device serial number (optional)"}>
 		</TD>
-		<TD width="1%">
-			<img src="img/netdev.gif" alt="">
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/calendar.gif" ALT="">
 		</TD>
-		<TD WIDTH="1%" class="bold nobr">
-			{trans("Net node:")}
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Purchase date:")}</B>
 		</TD>
-		<TD WIDTH="8%">
-			<SELECT NAME="netelem[netnodeid]" VALUE="{$netdevinfo.netnodeid}" {tip text="Select node"} >
-				<OPTION VALUE="-1">{trans("None")}</OPTION>
-				{section name=nd loop=$NNnodes}
-				<OPTION VALUE="{$NNnodes[nd].id}" {if ($netdevinfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
-				{/section}
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netelem[purchasedate]" VALUE="{if $netelem.purchasedate}{$netelem.purchasedate}{/if}" SIZE="10" maxlength="10" {tip class="calendar" trigger="purchasedate" text="Enter device purchase date in 'yyyy/mm/dd' format or click to choose date from calendar (optional)"}>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/guarantee.png" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Guarantee period:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT SIZE="1" NAME="netelem[guaranteeperiod]" {tip text="Select device guarantee period (optional)"}>
+				{foreach from=$_GUARANTEEPERIODS key=key item=period}
+				<OPTION VALUE="{$key}"{if $netelem.guaranteeperiod == $key} SELECTED{/if}>{$period}</OPTION>
+				{/foreach}
 			</SELECT>
 		</TD>
-
-	      </tr>
-	</table>
-	</td></tr>
-	      <tr>
-	       <TD WIDTH="100%" COLSPAN="6" CLASS="container fright ftop">
-                   <TABLE WIDTH="100%" CELLPADDING="0">
-
-<!-- start active -->
-	      <tbody id="elem_type_active" style="display:block">
+	</TR>
+    </TBODY>
+                                        </TABLE>
+				</TD>
+				<TD WIDTH="50%" style="vertical-align:top;">
+					<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD WIDTH="1%">
+			<IMG SRC="img/desc.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Description:")}</B>
+		</TD>
+		<TD WIDTH="98%">
+			<TEXTAREA NAME="netelem[description]" COLS="40" ROWS="5" {tip text="Enter additional information (optional)"}>{$netelem.description}</TEXTAREA>
+		</TD>
+	</TR>
+	<TR>
+		<TD width="1%">
+			<img src="img/money.gif" alt="">
+		</TD>
+		<TD WIDTH="1%" class="bold nobr">
+			{trans("Investment project:")}
+		</TD>
+		<TD WIDTH="98%">
+			<SELECT NAME="netelem[invprojectid]" ID="NNproject" VALUE="{$neteleminfo.invprojectid}" {tip text="Select project for this node"} onchange="setNNProject();">
+				<OPTION value="-2" {if ($neteleminfo.invprojectid == '-2' ) } selected="selected" {/if} >- {trans("none")} -</OPTION>
+				<OPTION value="-1" {if ($neteleminfo.invprojectid == '-1' ) } selected="selected" {/if}>{trans("New project")}</OPTION>
+				<OPTION value="1" {if ($neteleminfo.invprojectid == '1' ) } selected="selected" {/if}>{trans("From root device")}</OPTION>
+				{section name=project loop=$NNprojects}
+				<OPTION VALUE="{$NNprojects[project].id}" {if ($neteleminfo.invprojectid == $NNprojects[project].id ) } selected="selected" {/if} >{$NNprojects[project].name}</OPTION>
+				{/section}
+			</SELECT>
+			<INPUT TYPE="TEXT" NAME="netelem[projectname]" VALUE="{$neteleminfo.projectname}" {tip text="Enter new project name" trigger="projectname" } ID="NNprojectname">
+		</TD>
+	</TR>
+	                                        </TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+<!-- start of elem_type_active -->
+    <TBODY ID="elem_type_active" STYLE="display:none">
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Net node:")}i
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
+                                <OPTION VALUE="-1">{trans("None")}</OPTION>
+                                {section name=nd loop=$NNnodes}
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                {/section}
+                        </SELECT>
+                </TD>
+        </TR>
 {if ConfigHelper::checkConfig('phpui.radius')}
-	      <tr>
+	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Shortname:")}</B>
 		</TD>
-		<TD WIDTH="8%">
-			<INPUT TYPE="TEXT" NAME="netelem[shortname]" VALUE="{$netdev.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netdev[shortname]" VALUE="{$netdev.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
 		</TD>
-		</tr><tr>
+	</TR>
+	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Type:")}</B>
 		</TD>
-		<TD WIDTH="8%">
-			<SELECT NAME="netelem[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
+		<TD WIDTH="98%">
+			<SELECT NAME="netdev[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
 				<OPTION VALUE="0"></OPTION>
 				{foreach from=$nastype item=item key=key}
-				<OPTION VALUE="{$key}" {if $key==$netdevices.nastype} SELECTED{/if}>{$item.name}</OPTION>
+				<OPTION VALUE="{$key}" {if $key==$netdev.nastype} SELECTED{/if}>{$item.name}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
-	      </tr>
-	      <tr>
+	</TR>
+	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Max clients:")}</B>
 		</TD>
-		<TD WIDTH="8%">
-			<INPUT TYPE="TEXT" NAME="netelem[clients]" VALUE="{if $netdev.clients}{$netdev.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netdev[clients]" VALUE="{if $netdev.clients}{$netdev.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
 		</TD>
-		</tr><tr>
+	</TR>
+	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Secret:")}</B>
 		</TD>
-		<TD WIDTH="8%">
-			<INPUT TYPE="TEXT" NAME="netelem[secret]" VALUE="{$netdev.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netdev[secret]" VALUE="{$netdev.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
 		</TD>
-	      </tr>
-	      <tr>
+	</TR>
+	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Community:")}</B>
 		</TD>
-		<TD WIDTH="8%" colspan="4">
-			<INPUT TYPE="TEXT" NAME="netelem[community]" VALUE="{$netdev.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
+		<TD WIDTH="98%">
+			<INPUT TYPE="TEXT" NAME="netdev[community]" VALUE="{$netdev.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
 		</TD>
-	      </tr>
+	</TR>
 {/if}
 {if isset($channels)}
-	      <TR>
+	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/channel.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Channel:")}</B>
 		</TD>
-		<TD WIDTH="8%" colspan="4">
-			<SELECT NAME="netelem[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
+		<TD WIDTH="98%">
+			<SELECT NAME="netdev[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
 				<OPTION VALUE="">- {trans("none")} -</OPTION>
 				{foreach from=$channels item=item}
 				<OPTION VALUE="{$item.id}" {if $item.id == $netdev.channelid} SELECTED{/if}>{$item.name}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
-	      </TR>
+	</TR>
 {/if}
-        <tr>
-                <td colspan=3>
-                        {trans('Ports')}<img src="img/add.gif">
-                </td>
-        </tr>
-        <tbody id="portlist">
-        </tbody>
-
-	      </tbody>
-<!-- end of active -->
-<!-- start cable -->
-	      <tbody id="elem_type_cable" style="display:none">
-              <TR>
+        <TR>
                 <TD WIDTH="1%">
                         <IMG SRC="img/netdev.gif" ALT="">
                 </TD>
-                <TD WIDTH="1%" NOWRAP>
-                        <B>{trans("Beginning network node:")}</B>
+		<TD WIDTH="1%" NOWRAP>
+			{trans('Ports:')}
+		</TD>
+		<TD WIDTH="98%" ALIGN="text-left">
+			<TABLE><TR><TD WIDTH="1%">
+				<TABLE><TBODY id="portlist"></TBODY></TABLE>
+			</TD>
+			<TD><IMG SRC="img/add.gif" onclick="addports();">
+			</TD>
+			</TR></TABLE>
+		</TD>
+        </TR>
+
+	</TBODY>
+<!-- end of elem_type_active -->
+<!-- start of elem_type_passive -->
+        <TBODY ID="elem_type_passive" STYLE="display:none">
+        </TBODY>
+<!-- end of elem_type_passive -->
+<!-- start of elem_type_cable -->
+	<SCRIPT type="text/javascript">
+	<!--
+	xajax_changeWireType({$netcable.type});
+	//-->
+	</SCRIPT>
+
+    	<TBODY ID="elem_type_cable" STYLE="display:none">
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
                 </TD>
-                <TD WIDTH="8%" colspan="4">
-                        <SELECT NAME="netelem[]" {tip text="Select channel (optional)" trigger="channelid"}>
-                                <OPTION VALUE="">- {trans("none")} -</OPTION>
-                                {foreach from=$channels item=item}
-                                <OPTION VALUE="{$item.id}" {if $item.id == $netdev.channelid} SELECTED{/if}>{$item.name}</OPTION>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Label:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netcable[label]" VALUE="{if $netcable.label}{$netcable.label}{/if}" {tip trigger="label" text="Enter label for cable"}>
+                </TD>
+        </TR>
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Start net node:")}
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netcable[srcnodeid]" VALUE="{$netcable.srcnodeid}" {tip text="Select node"} >
+                                {section name=nd loop=$NNnodes}
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if $netcable.srcnodeid==$NNnodes[nd].id} selected{/if}>{$NNnodes[nd].name}</OPTION>
+                                {/section}
+                        </SELECT>
+                </TD>
+        </TR>
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("End net node:")}
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netcable[dstnodeid]" VALUE="{$netcable.dstnodeid}" {tip trigger="dstnodeid" text="Select node"} >
+                                {section name=nd loop=$NNnodes}
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if $netcable.dstnodeid==$NNnodes[nd].id} selected{/if}>{$NNnodes[nd].name}</OPTION>
+                                {/section}
+                        </SELECT>
+                </TD>
+        </TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Distance:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netcable[distance]" VALUE="{if $netcable.distance}{$netcable.distance}{/if}" {tip trigger="distance" text="Enter distance between nodes (in meters)"}>
+                </TD>
+        </TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Number of wires:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netcable[capacity]" VALUE="{if $netcable.capacity}{$netcable.capacity}{/if}" {tip trigger="capacity" text="Enter number of wires/fibers"}>
+                </TD>
+        </TR>
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev_model.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Cable type:")}
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netcable[type]" VALUE="{$netcable.type}" {tip text="Select node"} onchange="xajax_changeWireType(this.value)">
+                                {foreach from=$_NETCABLETYPES key=t item=v}
+                                <OPTION VALUE="{$t}" {if $netcableinfo.type==$t} selected{/if}>{$v}</OPTION>
                                 {/foreach}
                         </SELECT>
                 </TD>
-              </TR>
-		      
-	      </tbody>
-<!-- end of cable -->
+        </TR>
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev_model.gif" alt="">                                                                                                   </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Wire/fiber type:")}
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT ID="wiretype" NAME="netcable[wiretype]" VALUE="{$netcable.wiretype}" {tip text="Select type for wires/fibers"} >
+                        </SELECT>
+                </TD>
+        </TR>
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev_model.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Color schema:")}
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT ID="colorschema" NAME="netcable[colorschemaid]" VALUE="{$netcable.colorschemaid}" {tip text="Select schema for colouring wires/fibers"} >
+                        </SELECT>
+                </TD>
+        </TR>
+	</TBODY>
+<!-- end of elem_type_cable -->
+<!-- start of elem_type_splitter -->
+        <TBODY ID="elem_type_splitter" STYLE="display:none">
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Net node:")}
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
+                                <OPTION VALUE="-1">{trans("None")}</OPTION>
+                                {section name=nd loop=$NNnodes}
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                {/section}
+                        </SELECT>
+                </TD>
+        </TR>
+        </TBODY>
+<!-- end of elem_type_splitter -->
+<!-- start of elem_type_multiplexer -->
+        <TBODY ID="elem_type_multiplexer" STYLE="display:none">
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Net node:")}
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
+                                <OPTION VALUE="-1">{trans("None")}</OPTION>
+                                {section name=nd loop=$NNnodes}
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                {/section}
+                        </SELECT>
+                </TD>
+        </TR>
+        </TBODY>
+<!-- end of elem_type_multiplexer -->
+<!-- start of elem_type_computer -->
+        <TBODY ID="elem_type_computer" STYLE="display:none">
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Net node:")}
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
+                                <OPTION VALUE="-1">{trans("None")}</OPTION>
+                                {section name=nd loop=$NNnodes}
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                {/section}
+                        </SELECT>
+                </TD>
+        </TR>
+        </TBODY>
+<!-- end of elem_type_computer -->
 
-	      </table>
-	</td>
-    </tr>
- 
- 
- 
- <!-- stare kontrolki -->
- <TR>
-        <TD WIDTH="100%" COLSPAN="6" CLASS="container">
-		    <TABLE WIDTH="100%" CELLPADDING="0">
-				<TR>
-					<TD WIDTH="50%" style="vertical-align:top;">
-					    <TABLE WIDTH="100%" CELLPADDING="3"><!-- pierwsza kolumna -->
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-							<tr>
-							</tr>
-							<tr>
-							</tr>
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-						</table><!-- EOF pierwsza kolumna -->
-					</td>
-					<td>
-						<table WIDTH="100%" CELLPADDING="3"><!-- druga kolumna -->
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-							<TR>
-							</TR>
-
-						</table><!-- EOF druga kolumna -->
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>	
 	<TR>
 		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
 			<A HREF="javascript:document.netelemadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
@@ -341,19 +469,8 @@
 <SCRIPT type="text/javascript">
 <!--
 document.forms['netelemadd'].elements['netelem[name]'].focus();
-check_teryt('location', true);
 setNNProject();
-function set_lat_lon(){
-    var loc = document.getElementById('location').value;
-
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode( { 'address': loc}, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-            document.getElementById('latitude').value = results[0].geometry.location.lat();
-            document.getElementById('longitude').value = results[0].geometry.location.lng();
-        }
-    });
-}
+xajax_changeNetElementType({$netelem.type});
 //-->
 </SCRIPT>
 {/block}

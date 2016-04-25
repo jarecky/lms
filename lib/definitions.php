@@ -601,17 +601,13 @@ $NETCONNECTORS = array(
 );
 
 $NETCABLETYPES = array (
-	MEDIUM_COPPER => array (
-		1 => trans('twisted-pair'),
-		2 => trans('coaxial'),
-	),
-	MEDIUM_FIBER => array (
-		1 => 'jednotubowy',
-		2 => 'wielotubowy',
-		3 => 'łatwy dostęp',
-		4 => 'samonośny',
-		5 => 'doziemny',
-	),
+	1 => trans('twisted-pair'),
+	50 => trans('coaxial'),
+	200 => 'jednotubowy',
+	201 => 'wielotubowy',
+	202 => 'łatwy dostęp',
+	203 => 'samonośny',
+	204 => 'doziemny',
 );
 
 $NETWIRETYPES = array (
@@ -624,8 +620,8 @@ $NETWIRETYPES = array (
         6 => trans('UTP cat. 5a'),
         7 => trans('UTP cat. 7'),
         8 => trans('UTP cat. 7a'),
-	50 => trans('thicknet'),
-	51 => trans('thinnet'),
+	51 => trans('thicknet'),
+	52 => trans('thinnet'),
 	// RADIO
         101 => trans('802.11b/g'),
         102 => trans('802.11a/an/ac'),
@@ -635,7 +631,6 @@ $NETWIRETYPES = array (
 	// FIBE
 	200 => trans('single-mode G.652.A'),
 	202 => trans('single-mode G.652.B'),
-	203 => trans('single-mode G.652.C'),
 	204 => trans('single-mode G.652.D'),
 	205 => trans('single-mode G.653.A'),
 	205 => trans('single-mode G.653.B'),
@@ -659,7 +654,7 @@ $NETWIRETYPES = array (
 	254 => trans('multi-mode OM4'),
 );		
 
-$COPERCOLORSSCHEMAS = array (
+$COPPERCOLORSCHEMAS = array (
 	1	=> array(
 			label => 'standard',
 			colors => array (
@@ -890,6 +885,7 @@ if(isset($SMARTY))
 	$SMARTY->assign('_NETCABLETYPES', $NETCABLETYPES);
 	$SMARTY->assign('_NETWIRETYPES', $NETWIRETYPES);
 	$SMARTY->assign('_FIBEROPTICCOLORSCHEMAS', $FIBEROPTICCOLORSCHEMAS);
+	$SMARTY->assign('_COPPERCOLORSCHEMAS', $COPPERCOLORSCHEMAS);
 	$SMARTY->assign('_NETNODETYPES', $NETNODETYPES);
 	$SMARTY->assign('_NETNODEOWNERSHIPS', $NETNODEOWNERSHIPS);
 	$SMARTY->assign('_USERPANEL_ID_TYPES', $USERPANEL_ID_TYPES);
