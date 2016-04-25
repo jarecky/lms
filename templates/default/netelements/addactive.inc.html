@@ -1,83 +1,76 @@
-{extends file="netelements/add.html"}
-{block name=netelem_params}
 {if ConfigHelper::checkConfig('phpui.radius')}
-	<TR>
+	      <tr>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Shortname:")}</B>
 		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[shortname]" VALUE="{$netdev.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[shortname]" VALUE="{$netdev.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
 		</TD>
-	</TR>
-	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Type:")}</B>
 		</TD>
-		<TD WIDTH="98%">
-			<SELECT NAME="netdev[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
+		<TD WIDTH="8%">
+			<SELECT NAME="netelem[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
 				<OPTION VALUE="0"></OPTION>
 				{foreach from=$nastype item=item key=key}
 				<OPTION VALUE="{$key}" {if $key==$netdevices.nastype} SELECTED{/if}>{$item.name}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
-	</TR>
-	<TR>
+	      </tr>
+	      <tr>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Max clients:")}</B>
 		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[clients]" VALUE="{if $netdev.clients}{$netdev.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[clients]" VALUE="{if $netdev.clients}{$netdev.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
 		</TD>
-	</TR>
-	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Secret:")}</B>
 		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[secret]" VALUE="{$netdev.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[secret]" VALUE="{$netdev.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
 		</TD>
-	</TR>
-	<TR>
+	      </tr>
+	      <tr>
 		<TD WIDTH="1%">
 			<IMG SRC="img/radius.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Community:")}</B>
 		</TD>
-		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[community]" VALUE="{$netdev.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
+		<TD WIDTH="8%" colspan="4">
+			<INPUT TYPE="TEXT" NAME="netelem[community]" VALUE="{$netdev.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
 		</TD>
-	</TR>
+	      </tr>
 {/if}
 {if isset($channels)}
-	<TR>
+	      <TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/channel.gif" ALT="">
 		</TD>
 		<TD WIDTH="1%" NOWRAP>
 			<B>{trans("Channel:")}</B>
 		</TD>
-		<TD WIDTH="98%">
-			<SELECT NAME="netdev[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
+		<TD WIDTH="8%" colspan="4">
+			<SELECT NAME="netelem[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
 				<OPTION VALUE="">- {trans("none")} -</OPTION>
 				{foreach from=$channels item=item}
 				<OPTION VALUE="{$item.id}" {if $item.id == $netdev.channelid} SELECTED{/if}>{$item.name}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
-	</TR>
+	      </TR>
 {/if}
-{/block}

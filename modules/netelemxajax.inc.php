@@ -382,11 +382,16 @@ function getProducerByType($type){
 		LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
 		WHERE m.type=".$type;
 //error_log($q);
+error_log($q.MODULES_DIR.'/../templates/default/netelements/addactive.inc.html');
     $producers = $DB->getAll($q);
     $res->script("var d=document.getElementById('producer'); d.options.length=0;");
     $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
     foreach($producers as $p){
       $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
+    }
+    switch($type){
+      case '0':
+	$res->assign("elem_type","innerHTML", file_get_contents(MODULES_DIR.'/../templates/default/netelements/addactive.inc.html'));
     }
     return $res;
 }
@@ -395,7 +400,6 @@ function getModelsByProducerAndType($type, $producer){
     global $DB;
     $res = new xajaxResponse();
     $q="SELECT m.id, m.name FROM netdevicemodels m WHERE m.type=".$type." AND m.netdeviceproducerid=".$producer;
-//error_log($q);
     $producers = $DB->getAll($q);
     $res->script("var d=document.getElementById('model'); d.options.length=0;");
     $res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
@@ -406,12 +410,13 @@ function getModelsByProducerAndType($type, $producer){
 
 }
 
+
 global $LMS,$SMARTY;
 $LMS->InitXajax();
 $LMS->RegisterXajaxFunction(array(
 	'getManagementUrls','addManagementUrl', 'delManagementUrl', 'updateManagementUrl',
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
-	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType', 
+	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 
