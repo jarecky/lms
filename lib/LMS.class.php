@@ -1221,6 +1221,42 @@ class LMS
         return $manager->NetElemAdd($data);
     }
 
+    public function NetElemAddActive($netelemdata,$netactivedata)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemAddActive($netelemdata,$netactivedata);
+    }
+
+    public function NetElemAddPassive($netelemdata,$netpassivedata)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemAddPassive($netelemdata,$netpassivedata);
+    }
+
+    public function NetElemAddCable($netelemdata,$netcabledata)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemAddCable($netelemdata,$netcabledata);
+    }
+
+    public function NetElemAddSplitter($netelemdata,$netsplitterdata)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemAddSplitter($netelemdata,$netsplitterdata);
+    }
+
+    public function NetElemAddMultiplexer($netelemdata,$netmultiplexerdata)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemAddMultiplexer($netelemdata,$netmultiplexerdata);
+    }
+
+    public function NetElemAddComputer($netelemdata,$netcomputerdata)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->NetElemAddComputer($netelemdata,$netcomputerdata);
+    }
+
     public function NetElemUpdate($data)
     {
         $manager = $this->getNetElemManager();

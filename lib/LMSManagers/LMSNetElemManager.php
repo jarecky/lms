@@ -73,7 +73,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	}
 
         $args = array(
-            $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $devid,
+            $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $devid,
             'linktype' => $type,
             'linkradiosector' => $radiosector,
             'linktechnology' => $technology,
@@ -87,7 +87,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
         if ($this->syslog && $res) {
             $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]] = $this->db->GetOne('SELECT ownerid FROM vnodes WHERE id=?', array($id));
             $this->syslog->AddMessage(SYSLOG_RES_NODE, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE],
-                $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
+                $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM],
                 $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST]));
         }
         return $res;
@@ -117,8 +117,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $dstradiosector,
 		'technology' => $technology,
 		'speed' => $speed,
-		'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev2,
-		'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev1,
+		'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $dev2,
+		'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $dev1,
 	);
 	$res = $this->db->Execute('UPDATE netlinks SET type=?, srcradiosector=?, dstradiosector=?, technology=?, speed=?
 		WHERE src=? AND dst=?', array_values($args));
@@ -129,8 +129,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $dstradiosector,
 			'technology' => $technology,
 			'speed' => $speed,
-			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev1,
-			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev2,
+			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $dev1,
+			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $dev2,
 		);
 		$res = $this->db->Execute('UPDATE netlinks SET type=?, dstradiosector=?, srcradiosector=?, technology=?, speed=?
 			WHERE src=? AND dst=?', array_values($args));
@@ -139,8 +139,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		$args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK]] =
 			$this->db->GetOne('SELECT id FROM netlinks WHERE (src=? AND dst=?) OR (dst=? AND src=?)', array($dev1, $dev2, $dev1, $dev2));
 		$this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK],
-			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
-			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
+			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM],
+			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM],
 			'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR],
 			'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR],
 		));
@@ -171,8 +171,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
         if ($dev1 != $dev2)
             if (!$this->IsNetElemLink($dev1, $dev2)) {
                 $args = array(
-                    'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev1,
-                    'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $dev2,
+                    'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $dev1,
+                    'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $dev2,
                     'type' => $type,
                     'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $srcradiosector,
                     'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR] => $dstradiosector,
@@ -187,8 +187,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 if ($this->syslog && $res) {
                     $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK]] = $this->db->GetLastInsertID('netlinks');
                     $this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK],
-                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
-                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV],
+                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM],
+                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM],
                         'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR],
                         'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_RADIOSECTOR]));
                 }
@@ -208,8 +208,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 foreach ($netlinks as $netlink) {
                     $args = array(
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK] => $netlink['id'],
-                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['src'],
-                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['dst'],
+                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $netlink['src'],
+                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $netlink['dst'],
                     );
                     $this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_DELETE, $args, array_keys($args));
                 }
@@ -247,7 +247,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
             'netnodeid' => $data['netnodeid'],
             'status' => $data['status'],
             'netdevicemodelid' => !empty($data['netdevicemodelid']) ? $data['netdevicemodelid'] : null,
-            $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $data['id'],
+            $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $data['id'],
         );
         $res = $this->db->Execute('UPDATE netdevices SET name=?, description=?, producer=?, location=?,
 				location_city=?, location_street=?, location_house=?, location_flat=?,
@@ -256,7 +256,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 				invprojectid=?, netnodeid=?, status=?, netdevicemodelid=?
 				WHERE id=?', array_values($args));
         if ($this->syslog && $res)
-            $this->syslog->AddMessage(SYSLOG_RES_NETDEV, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV]));
+            $this->syslog->AddMessage(SYSLOG_RES_NETELEM, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]));
     }
 
     public function NetElemAdd($data)
@@ -264,40 +264,36 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
         global $SYSLOG_RESOURCE_KEYS;
 
         $args = array(
-            'name' => $data['name'],
-            'location' => trim($data['location']),
-            'location_city' => $data['location_city'] ? trim($data['location_city']) : null,
-            'location_street' => $data['location_street'] ? trim($data['location_street']) : null,
-            'location_house' => $data['location_house'] ? trim($data['location_house']) : null,
-            'location_flat' => $data['location_flat'] ? trim($data['location_flat']) : null,
+	    'name' => $data['name'],
+            'type' => $data['type'],
             'description' => $data['description'],
             'producer' => $data['producer'],
             'model' => $data['model'],
             'serialnumber' => $data['serialnumber'],
-            'ports' => $data['ports'],
             'purchasetime' => $data['purchasetime'],
             'guaranteeperiod' => $data['guaranteeperiod'],
-            'shortname' => $data['shortname'],
-            'nastype' => $data['nastype'],
-            'clients' => $data['clients'],
-            'secret' => $data['secret'],
-            'community' => $data['community'],
-            'channelid' => !empty($data['channelid']) ? $data['channelid'] : NULL,
-            'longitude' => !empty($data['longitude']) ? str_replace(',', '.', $data['longitude']) : NULL,
-            'latitude' => !empty($data['latitude']) ? str_replace(',', '.', $data['latitude']) : NULL,
-            'invprojectid' => $data['invprojectid'],
             'netnodeid' => $data['netnodeid'],
-            'status' => $data['status'],
+            'invprojectid' => $data['invprojectid'],
             'netdevicemodelid' => !empty($data['netdevicemodelid']) ? $data['netdevicemodelid'] : null,
+            'status' => $data['status'],
         );
-        if ($this->db->Execute('INSERT INTO netdevices (name, location,
-				location_city, location_street, location_house, location_flat,
+        if ($this->db->Execute('INSERT INTO netdevices (name, type
 				description, producer, model, serialnumber,
-				ports, purchasetime, guaranteeperiod, shortname,
-				nastype, clients, secret, community, channelid,
-				longitude, latitude, invprojectid, netnodeid, status, netdevicemodelid)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', array_values($args))) {
+				purchasetime, guaranteeperiod, netnodeid,
+				invprojectid, netdevicemodelid, status)
+				VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', array_values($args))) {
             $id = $this->db->GetLastInsertID('netdevices');
+
+            if ($this->syslog) {
+                $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]] = $id;
+                $this->syslog->AddMessage(SYSLOG_RES_NETELEM, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]));
+            }
+            return $id;
+        } else
+            return FALSE;
+    }
+
+    public function NetElemAddActive($netelemdata,$netactivedata) {
 
             // EtherWerX support (devices have some limits)
             // We must to replace big ID with smaller (first free)
@@ -305,10 +301,10 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 $this->db->BeginTrans();
                 $this->db->LockTables('ewx_channels');
 
-                if ($newid = $this->db->GetOne('SELECT n.id + 1 FROM ewx_channels n 
-						LEFT OUTER JOIN ewx_channels n2 ON n.id + 1 = n2.id
-						WHERE n2.id IS NULL AND n.id <= 99999
-						ORDER BY n.id ASC LIMIT 1')) {
+                if ($newid = $this->db->GetOne('SELECT n.id + 1 FROM ewx_channels n
+                                                LEFT OUTER JOIN ewx_channels n2 ON n.id + 1 = n2.id
+                                                WHERE n2.id IS NULL AND n.id <= 99999
+                                                ORDER BY n.id ASC LIMIT 1')) {
                     $this->db->Execute('UPDATE ewx_channels SET id = ? WHERE id = ?', array($newid, $id));
                     $id = $newid;
                 }
@@ -316,14 +312,26 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 $this->db->UnLockTables();
                 $this->db->CommitTrans();
             }
+    }	    
 
-            if ($this->syslog) {
-                $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV]] = $id;
-                $this->syslog->AddMessage(SYSLOG_RES_NETDEV, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV]));
-            }
-            return $id;
-        } else
-            return FALSE;
+    public function NetElemAddPassive($netelemdata,$netpassivedata) {
+
+    }
+
+    public function NetElemAddCable($netelemdata,$netcabledata) {
+
+    }
+
+    public function NetElemAddSplitter($netelemdata,$netsplitterdata) {
+
+    }
+
+    public function NetElemAddMultiplexer($netelemdata,$netmultiplexerdata) {
+
+    }
+
+    public function NetElemAddComputer($netelemdata,$netcomputerdata) {
+
     }
 
     public function NetElemExists($id)
@@ -530,8 +538,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 foreach ($netlinks as $netlink) {
                     $args = array(
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK] => $netlink['id'],
-                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['src'],
-                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['dst'],
+                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $netlink['src'],
+                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $netlink['dst'],
                     );
                     $this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_DELETE, $args, array_keys($args));
                 }
@@ -541,12 +549,12 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                     $args = array(
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE] => $node['id'],
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $node['ownerid'],
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => 0,
+                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => 0,
                         'port' => 0,
                     );
                     $this->syslog->AddMessage(SYSLOG_RES_NODE, SYSLOG_OPER_UPDATE, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE],
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST],
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV]));
+                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]));
                 }
         }
         $this->db->Execute('DELETE FROM netlinks WHERE src=? OR dst=?', array($id, $id));
@@ -565,8 +573,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 foreach ($netlinks as $netlink) {
                     $args = array(
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETLINK] => $netlink['id'],
-                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['src'],
-                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $netlink['dst'],
+                        'src_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $netlink['src'],
+                        'dst_' . $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $netlink['dst'],
                     );
                     $this->syslog->AddMessage(SYSLOG_RES_NETLINK, SYSLOG_OPER_DELETE, $args, array_keys($args));
                 }
@@ -584,7 +592,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                         }
                     $args = array(
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE] => $node,
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $id,
+                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $id,
                     );
                     $this->syslog->AddMessage(SYSLOG_RES_NODE, SYSLOG_OPER_DELETE, $args, array_keys($args));
                 }
@@ -594,12 +602,12 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                     $args = array(
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NODE] => $node['id'],
                         $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_CUST] => $node['ownerid'],
-                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => 0,
+                        $SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => 0,
                     );
                     $this->syslog->AddMessage(SYSLOG_RES_NODE, SYSLOG_OPER_UPDATE, $args, array_keys($args));
                 }
-            $args = array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETDEV] => $id);
-            $this->syslog->AddMessage(SYSLOG_RES_NETDEV, SYSLOG_OPER_DELETE, $args, array_keys($args));
+            $args = array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM] => $id);
+            $this->syslog->AddMessage(SYSLOG_RES_NETELEM, SYSLOG_OPER_DELETE, $args, array_keys($args));
         }
         $this->db->Execute('DELETE FROM netlinks WHERE src=? OR dst=?', array($id, $id));
         $this->db->Execute('DELETE FROM nodes WHERE ownerid=0 AND netdev=?', array($id));

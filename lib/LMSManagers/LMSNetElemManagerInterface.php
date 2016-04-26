@@ -46,7 +46,19 @@ interface LMSNetElemManagerInterface
     public function NetElemUpdate($data);
     
     public function NetElemAdd($data);
+
+    public function NetElemAddActive($netelemdata,$netactivedata);
+
+    public function NetElemAddPassive($netelemdata,$netpassivedata);
+
+    public function NetElemAddCable($netelemdata,$netcabledata);
+
+    public function NetElemAddSplitter($netelemdata,$netsplitterdata);	    
     
+    public function NetElemAddMultiplexer($netelemdata,$netmultiplexerdata);
+
+    public function NetElemAddComputer($netelemdata,$netcomputerdata);
+
     public function DeleteNetElem($id);
     
     public function NetElemDelLinks($id);
