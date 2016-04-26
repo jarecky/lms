@@ -272,12 +272,12 @@
 			{trans('Ports:')}
 		</TD>
 		<TD WIDTH="98%" ALIGN="text-left">
-			<TABLE><TR><TD WIDTH="1%">
-				<TABLE><TBODY id="portlist"></TBODY></TABLE>
-			</TD>
-			<TD><IMG SRC="img/add.gif" onclick="addports();">
-			</TD>
-			</TR></TABLE>
+			<IMG SRC="img/add.gif" onclick="addports();">
+		</TD>
+	</TR>
+	<TR>
+		<TD COLSPAN=3 WIDTH="100%">
+			<TABLE><TBODY id="porttable"></TBODY></TABLE>
 		</TD>
         </TR>
 
@@ -467,6 +467,78 @@
     </TBODY>
 </TABLE>
 </FORM>
+<script>
+function addports(){
+  var port_types='<option value=0>{trans("Select")}</option>';
+  {foreach from=$NETPORTTYPES key=k item=val}
+			      port_types+='<option value="{$k}">{$val}</option>';
+  {/foreach}
+
+  var connectors='<option value=0>{trans("Select")}</option>';
+  {foreach from=$NETCONNECTORS key=k item=val}
+			      connectors+='<option value="{$k}">{$val}</option>';
+  {/foreach}
+  var node=document.getElementById('porttable');
+  var row=document.createElement('tr');
+  var d=new Date();
+  var t='a'+d.getTime();
+  var index=t.substr(-7,5);
+  row.innerHTML='<td class="nobr fleft fright" colspan="3">{trans("Label:")}'+
+	'<input type=text name="modeledit['+index+'][label]" value="xxx"> typ:<select name="modeledit['+index+'][netporttype]">'+
+			    port_types+'</select>'+
+	' {trans("connector")}:<select name="modeledit['+index+'][netconnector]">'+
+	connectors+'</select>'+
+	'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
+	'<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
+	'</td>';
+  node.appendChild(row);
+  //renumerate('porttable');
+}
+
+function xaddport(id, label, connector, port_type, cn, pn){
+  var port_types='<option value=0>{trans("Select")}</option>';
+  {foreach from=$NETPORTTYPES key=k item=val}
+			      port_types+='<option value="{$k}">{$val}</option>';
+  {/foreach}
+
+  var connectors='<option value=0>{trans("Select")}</option>';
+  {foreach from=$NETCONNECTORS key=k item=val}
+			      connectors+='<option value="{$k}">{$val}</option>';
+  {/foreach}
+  var node=document.getElementById('porttable');
+  var row=document.createElement('tr');
+  var index=document.getElementById('porttable').rows.length+1;
+  row.innerHTML='<td class="nobr fleft fright" colspan="3">{trans("Label:")}'+
+	'<input type=text name="modeledit['+id+'][label]" value="'+label+'"> typ:<select name="modeledit['+id+'][netporttype]">'+
+			    '<option value='+port_type+'>'+pn+'</option>'+
+			    port_types+'</select>'+
+	' {trans("connector")}:<select name="modeledit['+id+'][netconnector]">'+
+	'<option value='+connector+'>'+cn+'</option>'+
+	connectors+'</select>'+
+	'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
+	'<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
+	'</td>';
+  node.appendChild(row);
+//  renumerate('porttable');
+}
+
+function clone(src){
+  var ports=document.getElementById('porttable');
+  var nrow=document.createElement('tr');
+  var d=new Date();
+  var t='a'+d.getTime();
+  var index=t.substr(-7,5);
+  nrow.innerHTML=src.parentNode.parentNode.innerHTML.replace(/[0-9]+\]/g,index+']');
+  ports.insertBefore(nrow,src.parentNode.parentNode.nextSibling);
+//  renumerate('porttable');
+
+}
+function remports(row){
+  row.parentNode.parentNode.parentNode.removeChild(row.parentNode.parentNode);
+  
+}  
+
+</script>
 <SCRIPT type="text/javascript">
 <!--
 document.forms['netelemadd'].elements['netelem[name]'].focus();

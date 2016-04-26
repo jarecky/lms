@@ -166,6 +166,8 @@ class LMSNetElemAction extends LMSModuleAction
 	function _add() {
 		include(MODULES_DIR . '/netelemxajax.inc.php');
 		$netelemdata['type']=-1;
+		global $NETPORTTYPES, $NETCONNECTORS;
+
 		if(isset($_POST['netelem']))
 		{
 			$netelemdata = $_POST['netelem'];
@@ -310,6 +312,8 @@ class LMSNetElemAction extends LMSModuleAction
 			
 		}
 		$this->smarty->assign('netelem', $netelemdata);
+		$this->smarty->assign('NETPORTTYPES',$NETPORTTYPES);
+		$this->smarty->assign('NETCONNECTORS',$NETCONNECTORS);
 		$layout['pagetitle'] = trans('New Element');
 
 		$this->smarty->assign('nastype', $this->lms->GetNAStypes());
@@ -450,8 +454,7 @@ class LMSNetElemAction extends LMSModuleAction
 	function _models() {
 
 		include(MODULES_DIR . '/modelxajax.inc.php');
-		global $NETPORTTYPES;
-		global $NETCONNECTORS;
+		global $NETPORTTYPES, $NETCONNECTORS;
 		$layout['pagetitle'] = trans("Network device producers and models");
 		$listdata = $modellist = array();
 		$producerlist = $this->db->GetAll('SELECT id, name FROM netdeviceproducers ORDER BY name ASC');

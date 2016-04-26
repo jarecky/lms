@@ -450,11 +450,13 @@ function getModelsByProducerAndType($type, $producer){
 }
 
 function getModelPortList($id){
-	global $DB;
+	global $DB, $NETCONNECTORS, $NETPORTTYPES;
 	$res= new xajaxResponse();
-	$q="SELECT FROM netdeviceschema ns ";
-	$res->script("var d=document.getElementById('portlist').innerHTML='';
-		      d.innerHTML=".$lista);
+	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id." ORDER by 3");
+	$res->script("document.getElementById('porttable').innerHTML=''");
+	foreach($ports as $p){
+	  $res->call('xaddport',$p['id'],$p['label'],$p['connector'],$p['port_type'], $NETCONNECTORS[($p['connector'])], $NETPORTTYPES[($p['port_type'])]);
+	}
 	return $res;
 }
 
@@ -498,6 +500,7 @@ $LMS->RegisterXajaxFunction(array(
 	'getManagementUrls','addManagementUrl', 'delManagementUrl', 'updateManagementUrl',
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
 	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
+	'getModelPortList',
 	'changeNetElementType','changeWireType',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());

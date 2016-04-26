@@ -145,7 +145,7 @@ function edit_model($id) {
 	$obj = new xajaxResponse();
 
 	$model = $DB->GetRow('SELECT * FROM netdevicemodels WHERE id = ?', array($id));
-	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id);
+	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id." ORDER by 3");
 
 	foreach($ports as $p){
 	  $obj->call('xaddport',$p['id'],$p['label'],$p['connector'],$p['port_type'], $NETCONNECTORS[($p['connector'])], $NETPORTTYPES[($p['port_type'])]);
