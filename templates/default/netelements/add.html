@@ -191,7 +191,7 @@
 			<B>{trans("Shortname:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[shortname]" VALUE="{$netdev.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netactive[shortname]" VALUE="{$netactive.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
 		</TD>
 	</TR>
 	<TR>
@@ -202,10 +202,10 @@
 			<B>{trans("Type:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT NAME="netdev[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
+			<SELECT NAME="netactive[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
 				<OPTION VALUE="0"></OPTION>
 				{foreach from=$nastype item=item key=key}
-				<OPTION VALUE="{$key}" {if $key==$netdev.nastype} SELECTED{/if}>{$item.name}</OPTION>
+				<OPTION VALUE="{$key}" {if $key==$netactive.nastype} SELECTED{/if}>{$item.name}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
@@ -218,7 +218,7 @@
 			<B>{trans("Max clients:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[clients]" VALUE="{if $netdev.clients}{$netdev.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netactive[clients]" VALUE="{if $netactive.clients}{$netactive.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
 		</TD>
 	</TR>
 	<TR>
@@ -229,7 +229,7 @@
 			<B>{trans("Secret:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[secret]" VALUE="{$netdev.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netactive[secret]" VALUE="{$netactive.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
 		</TD>
 	</TR>
 	<TR>
@@ -240,7 +240,7 @@
 			<B>{trans("Community:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netdev[community]" VALUE="{$netdev.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
+			<INPUT TYPE="TEXT" NAME="netactive[community]" VALUE="{$netactive.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
 		</TD>
 	</TR>
 {/if}
@@ -253,10 +253,10 @@
 			<B>{trans("Channel:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT NAME="netdev[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
+			<SELECT NAME="netactive[channelid]" {tip text="Select channel (optional)" trigger="channelid"}>
 				<OPTION VALUE="">- {trans("none")} -</OPTION>
 				{foreach from=$channels item=item}
-				<OPTION VALUE="{$item.id}" {if $item.id == $netdev.channelid} SELECTED{/if}>{$item.name}</OPTION>
+				<OPTION VALUE="{$item.id}" {if $item.id == $netactive.channelid} SELECTED{/if}>{$item.name}</OPTION>
 				{/foreach}
 			</SELECT>
 		</TD>
