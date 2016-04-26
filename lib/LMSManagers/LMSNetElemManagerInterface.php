@@ -63,8 +63,18 @@ interface LMSNetElemManagerInterface
     
     public function NetElemDelLinks($id);
     
-    public function GetNetElem($id);
-    
+    public function GetNetElemActive($id);
+
+    public function GetNetElemPassive($id);
+
+    public function GetNetElemCable($id);
+
+    public function GetNetElemSplitter($id);
+
+    public function GetNetElemMultiplexer($id);
+
+    public function GetNetElemComputer($id);
+
     public function GetNotConnectedElements($id);
     
     public function GetNetElemNames();
@@ -78,7 +88,9 @@ interface LMSNetElemManagerInterface
     public function CountNetElemLinks($id);
     
     public function GetNetElemIDByNode($id);
-    
+
+    public function GetNetElemType($id);
+
     public function NetElemExists($id);
 
     public function GetModelList($pid);

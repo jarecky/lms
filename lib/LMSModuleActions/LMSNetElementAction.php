@@ -336,71 +336,69 @@ class LMSNetElemAction extends LMSModuleAction
 		include(MODULES_DIR . '/netelemxajax.inc.php');
 
 		if (!array_key_exists('xjxfun', $_POST)) {                  // xajax was called and handled by netelemxajax.inc.php
-			$neteleminfo = $this->lms->GetNetElem($_GET['id']);
-			$netelemconnected = $this->lms->GetNetElemConnectedNames($_GET['id']);
-			$netcomplist = $this->lms->GetNetElemLinkedNodes($_GET['id']);
-			$netelemlist = $this->lms->GetNotConnectedElements($_GET['id']);
-			$netports = $this->lms->GetNetElemPorts($_GET['id']);
-
-			$nodelist = $this->lms->GetUnlinkedNodes();
-			$netelemips = $this->lms->GetNetElemIPs($_GET['id']);
-
-			$this->session->save('backto', $_SERVER['QUERY_STRING']);
-
 			$layout['pagetitle'] = trans('Element Info: $a $b $c', $neteleminfo['name'], $neteleminfo['producer'], $neteleminfo['model']);
-
-			$neteleminfo['id'] = $_GET['id'];
-
-			if ($neteleminfo['netnodeid']) {
-				$netnode = $this->db->GetRow("SELECT * FROM netnodes WHERE id=".$neteleminfo['netnodeid']);
-				if ($netnode) {
-					$neteleminfo['nodename'] = $netnode['name'];
-				}
-			}
-
-			$neteleminfo['projectname'] = trans('none');
-			if ($neteleminfo['invprojectid']) {
-				$prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id = ?", array($neteleminfo['invprojectid']));
-				if ($prj) {
-					if ($prj['type'] == INV_PROJECT_SYSTEM && intval($prj['id'])==1) {
-						/* inherited */
-						if ($netnode) {
-							$prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id=?",
-								array($netnode['invprojectid']));
-							if ($prj)
-								$neteleminfo['projectname'] = trans('$a (from network node $b)', $prj['name'], $netnode['name']);
-						}
-					} else
-						$neteleminfo['projectname'] = $prj['name'];
-				}
-			}
-			$this->smarty->assign('neteleminfo', $neteleminfo);
-			$this->smarty->assign('objectid', $neteleminfo['id']);
-			$this->smarty->assign('restnetelemlist', $netelemlist);
-			$this->smarty->assign('netports', $netports);
-			$this->smarty->assign('netelemips', $netelemips);
-			$this->smarty->assign('nodelist', $nodelist);
-			$this->smarty->assign('elemlinktype', $this->session->get('elemlinktype'));
-			$this->smarty->assign('elemlinktechnology', $this->session->get('elemlinktechnology'));
-			$this->smarty->assign('elemlinkspeed', $this->session->get('elemlinkspeed'));
-			$this->smarty->assign('nodelinktype', $this->session->get('nodelinktype'));
-			$this->smarty->assign('nodelinktechnology', $this->session->get('nodelinktechnology'));
-			$this->smarty->assign('nodelinkspeed', $this->session->get('nodelinkspeed'));
-
-			$hook_data = $this->lms->executeHook('neteleminfo_before_display',
-				array(
-					'netelemconnected' => $netelemconnected,
-					'netcomplist' => $netcomplist,
-					'smarty' => $this->smarty,
-				)
-			);
-			$netelemconnected = $hook_data['netelemconnected'];
-			$netcomplist = $hook_data['netcomplist'];
-			$this->smarty->assign('netelemlist', $netelemconnected);
-			$this->smarty->assign('netcomplist', $netcomplist);
-
-			switch ($neteleminfo['type']) {
+			$this->session->save('backto', $_SERVER['QUERY_STRING']);
+			switch ($this->lms->GetNetElemType($_GET['id'])) { 
 			case '0': 
+				$neteleminfo = $this->lms->GetNetElemActive($_GET['id']);
+				$neteleminfo['id'] = $_GET['id'];
+				$neteleminfo['projectname'] = trans('none');
+				if ($neteleminfo['invprojectid']) {
+					$prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id = ?", array($neteleminfo['invprojectid']));
+					if ($prj) {
+						if ($prj['type'] == INV_PROJECT_SYSTEM && intval($prj['id'])==1) {
+							/* inherited */
+							if ($netnode) {
+								$prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id=?",
+									array($netnode['invprojectid']));
+								if ($prj)
+									$neteleminfo['projectname'] = trans('$a (from network node $b)', $prj['name'], $netnode['name']);
+							}
+						} else
+							$neteleminfo['projectname'] = $prj['name'];
+					}
+				}
+
+				$netelemconnected = $this->lms->GetNetElemConnectedNames($_GET['id']);
+				$netcomplist = $this->lms->GetNetElemLinkedNodes($_GET['id']);
+				$netelemlist = $this->lms->GetNotConnectedElements($_GET['id']);
+				$netports = $this->lms->GetNetElemPorts($_GET['id']);
+
+				$nodelist = $this->lms->GetUnlinkedNodes();
+				$netelemips = $this->lms->GetNetElemIPs($_GET['id']);
+
+				if ($neteleminfo['netnodeid']) {
+					$netnode = $this->db->GetRow("SELECT * FROM netnodes WHERE id=".$neteleminfo['netnodeid']);
+					if ($netnode) {
+						$neteleminfo['nodename'] = $netnode['name'];
+					}
+				}
+
+				$this->smarty->assign('neteleminfo', $neteleminfo);
+				$this->smarty->assign('objectid', $neteleminfo['id']);
+				$this->smarty->assign('restnetelemlist', $netelemlist);
+				$this->smarty->assign('netports', $netports);
+				$this->smarty->assign('netelemips', $netelemips);
+				$this->smarty->assign('nodelist', $nodelist);
+				$this->smarty->assign('elemlinktype', $this->session->get('elemlinktype'));
+				$this->smarty->assign('elemlinktechnology', $this->session->get('elemlinktechnology'));
+				$this->smarty->assign('elemlinkspeed', $this->session->get('elemlinkspeed'));
+				$this->smarty->assign('nodelinktype', $this->session->get('nodelinktype'));
+				$this->smarty->assign('nodelinktechnology', $this->session->get('nodelinktechnology'));
+				$this->smarty->assign('nodelinkspeed', $this->session->get('nodelinkspeed'));
+
+				$hook_data = $this->lms->executeHook('neteleminfo_before_display',
+					array(
+						'netelemconnected' => $netelemconnected,
+						'netcomplist' => $netcomplist,
+						'smarty' => $this->smarty,
+					)
+				);
+				$netelemconnected = $hook_data['netelemconnected'];
+				$netcomplist = $hook_data['netcomplist'];
+				$this->smarty->assign('netelemlist', $netelemconnected);
+				$this->smarty->assign('netcomplist', $netcomplist);
+
 				if (isset($_GET['ip'])) {
 					$nodeipdata = $this->lms->GetNodeConnType($_GET['ip']);
 					$netelemauthtype = array();
@@ -419,7 +417,18 @@ class LMSNetElemAction extends LMSModuleAction
 			case '1':
 				break;
 			case '2':
-				$this->smarty->display('netelements/info.html');
+				$neteleminfo=$this->lms->GetNetElemCable($_GET['id']);
+				$netwires=$this->db->GetAll("SELECT * FROM netwires WHERE netelemid=?",array($_GET['id']));
+				
+				$this->smarty->assign('neteleminfo',$neteleminfo);
+				$this->smarty->assign('netwires',$netwirs);
+                                $hook_data = $this->lms->executeHook('neteleminfo_before_display',
+                                        array(
+                                                'smarty' => $this->smarty,
+                                        )
+                                );
+
+				$this->smarty->display('netelements/cableinfo.html');
 				break;
 			case '3':
 				break;
@@ -428,7 +437,7 @@ class LMSNetElemAction extends LMSModuleAction
 			case '99':
 				break;
 			default:
-				$this->session->redirect('?m=netelement&action=list');	
+				#$this->session->redirect('?m=netelement&action=list');	
 			}
 		}
 	}

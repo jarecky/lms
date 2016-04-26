@@ -1149,6 +1149,12 @@ class LMS
 	return $manager->GetModelList($pid);
     }
 
+    public function GetNetElemType($id)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemType($id);
+    }
+
     public function NetElemExists($id)
     {
         $manager = $this->getNetElemManager();
@@ -1197,12 +1203,42 @@ class LMS
         return $manager->GetNotConnectedElements($id);
     }
 
-    public function GetNetElem($id)
+    public function GetNetElemActive($id)
     {
         $manager = $this->getNetElemManager();
-        return $manager->GetNetElem($id);
+        return $manager->GetNetElemActive($id);
     }
 
+    public function GetNetElemPassive($id)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemPassive($id);
+    }
+
+    public function GetNetElemCable($id)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemCable($id);
+    }
+
+    public function GetNetElemSplitter($id)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemSplitter($id);
+    }
+
+    public function GetNetElemMultiplexer($id)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemMultiplexer($id);
+    }
+
+    public function GetNetElemComputer($id)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->GetNetElemComputer($id);
+    }
+    
     public function NetElemDelLinks($id)
     {
         $manager = $this->getNetElemManager();

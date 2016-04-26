@@ -67,6 +67,7 @@
 		</TD>
 	</TR>
 	{/if}
+	{if $neteleminfo.ports}
 	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/port.gif" ALT="">
@@ -89,6 +90,20 @@
 		        {$neteleminfo.takenports}
 		</TD>
 	</TR>
+	{/if}
+	{if $neteleminfo.capacity}
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/port.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Number of wires:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        {$neteleminfo.capacity}
+                </TD>
+        </TR>
+	{/if}	
 	{if $neteleminfo.location}
 	<TR>
 		<TD WIDTH="1%">
@@ -275,16 +290,16 @@
 			{$neteleminfo.projectname}
 		</TD>
 	</TR>
+	{if $neteleminfo.netnodeid}
 	<TR>
 		<TD colspan="2" NOWRAP>
 			<b>{trans("Net node:")}</b>	
 		</TD>
 		<TD>
-			{if $neteleminfo.netnodeid}<a href="?m=netnodeinfo&id={$neteleminfo.netnodeid}" class="bold">{$neteleminfo.nodename}</a>
-			{else}-{/if}
+			<a href="?m=netnodeinfo&id={$neteleminfo.netnodeid}" class="bold">{$neteleminfo.nodename}</a>
 		</TD>
 	</TR>
-
+	{/if}
 	                                        </TABLE>
 					</TD>
 				</TR>
@@ -295,10 +310,10 @@
 	<TR>
 	        <TD WIDTH="100%" COLSPAN="2" ALIGN="RIGHT">
 {/if}
-			<a href="?m=netelemadd&id={$neteleminfo.id}">{trans("Clone")} <img src="img/clone.gif" alt="[ {trans("Clone")} ]"</a>
+			<a href="?m=netelement&action=add&id={$neteleminfo.id}">{trans("Clone")} <img src="img/clone.gif" alt="[ {trans("Clone")} ]"</a>
 			<A href="javascript:void(0);" onclick="javascript:openSelectWindow('?m=choosenetelemreplace&id={$neteleminfo.id}', 'Replace netelem', 600, 290, 1, 1);">{trans("Replace")} <img src="img/alias.gif" ALT="[ {trans("Replace")} ]"></A>
-			<A href="?m=netelemedit&id={$neteleminfo.id}" ACCESSKEY="E">{trans("Edit")} <IMG src="img/edit.gif" ALT="[ {trans("Edit")} ]"></A>
-			<A href="?m=netelemdel&id={$neteleminfo.id}" OnClick="return confirmLink(this, '{t a=$neteleminfo.name}Are you sure, you want to remove element \'$a\' from database?{/t}');">{trans("Delete")} <img src="img/delete.gif" ALT=""></A>
+			<A href="?m=netelement&action=edit&id={$neteleminfo.id}" ACCESSKEY="E">{trans("Edit")} <IMG src="img/edit.gif" ALT="[ {trans("Edit")} ]"></A>
+			<A href="?m=netelement&action=del&id={$neteleminfo.id}" OnClick="return confirmLink(this, '{t a=$neteleminfo.name}Are you sure, you want to remove element \'$a\' from database?{/t}');">{trans("Delete")} <img src="img/delete.gif" ALT=""></A>
 		</TD>
 	</TR>
     </TBODY>
