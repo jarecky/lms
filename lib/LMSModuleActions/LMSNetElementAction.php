@@ -220,11 +220,13 @@ class LMSNetElemAction extends LMSModuleAction
 
 			if ($netelemdata['type']==0) {
 			// AKTYWNE
+				$netactivedata=$_POST['netactive'];
+				$netelemdata['netnodeid']=$netactivedata['netnodeid'];
+				
 				if(empty($netactivedata['clients']))
 					$netactivedata['clients'] = 0;
 				else
 					$netactivedata['clients'] = intval($netactivedata['clients']);
-				$netactivedata=$_POST['netactive'];
                                 if(!isset($netactivedata['shortname'])) $netactivedata['shortname'] = '';
                                 if(!isset($netactivedata['secret'])) $netactivedata['secret'] = '';
                                 if(!isset($netactivedata['community'])) $netactivedata['community'] = '';
@@ -234,10 +236,14 @@ class LMSNetElemAction extends LMSModuleAction
 			} 
 			elseif ($netelemdata['type']==1) {
 			// PASYWNE
+				$netpassivedata=$_POST['netpassive'];
+				$netelemdata['netnodeid']=$netpassivedata['netnodeid'];
+				$this->smarty->assign('netpassive', $netpassivedata);
 			} 
 			elseif ($netelemdata['type']==2) {
 			// KABEL
 				$netcabledata=$_POST['netcable'];
+				$netelemdata['netnodeid']=$netcabledata['srcnodeid'];
 				if (!is_numeric($netcabledata['distance']))
 					$error['distance']=trans('Distance must be integer number!');
 				if (!is_numeric($netcabledata['capacity']))
@@ -246,17 +252,33 @@ class LMSNetElemAction extends LMSModuleAction
 				#	$error['capacity']=trans('Wrong number of wires');
 				if ($netcabledata['srcnodeid']==$netcabledata['dstnodeid'])
 					$error['dstnodeid']=trans('Begin and end node must be different!');
-
 				$this->smarty->assign('netcable', $netcabledata);
 			} 
 			elseif ($netelemdata['type']==3) {
 			// SPLITTER
+				$netsplitterdata=$_POST['netsplitter'];
+				$netelemdata['netnodeid']=$netsplitterdata['netnodeid'];
+				if (!is_numeric($netsplitterdata['in']))
+					$error['in']=trans("Number of 'in' ports must be integer number!");
+				if (!is_numeric($netsplitterdata['in']))
+					$error['in']=trans("Number of 'in' ports must be integer number!");
+				$this->smarty->assign('netsplitter', $netsplitterdata);
 			} 
 			elseif ($netelemdata['type']==4) {
 			// MULTIPLEXER
+                                $netmultiplexerdata=$_POST['netmultiplexer'];
+				$netelemdata['netnodeid']=$netmultiplexerdata['netnodeid'];
+                                if (!is_numeric($netmultiplexerdata['in']))
+                                        $error['in']=trans("Number of 'in' ports must be integer number!");
+                                if (!is_numeric($netmultiplexerdata['in']))
+                                        $error['in']=trans("Number of 'in' ports must be integer number!");
+                                $this->smarty->assign('netmultiplexer', $netmultiplexerdata);
 			} 
 			elseif ($netelemdata['type']==99) {
 			// COMPUTER
+				$netcomputerdata=$_POST['netcomputer'];
+				$netelemdata['netnodeid']=$netcomputerdata['netnodeid'];
+				$this->smarty->assign('netcomputer',$netcomputerdata);
 			} 
 			else {
 				$error['type']=trans('Error');
@@ -372,13 +394,6 @@ class LMSNetElemAction extends LMSModuleAction
 				$nodelist = $this->lms->GetUnlinkedNodes();
 				$netelemips = $this->lms->GetNetElemIPs($_GET['id']);
 
-				if ($neteleminfo['netnodeid']) {
-					$netnode = $this->db->GetRow("SELECT * FROM netnodes WHERE id=".$neteleminfo['netnodeid']);
-					if ($netnode) {
-						$neteleminfo['nodename'] = $netnode['name'];
-					}
-				}
-
 				$this->smarty->assign('neteleminfo', $neteleminfo);
 				$this->smarty->assign('objectid', $neteleminfo['id']);
 				$this->smarty->assign('restnetelemlist', $netelemlist);
@@ -416,7 +431,7 @@ class LMSNetElemAction extends LMSModuleAction
 					$this->smarty->assign('netelemauthtype', $netelemauthtype);
 					$this->smarty->display('netelements/ipinfo.html');
 				} else {
-					$this->smarty->display('netelements/info.html');
+					$this->smarty->display('netelements/activeinfo.html');
 				}
 				break;
 			case '1':
@@ -440,8 +455,20 @@ class LMSNetElemAction extends LMSModuleAction
 				$this->smarty->display('netelements/cableinfo.html');
 				break;
 			case '3':
+				$neteleminfo=$this->lms->GetNetElemSplitter($_GET['id']);
+				$netports=$this->lms->GetNetElemPorts($_GET['id']);
+
+				$this->smarty->assign('neteleminfo',$neteleminfo);
+				$this->smarty->assign('netports',$netports);
+				$this->smarty->display('netelements/splitterinfo.html');
 				break;
 			case '4':
+                                $neteleminfo=$this->lms->GetNetElemMultiplexer($_GET['id']);
+                                $netports=$this->lms->GetNetElemPorts($_GET['id']);
+
+                                $this->smarty->assign('neteleminfo',$neteleminfo);
+                                $this->smarty->assign('netports',$netports);
+                                $this->smarty->display('netelements/multiplexerinfo.html');				
 				break;
 			case '99':
 				break;

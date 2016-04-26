@@ -17,6 +17,17 @@
 				<TR>
 					<TD WIDTH="50%" style="vertical-align:top;">
 						<TABLE WIDTH="100%" CELLPADDING="3">
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/producer.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%">
+                        <B>{trans("Type:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        {$_NETELEMENTTYPES[$neteleminfo.type]}
+                </TD>
+        </TR>
 	<TR>
 		<TD WIDTH="1%">
 			<IMG SRC="img/producer.gif" ALT="">
@@ -147,7 +158,19 @@
                 </TD>
         </TR>
         {/if}
-	
+        {if $neteleminfo.inports}
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Split ratio:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+			{$neteleminfo.inports}:{$neteleminfo.outports}
+                </TD>
+        </TR>
+        {/if}
 	{if $neteleminfo.location}
 	<TR>
 		<TD WIDTH="1%">

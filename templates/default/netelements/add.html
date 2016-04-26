@@ -176,10 +176,10 @@
                         {trans("Net node:")}i
                 </TD>
                 <TD WIDTH="98%">
-                        <SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
+                        <SELECT NAME="netactive[netnodeid]" VALUE="{$netactive.netnodeid}" {tip text="Select node"} >
                                 <OPTION VALUE="-1">{trans("None")}</OPTION>
                                 {section name=nd loop=$NNnodes}
-                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($netactive.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
                                 {/section}
                         </SELECT>
                 </TD>
@@ -407,14 +407,53 @@
                         {trans("Net node:")}
                 </TD>
                 <TD WIDTH="98%">
-                        <SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
-                                <OPTION VALUE="-1">{trans("None")}</OPTION>
+                        <SELECT NAME="netsplitter[netnodeid]" VALUE="{$netsplitter.netnodeid}" {tip text="Select node"} >
                                 {section name=nd loop=$NNnodes}
-                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($netsplitter.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
                                 {/section}
                         </SELECT>
                 </TD>
         </TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Ports in:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netsplitter[in]" VALUE="{if $netsplitter.in}{$netsplitter.in}{/if}" {tip trigger="in" text="Enter number in ports of 'in' splitter"}>
+                </TD>
+        </TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Ports out:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netsplitter[out]" VALUE="{if $netsplitter.out}{$netsplitter.out}{/if}" {tip trigger="in" text="Enter number of 'out' ports in splitter"}>
+                </TD>
+        </TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Connector:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netsplitter[connector]" VALUE="{$netsplitter.connector}" {tip text="Select connector type (optionaly)"} >
+			<OPTION VALUE="-1">{trans("None")}</OPTION>
+			{foreach from=$_NETCONNECTORS key=id item=conn}
+			{if ($id>=200 and $id<300)}
+			<OPTION VALUE="{$id}">{$conn}</OPTION>
+			{/if}
+			{/foreach} 
+			</SELECT>
+                </TD>                                                                                                                                     </TR>
+	</TR>
         </TBODY>
 <!-- end of elem_type_splitter -->
 <!-- start of elem_type_multiplexer -->
@@ -427,14 +466,53 @@
                         {trans("Net node:")}
                 </TD>
                 <TD WIDTH="98%">
-                        <SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
-                                <OPTION VALUE="-1">{trans("None")}</OPTION>
+                        <SELECT NAME="netmultiplexer[netnodeid]" VALUE="{$netmultiplexer.netnodeid}" {tip text="Select node"} >
                                 {section name=nd loop=$NNnodes}
-                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($netmultiplexer.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
                                 {/section}
                         </SELECT>
                 </TD>
         </TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Ports in:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netmultiplexer[in]" VALUE="{if $netmultiplexer.in}{$netmultiplexer.in}{/if}" {tip trigger="in" text="Enter number in ports of 'in' splitter"}>
+                </TD>
+        </TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Ports out:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <INPUT TYPE="TEXT" NAME="netmultiplexer[out]" VALUE="{if $netmultiplexer.out}{$netmultiplexer.out}{/if}" {tip trigger="in" text="Enter number of 'out' ports in splitter"}>
+                </TD>
+        </TR>
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Connector:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netmultiplexer[connector]" VALUE="{$netmultiplexer.connector}" {tip text="Select connector type (optionaly)"} >
+			<OPTION VALUE="-1">{trans("None")}</OPTION>
+			{foreach from=$_NETCONNECTORS key=id item=conn}
+			{if ($id>=200 and $id<300)}
+			<OPTION VALUE="{$id}">{$conn}</OPTION>
+			{/if}
+			{/foreach} 
+			</SELECT>
+                </TD>                                                                                                                                     </TR>
+	</TR>
         </TBODY>
 <!-- end of elem_type_multiplexer -->
 <!-- start of elem_type_computer -->
@@ -447,10 +525,10 @@
                         {trans("Net node:")}
                 </TD>
                 <TD WIDTH="98%">
-                        <SELECT NAME="netelem[netnodeid]" VALUE="{$neteleminfo.netnodeid}" {tip text="Select node"} >
+                        <SELECT NAME="netcomputer[netnodeid]" VALUE="{$netcomputer.netnodeid}" {tip text="Select node"} >
                                 <OPTION VALUE="-1">{trans("None")}</OPTION>
                                 {section name=nd loop=$NNnodes}
-                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($neteleminfo.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($netcomputer.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
                                 {/section}
                         </SELECT>
                 </TD>

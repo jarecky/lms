@@ -266,8 +266,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	    'name' => $data['name'],
             'type' => $data['type'],
             'description' => $data['description'],
-            'producer' => $data['producer'],
-            'model' => $data['model'],
+            'producer' => $data['producer'] ? $data['producer'] : '',
+            'model' => $data['model'] ? $data['model'] : '',
             'serialnumber' => $data['serialnumber'],
             'purchasetime' => $data['purchasetime'],
             'guaranteeperiod' => $data['guaranteeperiod'],
@@ -319,7 +319,6 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     public function NetElemAddCable($netelemdata,$netcabledata) {
         global $SYSLOG_RESOURCE_KEYS;
-        $netelemdata['netnodeid']=$netcabledata['srcnodeid'];
         $netelemid=$this->NetElemAdd($netelemdata);
 	if ($netelemid) {
           $args=array(
@@ -366,11 +365,60 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     }
 
     public function NetElemAddSplitter($netelemdata,$netsplitterdata) {
+        global $SYSLOG_RESOURCE_KEYS;
+        $netelemid=$this->NetElemAdd($netelemdata);
+	if ($netelemid) {
+	      $data=array(
+		  'netelemid'		=> $netelemid,
+		  'type'		=> 201,
+		  'label'		=> '',
+		  'connectortype'	=> $netsplitterdata['connector'] ? $netsplitterdata['connector'] : '0',
+		  'technology'		=> 209,
+                  'capacity'		=> 1
+              );
+	      for ($i=1;$i<=$netsplitterdata['in'];$i++) {
+		 $data['label']='in'.$i;
+		 $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity) 
+			VALUES (?,?,?,?,?,?)",array_values($data));
+              }
+	      $port['type']=202;
+              for ($i=1;$i<=$netsplitterdata['out'];$i++) {
+                 $data['label']='out'.$i;
+                 $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity)
+                        VALUES (?,?,?,?,?,?)",array_values($data));
+              }	      
+	      return($netelemid);
+	}
+	return FALSE;
 
     }
 
     public function NetElemAddMultiplexer($netelemdata,$netmultiplexerdata) {
-
+        global $SYSLOG_RESOURCE_KEYS;
+        $netelemid=$this->NetElemAdd($netelemdata);
+        if ($netelemid) {
+              $data=array(
+                  'netelemid'           => $netelemid,
+                  'type'                => 201,
+                  'label'               => '',
+                  'connectortype'       => $netmultiplexerdata['connector'] ? $netmultiplexerdata['connector'] : '0',
+                  'technology'          => 0,
+                  'capacity'            => 1
+              );
+              for ($i=1;$i<=$netmultiplexerdata['in'];$i++) {
+                 $data['label']='in'.$i;
+                 $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity)
+                        VALUES (?,?,?,?,?,?)",array_values($data));
+              }
+              $data['type']=202;
+              for ($i=1;$i<=$netmultiplexerdata['out'];$i++) {
+                 $data['label']='out'.$i;
+                 $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity)
+                        VALUES (?,?,?,?,?,?)",array_values($data));
+              }
+              return($netelemid);
+        }
+        return FALSE;
     }
 
     public function NetElemAddComputer($netelemdata,$netcomputerdata) {
@@ -547,6 +595,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     public function GetNetElemActive($id)
     {
         $result = $this->db->GetRow('SELECT e.*, d.*, t.name AS nastypename, c.name AS channel,
+				n.name AS nodename,
 				(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
 				(SELECT COUNT(*) FROM netports WHERE netelemid=e.id) AS ports,
 				lt.name AS street_type,
@@ -597,7 +646,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     public function GetNetElemCable($id)
     {
-        $result = $this->db->GetRow('SELECT e.*, c.*, 
+        $result = $this->db->GetRow('SELECT e.*, c.*, e.type AS type, 
 				e.netnodeid AS srcnodeid,
 				c.type AS cabletype,
 				(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
@@ -641,12 +690,95 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     public function GetNetElemSplitter($id)
     {
+        $result = $this->db->GetRow('SELECT e.*,
+				n.name AS nodename,
+				(SELECT COUNT(*) FROM netports WHERE netelemid=e.id AND type=201) AS inports,
+				(SELECT COUNT(*) FROM netports WHERE netelemid=e.id AND type=202) AS outports,
+				(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
+				lt.name AS street_type,
+				lc.name AS city_name,
+				lb.name AS borough_name, lb.type AS borough_type,
+				ld.name AS district_name, ls.name AS state_name
+			FROM netelements e
+			LEFT JOIN netnodes n ON (n.id = e.netnodeid)
+			LEFT JOIN location_cities lc ON (lc.id = n.location_city)
+			LEFT JOIN location_streets lst ON (lst.id = n.location_street)
+			LEFT JOIN location_street_types lt ON (lt.id = lst.typeid)
+			LEFT JOIN location_boroughs lb ON (lb.id = lc.boroughid)
+			LEFT JOIN location_districts ld ON (ld.id = lb.districtid)
+			LEFT JOIN location_states ls ON (ls.id = ld.stateid)
+			WHERE e.id = ?', array($id));
+        $result['takenports'] = $this->CountNetElemLinks($id);
+
+	#$result['location'] = $result['city_name'].', '.$result['street_type'].' '.$result['street_name'];
+	
+        if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
+            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); // transform to UNIX timestamp
+        elseif ($result['guaranteeperiod'] == NULL)
+            $result['guaranteeperiod'] = -1;
+        $result['projectname'] = trans('none');
+        if ($result['invprojectid']) {
+            $prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id = ?", array($result['invprojectid']));
+            if ($prj) {
+                if ($prj['type'] == INV_PROJECT_SYSTEM && intval($prj['id'])==1) {
+                    /* inherited */
+                    if ($netnode) {
+                        $prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id=?",array($netnode['invprojectid']));
+                            if ($prj)
+                                $result['projectname'] = trans('$a (from network node $b)', $prj['name'], $netnode['name']);
+                    }
+                } else
+                    $result['projectname'] = $prj['name'];
+            }
+        }
+        return $result;
 
     }
 
     public function GetNetElemMultiplexer($id)
     {
+        $result = $this->db->GetRow('SELECT e.*,
+				n.name AS nodename,
+				(SELECT COUNT(*) FROM netports WHERE netelemid=e.id AND type=201) AS inports,
+				(SELECT COUNT(*) FROM netports WHERE netelemid=e.id AND type=202) AS outports,
+				(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
+				lt.name AS street_type,
+				lc.name AS city_name,
+				lb.name AS borough_name, lb.type AS borough_type,
+				ld.name AS district_name, ls.name AS state_name
+			FROM netelements e
+			LEFT JOIN netnodes n ON (n.id = e.netnodeid)
+			LEFT JOIN location_cities lc ON (lc.id = n.location_city)
+			LEFT JOIN location_streets lst ON (lst.id = n.location_street)
+			LEFT JOIN location_street_types lt ON (lt.id = lst.typeid)
+			LEFT JOIN location_boroughs lb ON (lb.id = lc.boroughid)
+			LEFT JOIN location_districts ld ON (ld.id = lb.districtid)
+			LEFT JOIN location_states ls ON (ls.id = ld.stateid)
+			WHERE e.id = ?', array($id));
+        $result['takenports'] = $this->CountNetElemLinks($id);
 
+	#$result['location'] = $result['city_name'].', '.$result['street_type'].' '.$result['street_name'];
+	
+        if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
+            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); // transform to UNIX timestamp
+        elseif ($result['guaranteeperiod'] == NULL)
+            $result['guaranteeperiod'] = -1;
+        $result['projectname'] = trans('none');
+        if ($result['invprojectid']) {
+            $prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id = ?", array($result['invprojectid']));
+            if ($prj) {
+                if ($prj['type'] == INV_PROJECT_SYSTEM && intval($prj['id'])==1) {
+                    /* inherited */
+                    if ($netnode) {
+                        $prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id=?",array($netnode['invprojectid']));
+                            if ($prj)
+                                $result['projectname'] = trans('$a (from network node $b)', $prj['name'], $netnode['name']);
+                    }
+                } else
+                    $result['projectname'] = $prj['name'];
+            }
+        }
+        return $result;
     }
 
     public function GetNetElemComputer($id)
