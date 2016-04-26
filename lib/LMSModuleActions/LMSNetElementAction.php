@@ -222,13 +222,13 @@ class LMSNetElemAction extends LMSModuleAction
 
 			if ($netelemdata['type']==0) {
 			// AKTYWNE
-				$netdevdata=$_POST['netdev'];
-                                if(!isset($netdevdata['shortname'])) $netdevdata['shortname'] = '';
-                                if(!isset($netdevdata['secret'])) $netdevdata['secret'] = '';
-                                if(!isset($netdevdata['community'])) $netdevdata['community'] = '';
-                                if(!isset($netdevdata['nastype'])) $netdevdata['nastype'] = 0;
+				$netactivedata=$_POST['netactive'];
+                                if(!isset($netactivedata['shortname'])) $netactivedata['shortname'] = '';
+                                if(!isset($netactivedata['secret'])) $netactivedata['secret'] = '';
+                                if(!isset($netactivedata['community'])) $netactivedata['community'] = '';
+                                if(!isset($netactivedata['nastype'])) $netactivedata['nastype'] = 0;
 				
-				$this->smarty->assign('netdev', $netdevdata);
+				$this->smarty->assign('netactive', $netactivedata);
 			} elseif ($netelemdata['type']==1) {
 			// PASYWNE
 			} elseif ($netelemdata['type']==2) {
@@ -271,9 +271,28 @@ class LMSNetElemAction extends LMSModuleAction
 				else
 					$netelemdata['invprojectid'] = NULL;
 
-				$netelemid = $this->lms->NetElemAdd($netelemdata);
+				switch ($netelemdata['type']) {
+				case '0':
+					#$netelemid = $this->lms->NetElemAddActive($netelemdata,$netactivedata);
+					break;
+				case '1':
+					#$netelemid = $this->lms­>NetElemAddpassice($netelemdata,$netpassivedata);
+					break;
+				case '2':
+					$netelemid = $this->lms->NetElemAddCable($netelemdata,$netcabledata);
+					break;
+				case '3':
+					$netelemid = $this->lms->NetElemAddSplitter($netelemdata,$netsplitterdata);
+					break;
+				case '4':
+					#$netelemid = $this->lms->NetElemAddMultiplexer($netelemdata,$netmultiplexerdata);
+					break;
+				case '99':
+					#$netelemid = $this->lms->NetElemAddComputer($netelemdata,$netcomputerdata);
+					break;
 
-				$this->session->redirect('?m=netelement&action=info&id='.$netelemid);
+				if ($netelemid)
+					$this->session->redirect('?m=netelement&action=info&id='.$netelemid);
 			}
 
 			$this->smarty->assign('error', $error);
