@@ -484,7 +484,7 @@ function addports(){
   var t='a'+d.getTime();
   var index=t.substr(-7,5);
   row.innerHTML='<td class="nobr" colspan="3">{trans("Label:")}'+
-	'<input type=text name="modeledit['+index+'][label]" value="xxx"> typ:<select name="modeledit['+index+'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, '+index+')">'+
+	'<input type=text name="modeledit['+index+'][label]" value="xxx"> typ:<select name="modeledit['+index+'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'+index+'\')">'+
 			    port_types+'</select>'+
 	' {trans("connector")}:<select name="modeledit['+index+'][netconnector]" id="conn'+index+'">'+
 	connectors+'</select>'+
@@ -509,7 +509,7 @@ function xaddport(id, label, connector, port_type, cn, pn){
   var row=document.createElement('tr');
   var index=document.getElementById('porttable').rows.length+1;
   row.innerHTML='<td class="nobr" colspan="3">{trans("Label:")}'+
-	'<input type=text name="modeledit['+id+'][label]" value="'+label+'"> typ:<select name="modeledit['+id+'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, '+id+')">'+
+	'<input type=text name="modeledit['+id+'][label]" value="'+label+'"> typ:<select name="modeledit['+id+'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'+id+'\')">'+
 			    '<option value='+port_type+'>'+pn+'</option>'+
 			    port_types+'</select>'+
 	' {trans("connector")}:<select name="modeledit['+id+'][netconnector]" id="conn'+id+'">'+
@@ -529,6 +529,7 @@ function clone(src){
   var t='a'+d.getTime();
   var index=t.substr(-7,5);
   nrow.innerHTML=src.parentNode.parentNode.innerHTML.replace(/[0-9]+\]/g,index+']');
+  nrow.innerHTML=nrow.innerHTML.replace(/conn[0-9]+/g,'conn'+index+'');
   ports.insertBefore(nrow,src.parentNode.parentNode.nextSibling);
 //  renumerate('porttable');
 
