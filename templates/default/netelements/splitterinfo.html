@@ -1,0 +1,13 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+{$xajax}
+<H1>{$layout.pagetitle}</H1>
+{block name=neteleminfobox}
+	{include file="netelements/infobox.html"}
+{/block}
+{block name=splitterports} 
+	{include file="netelements/splitterports.html"} 
+{/block}
+{/block}

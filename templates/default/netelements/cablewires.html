@@ -1,0 +1,63 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 100%;" class="hand nobr">
+			<IMG SRC="img/mac.gif" alt="">
+			<span class="bold">{t a=$netwires|@count}Wires/Fibers ($a):{/t}</span>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+        <TR id="netwires">
+                <TD style="width: 100%;">
+                        <TABLE class="lmsbox-inner">
+        <THEAD>
+        <TR>
+                <TD style="width: 20%;" class="nobr">
+                        {trans("Element")}/{trans("Port")}
+                </TD>
+                <TD style="width: 20%;" class="nobr">
+                </TD>
+                <TD style="width: 20%;" class="nobr">
+                </TD>
+                <TD style="width: 20%;" class="nobr">
+                </TD>
+                <TD style="width: 20%;" class="nobr text-right">
+                        {trans("Element")}/{trans("Port")}
+                </TD>
+        </TR>
+        </THEAD>
+        <TBODY>
+	{if $netwires}
+	{if $neteleminfo.cabletype<=100}
+		<TR><TD COLSPAN="6">Copper</TD></TR>	
+	{else}
+	{$fiber=$_FIBEROPTICCOLORSCHEMAS[$neteleminfo.colorschemaid].fibers}
+	{$tube=$_FIBEROPTICCOLORSCHEMAS[$neteleminfo.colorschemaid].tubes}
+
+	{cycle values="light,lucid" print=false}
+	{section name=n loop=$netwires start=0}
+	<TR class="{cycle}">
+		<TD>&nbsp;</TD>
+		<TD CLASS="text-center" BGCOLOR="{$fiber[$netwires[n].wire]}">{$netwires[n].wire}</TD>
+		<TD CLASS="text-center" BGCOLOR="{$tube[$netwires[n].bundle]}">{$netwires[n].bundle}</TD>
+		<TD CLASS="text-center" BGCOLOR="{$fiber[$netwires[n].wire]}">{$netwires[n].wire}</TD>
+		<TD>&nbsp;</TD>
+	</TR>	
+	{/section}
+	{/if}
+	{else}
+	<TR>
+		<TD colspan="6" class="empty-table">
+			<P>{trans("No such wires.")}</P>
+		</TD>
+	</TR>
+	{/if}
+	</TBODY>
+</TABLE>
+               </TD>
+       </TR>
+    </TBODY>
+</TABLE>
+
