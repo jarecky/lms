@@ -599,6 +599,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     {
         $result = $this->db->GetRow('SELECT e.*, c.*, 
 				e.netnodeid AS srcnodeid,
+				c.type AS cabletype,
 				(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
 				lt.name AS street_type,
 				lc.name AS city_name,

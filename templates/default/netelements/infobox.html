@@ -103,7 +103,51 @@
                         {$neteleminfo.capacity}
                 </TD>
         </TR>
-	{/if}	
+	{/if}
+	{if $srcnode.id}	
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Source netnode:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+			<a href="?m=netnodeinfo&id={$srcnode.id}" class="bold">{$srcnode.name}</a>
+                </TD>
+        </TR>
+        {/if}
+        {if $dstnode.id}
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Destinations netnode:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+			<a href="?m=netnodeinfo&id={$dstnode.id}" class="bold">{$dstnode.name}</a>
+                </TD>
+        </TR>
+        {/if}
+        {if $neteleminfo.colorschemaid}
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev_model.gif" ALT="">
+                </TD>
+                <TD WIDTH="1%" NOWRAP>
+                        <B>{trans("Colouring of wires:")}</B>
+                </TD>
+                <TD WIDTH="98%">
+			{if $neteleminfo.cabletype<100}
+			{$_COPPERCOLORSCHEMAS[$neteleminfo.colorschemaid].label}
+			{else}
+			{$_FIBEROPTICCOLORSCHEMAS[$neteleminfo.colorschemaid].label}
+			{/if}
+                </TD>
+        </TR>
+        {/if}
+	
 	{if $neteleminfo.location}
 	<TR>
 		<TD WIDTH="1%">
