@@ -358,7 +358,7 @@
                         {trans("Cable type:")}
                 </TD>
                 <TD WIDTH="98%">
-                        <SELECT NAME="netcable[type]" VALUE="{$netcable.type}" {tip text="Select node"} onchange="xajax_changeWireType(this.value)">
+                        <SELECT NAME="netcable[type]" VALUE="{$netcable.type}" {tip text="Select node"} onchange="xajax_changeWireType(this.value,0,0)">
                                 {foreach from=$_NETCABLETYPES key=t item=v}
                                 <OPTION VALUE="{$t}" {if $netcable.type==$t} selected{/if}>{$v}</OPTION>
                                 {/foreach}
@@ -389,8 +389,9 @@
                 </TD>
         </TR>
         <SCRIPT type="text/javascript">
-        xajax_changeWireType({$netcable.type},{$netcable.type},{$netcable.colorschemaid});
+        xajax_changeWireType({$netcable.type},{$netcable.colorschemaid},{$netcable.wiretype});
         </SCRIPT>
+
 	</TBODY>
 <!-- end of elem_type_cable -->
 <!-- start of elem_type_splitter -->
