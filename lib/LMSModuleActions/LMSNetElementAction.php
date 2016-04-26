@@ -418,10 +418,14 @@ class LMSNetElemAction extends LMSModuleAction
 				break;
 			case '2':
 				$neteleminfo=$this->lms->GetNetElemCable($_GET['id']);
-				$netwires=$this->db->GetAll("SELECT * FROM netwires WHERE netelemid=?",array($_GET['id']));
-				
+				$netwires=$this->db->GetAll("SELECT * FROM netwires WHERE netcableid=?",array($_GET['id']));
+				$srcnode=$this->db->GetRow("SELECT * FROM netnodes WHERE id=".$neteleminfo['srcnodeid']);
+				$dstnode=$this->db->GetRow("SELECT * FROM netnodes WHERE id=".$neteleminfo['dstnodeid']);
 				$this->smarty->assign('neteleminfo',$neteleminfo);
-				$this->smarty->assign('netwires',$netwirs);
+				$this->smarty->assign('netwires',$netwires);
+				$this->smarty->assign('srcnode',$srcnode);
+				$this->smarty->assign('dstnode',$dstnode);
+				$this->smarty->assign('colorschema',$colorschema);
                                 $hook_data = $this->lms->executeHook('neteleminfo_before_display',
                                         array(
                                                 'smarty' => $this->smarty,
