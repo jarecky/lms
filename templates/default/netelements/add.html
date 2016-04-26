@@ -286,7 +286,7 @@
         </TBODY>
 <!-- end of elem_type_passive -->
 <!-- start of elem_type_cable -->
-    	<TBODY ID="elem_type_cable" STYLE="display:none">
+    	<TBODY ID="elem_type_cable" STYLE="display:{if $netelemdata.type==2}{else}none{/if}">
         <TR>
                 <TD WIDTH="1%">
                         <IMG SRC="img/netdev_model.gif" ALT="">
@@ -388,9 +388,11 @@
                         </SELECT>
                 </TD>
         </TR>
+        {if $error}
         <SCRIPT type="text/javascript">
         xajax_changeWireType({$netcable.type},{$netcable.type},{$netcable.colorschemaid});
         </SCRIPT>
+        {/if}
 	</TBODY>
 <!-- end of elem_type_cable -->
 <!-- start of elem_type_splitter -->

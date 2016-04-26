@@ -233,8 +233,8 @@ class LMSNetElemAction extends LMSModuleAction
 			// PASYWNE
 			} elseif ($netelemdata['type']==2) {
 			// KABEL
-				echo '<PRE>';print_r($netcabledata);echo '</PRE>';
 				$netcabledata=$_POST['netcable'];
+				echo '<PRE>';print_r($netcabledata);echo '</PRE>';
 				if (!is_integer($netcabledata['distance']))
 					$error['distance']=trans('Distance must be integer number!');
 				if (!is_integer($netcabledata['capacity']))
