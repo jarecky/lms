@@ -597,7 +597,9 @@ $NETCONNECTORS = array(
 	240 => 'E2000/FLAT',
 	241 => 'E2000/PC',
 	242 => 'E2000/UPC',
-	243 => 'E2000/APC'
+	243 => 'E2000/APC',
+	//PSEUDOZLACZE splice
+	999 => 'splice'
 );
 
 $NETCABLETYPES = array (

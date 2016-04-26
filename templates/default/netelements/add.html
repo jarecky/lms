@@ -483,10 +483,10 @@ function addports(){
   var d=new Date();
   var t='a'+d.getTime();
   var index=t.substr(-7,5);
-  row.innerHTML='<td class="nobr fleft fright" colspan="3">{trans("Label:")}'+
-	'<input type=text name="modeledit['+index+'][label]" value="xxx"> typ:<select name="modeledit['+index+'][netporttype]">'+
+  row.innerHTML='<td class="nobr" colspan="3">{trans("Label:")}'+
+	'<input type=text name="modeledit['+index+'][label]" value="xxx"> typ:<select name="modeledit['+index+'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, '+index+')">'+
 			    port_types+'</select>'+
-	' {trans("connector")}:<select name="modeledit['+index+'][netconnector]">'+
+	' {trans("connector")}:<select name="modeledit['+index+'][netconnector]" id="conn'+index+'">'+
 	connectors+'</select>'+
 	'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
 	'<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
@@ -508,11 +508,11 @@ function xaddport(id, label, connector, port_type, cn, pn){
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');
   var index=document.getElementById('porttable').rows.length+1;
-  row.innerHTML='<td class="nobr fleft fright" colspan="3">{trans("Label:")}'+
-	'<input type=text name="modeledit['+id+'][label]" value="'+label+'"> typ:<select name="modeledit['+id+'][netporttype]">'+
+  row.innerHTML='<td class="nobr" colspan="3">{trans("Label:")}'+
+	'<input type=text name="modeledit['+id+'][label]" value="'+label+'"> typ:<select name="modeledit['+id+'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, '+id+')">'+
 			    '<option value='+port_type+'>'+pn+'</option>'+
 			    port_types+'</select>'+
-	' {trans("connector")}:<select name="modeledit['+id+'][netconnector]">'+
+	' {trans("connector")}:<select name="modeledit['+id+'][netconnector]" id="conn'+id+'">'+
 	'<option value='+connector+'>'+cn+'</option>'+
 	connectors+'</select>'+
 	'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+

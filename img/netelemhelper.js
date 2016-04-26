@@ -8,7 +8,7 @@ function change_producer(elem,type)
                 //model.style.display = 'none';
                 xajax_select_producer(elem.value, type.value);
             }
-
+function getProducerByType(type){
 function update_models(data)
             {
 

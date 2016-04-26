@@ -459,6 +459,38 @@ function getModelPortList($id){
 	}
 	return $res;
 }
+function getConnectorOptionsByPortType($type,$id){
+	global $NETCONNECTORS, $NETPORTTYPES;
+	$res= new xajaxResponse();
+	if($type==1){
+	  $list=array(1,2,7,8);
+	}
+	elseif($type==2){
+	  $list=array(5,6);
+	}
+	elseif($type==3 || $type==4){
+	  $list=array(1,2,201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	}
+	elseif($type==100){
+	  $list=array(100,101,102,103,104,151);
+	}
+	elseif($type==200|| $type==201 || $type==202){
+	  $list=array(201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	}
+	elseif($type==300){
+	  $list=array(999);
+	}
+	else{
+	  $list=array();
+	}
+	$res->script("var d=document.getElementById('conn".$id."'); d.options.length=0;");
+	$res->script("var d=document.getElementById('conn".$id."'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
+	foreach($list as $p){
+		$res->script("var d=document.getElementById('conn".$id."'); d.options[d.options.length]=new Option('".$NETCONNECTORS[$p]."','".$p['id']."');");
+	}
+	
+	return $res;
+}
 
 function changeWireType($type,$tschemaid,$ttype) {
 	global $COPPERCOLORSCHEMAS,$FIBEROPTICCOLORSCHEMAS,$NETWIRETYPES;
@@ -500,7 +532,7 @@ $LMS->RegisterXajaxFunction(array(
 	'getManagementUrls','addManagementUrl', 'delManagementUrl', 'updateManagementUrl',
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
 	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
-	'getModelPortList',
+	'getModelPortList','getConnectorOptionsByPortType',
 	'changeNetElementType','changeWireType',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
