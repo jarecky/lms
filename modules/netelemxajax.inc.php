@@ -426,10 +426,9 @@ function changeNetElementType($type) {
     return $res;
 }
 
-function changeWireType($type) {
+function changeWireType($type,$ttype=0,$tschema=0) {
    global $COPPERCOLORSCHEMAS,$FIBEROPTICCOLORSCHEMAS,$NETWIRETYPES;
    $res = new xajaxResponse();
-   $req = new xajaxRequest();
    if ($type<100) {
       $colorschema=$COPPERCOLORSCHEMAS;
       if ($type<50) {
@@ -443,11 +442,11 @@ function changeWireType($type) {
    }
    $cselect='';
    foreach ($colorschema AS $id => $schema) {
-      $cselect.='<OPTION VALUE="'.$id.'">'.$schema['label'].'</OPTION>';
+      $cselect.='<OPTION VALUE="'.$id.'"';
+      if ($id==$tschemaid) $cselect.=' SELECTED';	   
+      $cselect.='>'.$schema['label'].'</OPTION>';
    }
    $tselect='';
-   # TODO - dorobic selected :)
-   #$ttype=$req->getFormValues('netcable[wiretype]');
    foreach ($NETWIRETYPES AS $id => $type) {
       if ($id>$start AND $id<=$end) {
 	      $tselect.='<OPTION VALUE="'.$id.'"';

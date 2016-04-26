@@ -286,12 +286,6 @@
         </TBODY>
 <!-- end of elem_type_passive -->
 <!-- start of elem_type_cable -->
-	<SCRIPT type="text/javascript">
-	<!--
-	xajax_changeWireType({$netcable.type});
-	//-->
-	</SCRIPT>
-
     	<TBODY ID="elem_type_cable" STYLE="display:none">
         <TR>
                 <TD WIDTH="1%">
@@ -366,7 +360,7 @@
                 <TD WIDTH="98%">
                         <SELECT NAME="netcable[type]" VALUE="{$netcable.type}" {tip text="Select node"} onchange="xajax_changeWireType(this.value)">
                                 {foreach from=$_NETCABLETYPES key=t item=v}
-                                <OPTION VALUE="{$t}" {if $netcableinfo.type==$t} selected{/if}>{$v}</OPTION>
+                                <OPTION VALUE="{$t}" {if $netcable.type==$t} selected{/if}>{$v}</OPTION>
                                 {/foreach}
                         </SELECT>
                 </TD>
@@ -394,6 +388,9 @@
                         </SELECT>
                 </TD>
         </TR>
+        <SCRIPT type="text/javascript">
+        xajax_changeWireType({$netcable.type},{$netcable.type},{$netcable.colorschemaid});
+        </SCRIPT>
 	</TBODY>
 <!-- end of elem_type_cable -->
 <!-- start of elem_type_splitter -->
