@@ -317,7 +317,7 @@ class LMSNetElemAction extends LMSModuleAction
 			$this->smarty->assign('channels', $this->db->GetAll('SELECT id, name FROM ewx_channels ORDER BY name'));
 
 		$this->smarty->display("netelements/add.html");
-}	
+}}	
 
 	function _edit() {
 
