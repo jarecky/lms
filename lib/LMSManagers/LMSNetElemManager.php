@@ -262,7 +262,6 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     public function NetElemAdd($data)
     {
         global $SYSLOG_RESOURCE_KEYS;
-
         $args = array(
 	    'name' => $data['name'],
             'type' => $data['type'],
@@ -277,12 +276,12 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
             'netdevicemodelid' => !empty($data['netdevicemodelid']) ? $data['netdevicemodelid'] : null,
             'status' => $data['status'],
         );
-        if ($this->db->Execute('INSERT INTO netdevices (name, type
+        if ($this->db->Execute('INSERT INTO netelements (name, type,
 				description, producer, model, serialnumber,
 				purchasetime, guaranteeperiod, netnodeid,
 				invprojectid, netdevicemodelid, status)
 				VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', array_values($args))) {
-            $id = $this->db->GetLastInsertID('netdevices');
+            $id = $this->db->GetLastInsertID('netelements');
 
             if ($this->syslog) {
                 $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]] = $id;
@@ -315,11 +314,55 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     }	    
 
     public function NetElemAddPassive($netelemdata,$netpassivedata) {
-
+	global $SYSLOG_RESOURCE_KEYS;
     }
 
     public function NetElemAddCable($netelemdata,$netcabledata) {
+        global $SYSLOG_RESOURCE_KEYS;
+        $netelemdata['netnodeid']=$netcabledata['srcnodeid'];
+        $netelemid=$this->NetElemAdd($netelemdata);
+	if ($netelemid) {
+          $args=array(
+          	'netelemid'	=> $netelemid,
+		'type'		=> $netcabledata['type'],
+		'label'		=> $netcabledata['label'],
+		'capacity'	=> $netcabledata['capacity'],
+		'distance'	=> $netcabledata['distance'],
+		'colorschemaid'	=> $netcabledata['colorschemaid'],
+		'dstnodeid'	=> $netcabledata['dstnodeid'],
+          );
+          if ($this->db->Execute("INSERT INTO netcables (netelemid, type,
+		label,capacity,distance,colorschemaid,dstnodeid)
+		VALUES (?,?,?,?,?,?,?)",array_values($args))) {
 
+              $cableid = $this->db->GetLastInsertID('netcables');
+	      if ($this->syslog) {
+	  	$args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]] = $id;
+		$this->syslog->AddMessage(SYSLOG_RES_NETELEM, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]));
+              }
+	      $data=array(
+		  'netcableid'	=> $netelemid,
+		  'type'	=> $netcabledata['wiretype'],
+		  'bundle'	=> 1,
+		  'wire'	=> 1,
+              );
+	      for ($i=0;$i<$netcabledata['capacity'];$i++) {
+		 if ($netcabledata['type']==201) {
+		   $data['wire'] = $i % 12 + 1;
+		   $data['bundle'] = ceil(($i+1)/12);
+                 } else {
+		   $data['wire'] = $i + 1;
+		   $data['bundle'] = 1;
+		 }
+		 $this->db->Execute("INSERT INTO netwires (netcableid,type,bundle,wire) 
+			VALUES (?,?,?,?)",array_values($data));
+                 echo '<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
+              }
+	      return($netelemid);
+	  }
+	}
+
+	return FALSE;
     }
 
     public function NetElemAddSplitter($netelemdata,$netsplitterdata) {
@@ -630,7 +673,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     public function GetNetElemPorts($id) {
 	$ports = $this->db->GetAll('SELECT * FROM netports WHERE netelemid=? ORDER BY label ASC',array($id));
-	foreach ($ports AS $idx => $port) {
+	if (is_array($ports)) foreach ($ports AS $idx => $port) {
 	    $rss = $this->db->GetAll('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
 	    if (count($rss)) 
 		$ports[$idx]['radiosectors']=$rss;

@@ -169,11 +169,6 @@ class LMSNetElemAction extends LMSModuleAction
 		{
 			$netelemdata = $_POST['netelem'];
 
-			if(empty($netelemdata['clients']))
-				$netelemdata['clients'] = 0;
-			else
-				$netelemdata['clients'] = intval($netelemdata['clients']);
-
 			if($netelemdata['name'] == '')
 				$error['name'] = trans('Element name is required!');
 			elseif (strlen($netelemdata['name']) > 60)
@@ -222,6 +217,10 @@ class LMSNetElemAction extends LMSModuleAction
 
 			if ($netelemdata['type']==0) {
 			// AKTYWNE
+				if(empty($netactivedata['clients']))
+					$netactivedata['clients'] = 0;
+				else
+					$netactivedata['clients'] = intval($netactivedata['clients']);
 				$netactivedata=$_POST['netactive'];
                                 if(!isset($netactivedata['shortname'])) $netactivedata['shortname'] = '';
                                 if(!isset($netactivedata['secret'])) $netactivedata['secret'] = '';
@@ -234,10 +233,10 @@ class LMSNetElemAction extends LMSModuleAction
 			} elseif ($netelemdata['type']==2) {
 			// KABEL
 				$netcabledata=$_POST['netcable'];
-				echo '<PRE>';print_r($netcabledata);echo '</PRE>';
-				if (!is_integer($netcabledata['distance']))
+				#echo '<PRE>';print_r($netcabledata);echo '</PRE>';
+				if (!is_numeric($netcabledata['distance']))
 					$error['distance']=trans('Distance must be integer number!');
-				if (!is_integer($netcabledata['capacity']))
+				if (!is_numeric($netcabledata['capacity']))
 					$error['capacity']=trans('Number of wires must be integer number!');
 				#elseif ($netcabledata['capacity']%12!=0 AND $netcabledata['type']==201) 
 				#	$error['capacity']=trans('Wrong number of wires');
@@ -254,7 +253,7 @@ class LMSNetElemAction extends LMSModuleAction
 			} else {
 				$error['type']=trans('Error');
 			}
-			if(!$error) {
+			if (!$error) {
 				if($netelemdata['guaranteeperiod'] == -1)
 					$netelemdata['guaranteeperiod'] = NULL;
 
@@ -273,10 +272,10 @@ class LMSNetElemAction extends LMSModuleAction
 
 				switch ($netelemdata['type']) {
 				case '0':
-					#$netelemid = $this->lms->NetElemAddActive($netelemdata,$netactivedata);
+					$netelemid = $this->lms->NetElemAddActive($netelemdata,$netactivedata);
 					break;
 				case '1':
-					#$netelemid = $this->lms­>NetElemAddpassice($netelemdata,$netpassivedata);
+					$netelemid = $this->lms­>NetElemAddpassice($netelemdata,$netpassivedata);
 					break;
 				case '2':
 					$netelemid = $this->lms->NetElemAddCable($netelemdata,$netcabledata);
@@ -285,12 +284,12 @@ class LMSNetElemAction extends LMSModuleAction
 					$netelemid = $this->lms->NetElemAddSplitter($netelemdata,$netsplitterdata);
 					break;
 				case '4':
-					#$netelemid = $this->lms->NetElemAddMultiplexer($netelemdata,$netmultiplexerdata);
+					$netelemid = $this->lms->NetElemAddMultiplexer($netelemdata,$netmultiplexerdata);
 					break;
 				case '99':
-					#$netelemid = $this->lms->NetElemAddComputer($netelemdata,$netcomputerdata);
+					$netelemid = $this->lms->NetElemAddComputer($netelemdata,$netcomputerdata);
 					break;
-
+				}
 				if ($netelemid)
 					$this->session->redirect('?m=netelement&action=info&id='.$netelemid);
 			}
@@ -317,7 +316,7 @@ class LMSNetElemAction extends LMSModuleAction
 			$this->smarty->assign('channels', $this->db->GetAll('SELECT id, name FROM ewx_channels ORDER BY name'));
 
 		$this->smarty->display("netelements/add.html");
-}}	
+	}	
 
 	function _edit() {
 
@@ -330,7 +329,7 @@ class LMSNetElemAction extends LMSModuleAction
 
 		include(MODULES_DIR . '/netelemxajax.inc.php');
 
-		if (! array_key_exists('xjxfun', $_POST)) {                  // xajax was called and handled by netelemxajax.inc.php
+		if (!array_key_exists('xjxfun', $_POST)) {                  // xajax was called and handled by netelemxajax.inc.php
 			$neteleminfo = $this->lms->GetNetElem($_GET['id']);
 			$netelemconnected = $this->lms->GetNetElemConnectedNames($_GET['id']);
 			$netcomplist = $this->lms->GetNetElemLinkedNodes($_GET['id']);
@@ -394,7 +393,8 @@ class LMSNetElemAction extends LMSModuleAction
 			$this->smarty->assign('netelemlist', $netelemconnected);
 			$this->smarty->assign('netcomplist', $netcomplist);
 
-			if ($neteleminfo['type']==0) {
+			switch ($neteleminfo['type']) {
+			case '0': 
 				if (isset($_GET['ip'])) {
 					$nodeipdata = $this->lms->GetNodeConnType($_GET['ip']);
 					$netelemauthtype = array();
@@ -409,6 +409,20 @@ class LMSNetElemAction extends LMSModuleAction
 				} else {
 					$this->smarty->display('netelements/info.html');
 				}
+				break;
+			case '1':
+				break;
+			case '2':
+				$this->smarty->display('netelements/info.html');
+				break;
+			case '3':
+				break;
+			case '4':
+				break;
+			case '99':
+				break;
+			default:
+				$this->session->redirect('?m=netelement&action=list');	
 			}
 		}
 	}
