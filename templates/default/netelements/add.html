@@ -27,9 +27,9 @@
                         <IMG SRC="img/netdev.gif" ALT="">
                 </TD>
                 <TD WIDTH="1%">
-                        <B>{trans("Type:")}</B>
+                        <B>{trans("Type:")}{$netelem.type}</B>
                 <TD WIDTH="98%">
-                        <SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} VALUE="{$netelem.type}" onchange="xajax_changeNetElementType(this.value)">
+                        <SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} onchange="xajax_changeNetElementType(this.value)">
                           <OPTION VALUE="-1">{trans("Select type:")}</OPTION>
                         {foreach $_NETELEMENTTYPES as $idx => $type}
                           <OPTION VALUE="{$idx}" {if $idx==$netelem.type} SELECTED{/if}>{$type}</OPTION>
@@ -286,7 +286,7 @@
         </TBODY>
 <!-- end of elem_type_passive -->
 <!-- start of elem_type_cable -->
-    	<TBODY ID="elem_type_cable" STYLE="display:{if $netelemdata.type==2}{else}none{/if}">
+    	<TBODY ID="elem_type_cable" STYLE="display:none">
         <TR>
                 <TD WIDTH="1%">
                         <IMG SRC="img/netdev_model.gif" ALT="">
@@ -325,7 +325,7 @@
                                 {section name=nd loop=$NNnodes}
                                 <OPTION VALUE="{$NNnodes[nd].id}" {if $netcable.dstnodeid==$NNnodes[nd].id} selected{/if}>{$NNnodes[nd].name}</OPTION>
                                 {/section}
-                        </SELECT>
+                        </SELECT><img src="img/add.gif">{trans('Add netnode')}
                 </TD>
         </TR>
         <TR>

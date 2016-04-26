@@ -228,12 +228,13 @@ class LMSNetElemAction extends LMSModuleAction
                                 if(!isset($netactivedata['nastype'])) $netactivedata['nastype'] = 0;
 				
 				$this->smarty->assign('netactive', $netactivedata);
-			} elseif ($netelemdata['type']==1) {
+			} 
+			elseif ($netelemdata['type']==1) {
 			// PASYWNE
-			} elseif ($netelemdata['type']==2) {
+			} 
+			elseif ($netelemdata['type']==2) {
 			// KABEL
 				$netcabledata=$_POST['netcable'];
-				#echo '<PRE>';print_r($netcabledata);echo '</PRE>';
 				if (!is_numeric($netcabledata['distance']))
 					$error['distance']=trans('Distance must be integer number!');
 				if (!is_numeric($netcabledata['capacity']))
@@ -244,13 +245,17 @@ class LMSNetElemAction extends LMSModuleAction
 					$error['dstnodeid']=trans('Begin and end node must be different!');
 
 				$this->smarty->assign('netcable', $netcabledata);
-			} elseif ($netelemdata['type']==3) {
+			} 
+			elseif ($netelemdata['type']==3) {
 			// SPLITTER
-			} elseif ($netelemdata['type']==4) {
+			} 
+			elseif ($netelemdata['type']==4) {
 			// MULTIPLEXER
-			} elseif ($netelemdata['type']==99) {
+			} 
+			elseif ($netelemdata['type']==99) {
 			// COMPUTER
-			} else {
+			} 
+			else {
 				$error['type']=trans('Error');
 			}
 			if (!$error) {
@@ -293,16 +298,17 @@ class LMSNetElemAction extends LMSModuleAction
 				if ($netelemid)
 					$this->session->redirect('?m=netelement&action=info&id='.$netelemid);
 			}
-
+		
 			$this->smarty->assign('error', $error);
 			$this->smarty->assign('netelem', $netelemdata);
-		} elseif (isset($_GET['id'])) {
+		} 
+		elseif (isset($_GET['id'])) {
 			$netelemdata = $this->lms->GetNetElem($_GET['id']);
 			$netelemdata['name'] = trans('$a (clone)', $netelemdata['name']);
 			$netelemdata['teryt'] = !empty($netelemdata['location_city']) && !empty($netelemdata['location_street']);
-			$this->smarty->assign('netelem', $netelemdata);
+			
 		}
-
+		$this->smarty->assign('netelem', $netelemdata);
 		$layout['pagetitle'] = trans('New Element');
 
 		$this->smarty->assign('nastype', $this->lms->GetNAStypes());
