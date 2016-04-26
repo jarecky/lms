@@ -165,6 +165,7 @@ class LMSNetElemAction extends LMSModuleAction
 
 	function _add() {
 		include(MODULES_DIR . '/netelemxajax.inc.php');
+		$netelemdata['type']=-1;
 		if(isset($_POST['netelem']))
 		{
 			$netelemdata = $_POST['netelem'];

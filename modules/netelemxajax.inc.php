@@ -393,6 +393,7 @@ error_log($q.MODULES_DIR.'/../templates/default/netelements/addactive.inc.html')
 }
 
 function changeNetElementType($type) {
+	global $DB;
 	$res = new xajaxResponse();
 	$res->assign('elem_main','style.display','table-row-group');			
 	$res->assign('elem_type_active','style.display', 'none');
@@ -402,8 +403,16 @@ function changeNetElementType($type) {
 	$res->assign('elem_type_multiplexer','style.display', 'none');
 	$res->assign('elem_type_computer','style.display', 'none');
 	switch($type){
-		case '0':
-	$res->assign('elem_type_active','style.display', 'table-row-group');
+		case '0':{
+		  $res->assign('elem_type_active','style.display', 'table-row-group');
+		  $q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
+		      LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
+		      WHERE m.type=".$type;
+		  $producers = $DB->getAll($q);
+		  foreach($producers as $p){
+		      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
+		  }
+	}
 	break;
 		case '1':
 	$res->assign('elem_type_passive','style.display', 'table-row-group');
@@ -423,6 +432,29 @@ function changeNetElementType($type) {
 		case 'default':
 		$res->assign('elem_main','style.display','none');		
 	}
+	return $res;
+}
+
+function getModelsByProducerAndType($type, $producer){
+	global $DB;
+	$res = new xajaxResponse();
+	$q="SELECT m.id, m.name FROM netdevicemodels m WHERE m.type=".$type." AND m.netdeviceproducerid=".$producer;
+	$producers = $DB->getAll($q);
+	$res->script("var d=document.getElementById('model'); d.options.length=0;");
+	$res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
+	foreach($producers as $p){
+		$res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
+	}
+	return $res;
+
+}
+
+function getModelPortList($id){
+	global $DB;
+	$res= new xajaxResponse();
+	$q="SELECT FROM netdeviceschema ns ";
+	$res->script("var d=document.getElementById('portlist').innerHTML='';
+		      d.innerHTML=".$lista);
 	return $res;
 }
 
@@ -457,21 +489,6 @@ function changeWireType($type,$tschemaid,$ttype) {
 	$res->assign('colorschema','innerHTML',$cselect);
 	$res->assign('wiretype','innerHTML',$tselect);
 	return $res;
-}
-
-
-function getModelsByProducerAndType($type, $producer){
-	global $DB;
-	$res = new xajaxResponse();
-	$q="SELECT m.id, m.name FROM netdevicemodels m WHERE m.type=".$type." AND m.netdeviceproducerid=".$producer;
-	$producers = $DB->getAll($q);
-	$res->script("var d=document.getElementById('model'); d.options.length=0;");
-	$res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
-	foreach($producers as $p){
-		$res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
-	}
-	return $res;
-
 }
 
 

@@ -69,7 +69,8 @@
 			<B>{trans("Manufacturer:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netelem[producer]" VALUE="{$netelem.producer}" {tip text="Enter producer name (optional)"}>
+			<SELECT id="producer" NAME="netelem[producer]" VALUE="{$netelem.producer}" {tip text="Enter producer name (optional)"} onchange="xajax_getModelsByProducerAndType(document.getElementById('type').value, this.value)">
+			</SELECT>
 		</TD>
 	</TR>
 	<TR>
@@ -80,7 +81,8 @@
 			<B>{trans("Model:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<INPUT TYPE="TEXT" NAME="netelem[model]" VALUE="{$netelem.model}" {tip text="Enter device model (optional)"}>
+			<SELECT id="model" NAME="netelem[model]" VALUE="{$netelem.model}" {tip text="Enter device model (optional)"} onchange="xajax_getModelPortList(this.value)" >
+			</SELECT>
                         <A href="javascript:void(0);" onclick="return netelemmodelchoosewin('netelem', 'netelemadd', document.forms['netelemadd'].elements['netelem[netelemicemodelid]'].value, document.forms['netelemadd'].elements['netelem[producer]'].value, document.forms['netelemadd'].elements['netelem[model]'].value)" {tip text="Click to select model"}>&raquo;&raquo;&raquo;</A>
 			<BR>
                         <INPUT type="hidden" name="netelem[netelemicemodelid]" value="{$netelem.netelemicemodelid}">
