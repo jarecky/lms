@@ -30,20 +30,30 @@
         </THEAD>
         <TBODY>
 	{if $netwires}
-	{if $neteleminfo.cabletype<=100}
-		<TR><TD COLSPAN="6">Copper</TD></TR>	
-	{else}
+	{cycle values="light,lucid" print=false}
+	{if $neteleminfo.cabletype<50}
+	{$i=1}
+	{foreach from=$netwires key=n item=wire}
+	<TR class="{cycle} highlight">
+		<TD>x<BR>y</TD>
+		{if $n is even}<TD COLSPAN="3" ROWSPAN="2"><IMG SRC="img/pair{counter}.gif" HEIGHT="12" WIDTH="100%"></TD>{/if}
+		<TD CLASS="text-right">y<BR>x</TD>
+	</TR>
+	{/foreach}
+	{elseif $neteleminfo.cabletype<100}
+	<TR class="{cycle}">
+		<TD COLPSPAN="6">coaxial</TD>
+	</TR>
+     	{else}
 	{$fiber=$_FIBEROPTICCOLORSCHEMAS[$neteleminfo.colorschemaid].fibers}
 	{$tube=$_FIBEROPTICCOLORSCHEMAS[$neteleminfo.colorschemaid].tubes}
-
-	{cycle values="light,lucid" print=false}
 	{section name=n loop=$netwires start=0}
 	<TR class="{cycle}">
-		<TD><BR><BR></TD>
-		<TD CLASS="text-right" STYLE="padding-right:0px";><img src="img/fiber{$netwires[n].wire}.gif" width="50" height="12">
-		<TD CLASS="text-center" style="opacity: 0.4;padding-right:0px; padding-left:0px; background-color:{$tube[$netwires[n].bundle]}; "><IMG STYLE="opacity: 1;" SRC="img/fiber{$netwires[n].wire}.gif" HEIGHT="12" WIDTH="100%"</TD>
+		<TD>x<BR>y<BR></TD>
+		<TD CLASS="text-right" STYLE="padding-right:0px;"><img src="img/fiber{$netwires[n].wire}.gif" width="50" height="12">
+		<TD CLASS="text-center" style="opacity: 0.4;padding-right:0px; padding-left:0px; background-color:{$tube[$netwires[n].bundle]}; "><IMG STYLE="opacity: 1;" SRC="img/fiber{$netwires[n].wire}.gif" HEIGHT="12" WIDTH="100%"></TD>
 		<TD CLASS="text-left" STYLE="padding-left:0px;"><img src="img/fiber{$netwires[n].wire}.gif" width="50" height="12">
-		<TD>&nbsp;</TD>
+		<TD CLASS="text-right">y<BR>x</TD>
 	</TR>	
 	{/section}
 	{/if}
