@@ -221,6 +221,7 @@ class LMSNetElemAction extends LMSModuleAction
 			if ($netelemdata['type']==0) {
 			// AKTYWNE
 				$netactivedata=$_POST['netactive'];
+				$netports=$_POST['netports'];
 				$netelemdata['netnodeid']=$netactivedata['netnodeid'];
 				
 				if(empty($netactivedata['clients']))
@@ -238,6 +239,7 @@ class LMSNetElemAction extends LMSModuleAction
 			// PASYWNE
 				$netpassivedata=$_POST['netpassive'];
 				$netelemdata['netnodeid']=$netpassivedata['netnodeid'];
+				$netports=$_POST['netports'];
 				$this->smarty->assign('netpassive', $netpassivedata);
 			} 
 			elseif ($netelemdata['type']==2) {
@@ -283,6 +285,7 @@ class LMSNetElemAction extends LMSModuleAction
 			else {
 				$error['type']=trans('Error');
 			}
+			
 			if (!$error) {
 				if($netelemdata['guaranteeperiod'] == -1)
 					$netelemdata['guaranteeperiod'] = NULL;
@@ -303,9 +306,11 @@ class LMSNetElemAction extends LMSModuleAction
 				switch ($netelemdata['type']) {
 				case '0':
 					$netelemid = $this->lms->NetElemAddActive($netelemdata,$netactivedata);
+					$addnetports = $this->lms->NetElemAddPorts($netelemdata,$netports);
 					break;
 				case '1':
-					$netelemid = $this->lms­>NetElemAddpassice($netelemdata,$netpassivedata);
+					$netelemid = $this->lms­>NetElemAddpassive($netelemdata,$netpassivedata);
+					$addnetports = $this->lms->NetElemAddPorts($netelemdata,$netports);
 					break;
 				case '2':
 					$netelemid = $this->lms->NetElemAddCable($netelemdata,$netcabledata);
