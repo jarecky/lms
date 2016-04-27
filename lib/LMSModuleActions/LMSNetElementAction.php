@@ -356,11 +356,11 @@ class LMSNetElemAction extends LMSModuleAction
 				switch ($netelemdata['type']) {
 				case '0':
 					$netelemid = $this->lms->NetElemAddActive($netelemdata,$netactivedata);
-					$addnetports = $this->lms->NetElemAddPorts($netelemdata,$netports);
+					$addnetports = $this->lms->NetElemAddPorts($netelemid,$netports);
 					break;
 				case '1':
 					$netelemid = $this->lms­>NetElemAddpassive($netelemdata,$netpassivedata);
-					$addnetports = $this->lms->NetElemAddPorts($netelemdata,$netports);
+					$addnetports = $this->lms->NetElemAddPorts($netelemid,$netports);
 					break;
 				case '2':
 					$netelemid = $this->lms->NetElemAddCable($netelemdata,$netcabledata);
