@@ -298,7 +298,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	if ($netelemid) {
             // EtherWerX support (devices have some limits)
             // We must to replace big ID with smaller (first free)
-            if ($id > 99999 && ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.ewx_support', false))) {
+            if ($netelemid > 99999 && ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.ewx_support', false))) {
                 $this->db->BeginTrans();
                 $this->db->LockTables('ewx_channels');
                 if ($newid = $this->db->GetOne('SELECT n.id + 1 FROM ewx_channels n
@@ -333,8 +333,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                     'type'                => 0,
                     'label'               => '',
                     'connectortype'       => $netsplitterdata['connector'] ? $netsplitterdata['connector'] : '0',
-                    'technology'          => 0,
-                    'capacity'            => 0
+                    'technology'          => NULL,
+                    'capacity'            => 1
                 );
 		foreach ($netactivedata['ports'] AS $port) {
 		    $data['type']=$port['netporttype'];
@@ -352,6 +352,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     }	    
 
     public function NetElemAddPassive($netelemdata,$netpassivedata) {
+	global $SYSLOG_RESOURCE_KEYS, $NETCONNECTORS;
         $netelemid=$this->NetElemAdd($netelemdata);
 	if ($netelemid) {
            $data=array(
@@ -366,6 +367,21 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 $data['type']=$port['netporttype'];
                 $data['label']=$port['label'];
                 $data['connectortype']=$port['netconnector'];
+		$connid=$data['connectortype'];
+		if ($connid<50) {
+			if (preg_match('/[0-9]P([0-9])C/',$NETCONNECTORS[$connid],$conn)) {
+				$data['capacity']=$conn[1]*2;
+			} else {
+				$data['capacity']=2;
+			}
+		} elseif ($connid<100) {
+			$data['capacity']=2;
+		} elseif ($connid<300) {
+			$data['capacity']=2;
+		} else {
+			$data['capacity']=12;
+		}
+		echo '<PRE>';print_r($data);echo '</PRE>';
                 $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity)
                                     VALUES (?,?,?,?,?,?)",array_values($data));
             }

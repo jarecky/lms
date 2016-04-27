@@ -162,7 +162,10 @@ class LMSNetElemAction extends LMSModuleAction
 			case '1':
 				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
 				foreach ($netelemlist[$id]['ports'] as $port) {
-					$netelemlist[$id]['conn'][$port['connectortype']]['total']++;
+					if ($port['connectortype']==999)
+						$netelemlist[$id]['conn'][$port['connectortype']]['total']+=$port['capacity'];
+					else
+						$netelemlist[$id]['conn'][$port['connectortype']]['total']++;
 					if ($port['taken']==$port['capacity'])
 						$netelemlist[$id]['conn'][$port['connectortype']]['taken']++;
 				}
