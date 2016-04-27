@@ -402,6 +402,17 @@ function changeNetElementType($type) {
 	$res->assign('elem_type_splitter','style.display', 'none');
 	$res->assign('elem_type_multiplexer','style.display', 'none');
 	$res->assign('elem_type_computer','style.display', 'none');
+	$res->assign('elem_ports','style.display', 'none');
+	$res->assign('porttable', 'innerHTML', '');
+		  $q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
+		      LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
+		      WHERE m.type=".$type;
+		  $producers = $DB->getAll($q);
+		  $res->script("var d=document.getElementById('producer'); d.options.length=0;");
+		  $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('Select','-1');");
+		  foreach($producers as $p){
+		      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
+		  }
 	switch($type){
 	case '0':
 		$res->assign('elem_type_active','style.display', 'table-row-group');
