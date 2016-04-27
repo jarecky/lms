@@ -568,8 +568,8 @@ $NETCONNECTORS = array(
 	4 => '6P4C',
 	5 => '4P4C',
 	6 => '4P2C',
-	7 => 'BNC',
-	8 => 'F',
+	50 => 'BNC',
+	51 => 'F',
 	// RADIO
 	100 => '2,4GHz',
 	101 => '3GHz,',

@@ -130,13 +130,13 @@ class LMSNetElemAction extends LMSModuleAction
 			if (isset($netelem['type']))
 			switch ($netelem['type']) {
 			case '0':
+				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
 				$netelemlist[$id]['copper']=0;
 				$netelemlist[$id]['copper_taken']=0;
 				$netelemlist[$id]['wireless']=0;
 				$netelemlist[$id]['wireless_taken']=0;
 				$netelemlist[$id]['fiber']=0;
 				$netelemlist[$id]['fiber_taken']=0;
-				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
 				foreach ($netelemlist[$id]['ports'] as $port) {
 					if ($port['technology']<100) {
 						$netelemlist[$id]['copper']++;
@@ -161,6 +161,12 @@ class LMSNetElemAction extends LMSModuleAction
 				break;
 			case '1':
 				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
+				foreach ($netelemlist[$id]['ports'] as $port) {
+					$netelemlist[$id]['conn'][$port['connectortype']]['total']++;
+					if ($port['taken']==$port['capacity'])
+						$netelemlist[$id]['conn'][$port['connectortype']]['taken']++;
+				}
+				#echo '<PRE>';print_r($netelemlist[$id]);echo '</PRE>';
 				break;
 			case '2':
 				$netelemlist[$id]['netcable']=$this->lms->GetNetElemCable($netelem['id']);
@@ -218,41 +224,32 @@ class LMSNetElemAction extends LMSModuleAction
 		$netelemdata['type']=-1;
 		global $NETPORTTYPES, $NETCONNECTORS;
 
-		if(isset($_POST['netelem']))
-		{
+		if(isset($_POST['netelem'])) {
 			$netelemdata = $_POST['netelem'];
-
 			if($netelemdata['name'] == '')
 				$error['name'] = trans('Element name is required!');
 			elseif (strlen($netelemdata['name']) > 60)
 				$error['name'] = trans('Specified name is too long (max. $a characters)!', '60');
 
 			$netelemdata['purchasetime'] = 0;
-			if($netelemdata['purchasedate'] != '') 
-			{
+			if($netelemdata['purchasedate'] != '') {
 				// date format 'yyyy/mm/dd'
-				if(!preg_match('/^[0-9]{4}\/[0-9]{2}\/[0-9]{2}$/', $netelemdata['purchasedate']))
-				{
+				if(!preg_match('/^[0-9]{4}\/[0-9]{2}\/[0-9]{2}$/', $netelemdata['purchasedate'])) {
 					$error['purchasedate'] = trans('Invalid date format!');
-				}
-				else
-				{
+				} else {
 					$date = explode('/', $netelemdata['purchasedate']);
-					if(checkdate($date[1], $date[2], (int)$date[0]))
-					{
+					if(checkdate($date[1], $date[2], (int)$date[0])) {
 						$tmpdate = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
 						if(mktime(0,0,0) < $tmpdate)
 							$error['purchasedate'] = trans('Date from the future not allowed!');
 						else
 							$netelemdata['purchasetime'] = $tmpdate;
-					}
-					else
+					} else
 						$error['purchasedate'] = trans('Invalid date format!');
 				}
 			}
 
-			if($netelemdata['guaranteeperiod'] != 0 && $netelemdata['purchasetime'] == NULL)
-			{
+			if($netelemdata['guaranteeperiod'] != 0 && $netelemdata['purchasetime'] == NULL) {
 				$error['purchasedate'] = trans('Purchase date cannot be empty when guarantee period is set!');
 			}
 
@@ -271,9 +268,9 @@ class LMSNetElemAction extends LMSModuleAction
 			if ($netelemdata['type']==0) {
 			// AKTYWNE
 				$netactivedata=$_POST['netactive'];
-				$netports=$_POST['netports'];
+				$netportdata=$_POST['netports'];
 				$netelemdata['netnodeid']=$netactivedata['netnodeid'];
-				
+				$netactivedata['ports']=$netportdata;
 				if(empty($netactivedata['clients']))
 					$netactivedata['clients'] = 0;
 				else
@@ -282,17 +279,17 @@ class LMSNetElemAction extends LMSModuleAction
                                 if(!isset($netactivedata['secret'])) $netactivedata['secret'] = '';
                                 if(!isset($netactivedata['community'])) $netactivedata['community'] = '';
                                 if(!isset($netactivedata['nastype'])) $netactivedata['nastype'] = 0;
-				
+				$this->smarty->assign('netports', $netportdata);
 				$this->smarty->assign('netactive', $netactivedata);
-			} 
-			elseif ($netelemdata['type']==1) {
+			} elseif ($netelemdata['type']==1) {
 			// PASYWNE
 				$netpassivedata=$_POST['netpassive'];
+				$netportdata=$_POST['netports'];
 				$netelemdata['netnodeid']=$netpassivedata['netnodeid'];
-				$netports=$_POST['netports'];
+				$netpassivedata['ports']=$netportdata;
+				$this->smarty->assign('netports', $netportdata);
 				$this->smarty->assign('netpassive', $netpassivedata);
-			} 
-			elseif ($netelemdata['type']==2) {
+			} elseif ($netelemdata['type']==2) {
 			// KABEL
 				$netcabledata=$_POST['netcable'];
 				$netelemdata['netnodeid']=$netcabledata['srcnodeid'];
@@ -305,8 +302,7 @@ class LMSNetElemAction extends LMSModuleAction
 				if ($netcabledata['srcnodeid']==$netcabledata['dstnodeid'])
 					$error['dstnodeid']=trans('Begin and end node must be different!');
 				$this->smarty->assign('netcable', $netcabledata);
-			} 
-			elseif ($netelemdata['type']==3) {
+			} elseif ($netelemdata['type']==3) {
 			// SPLITTER
 				$netsplitterdata=$_POST['netsplitter'];
 				$netelemdata['netnodeid']=$netsplitterdata['netnodeid'];
@@ -315,8 +311,7 @@ class LMSNetElemAction extends LMSModuleAction
 				if (!is_numeric($netsplitterdata['in']))
 					$error['in']=trans("Number of 'in' ports must be integer number!");
 				$this->smarty->assign('netsplitter', $netsplitterdata);
-			} 
-			elseif ($netelemdata['type']==4) {
+			} elseif ($netelemdata['type']==4) {
 			// MULTIPLEXER
                                 $netmultiplexerdata=$_POST['netmultiplexer'];
 				$netelemdata['netnodeid']=$netmultiplexerdata['netnodeid'];
@@ -325,14 +320,12 @@ class LMSNetElemAction extends LMSModuleAction
                                 if (!is_numeric($netmultiplexerdata['in']))
                                         $error['in']=trans("Number of 'in' ports must be integer number!");
                                 $this->smarty->assign('netmultiplexer', $netmultiplexerdata);
-			} 
-			elseif ($netelemdata['type']==99) {
+			} elseif ($netelemdata['type']==99) {
 			// COMPUTER
 				$netcomputerdata=$_POST['netcomputer'];
 				$netelemdata['netnodeid']=$netcomputerdata['netnodeid'];
 				$this->smarty->assign('netcomputer',$netcomputerdata);
-			} 
-			else {
+			} else {
 				$error['type']=trans('Error');
 			}
 			
@@ -356,11 +349,9 @@ class LMSNetElemAction extends LMSModuleAction
 				switch ($netelemdata['type']) {
 				case '0':
 					$netelemid = $this->lms->NetElemAddActive($netelemdata,$netactivedata);
-					$addnetports = $this->lms->NetElemAddPorts($netelemid,$netports);
 					break;
 				case '1':
-					$netelemid = $this->lms­>NetElemAddpassive($netelemdata,$netpassivedata);
-					$addnetports = $this->lms->NetElemAddPorts($netelemid,$netports);
+					$netelemid = $this->lms->NetElemAddPassive($netelemdata,$netpassivedata);
 					break;
 				case '2':
 					$netelemid = $this->lms->NetElemAddCable($netelemdata,$netcabledata);
@@ -490,6 +481,12 @@ class LMSNetElemAction extends LMSModuleAction
 				}
 				break;
 			case '1':
+				$neteleminfo=$this->lms->GetNetElemPassive($_GET['id']);
+				$netports=$this->lms->GetNetElemPorts($_GET['id']);
+
+				$this->smarty->assign('netports',$netports);
+				$this->smarty->assign('neteleminfo',$neteleminfo);
+				$this->smarty->display('netelements/passiveinfo.html');
 				break;
 			case '2':
 				$neteleminfo=$this->lms->GetNetElemCable($_GET['id']);

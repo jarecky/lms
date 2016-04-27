@@ -492,7 +492,7 @@ function getConnectorOptionsByPortType($type,$id){
 	$res->script("var d=document.getElementById('".$id."'); d.options.length=0;");
 	$res->script("var d=document.getElementById('".$id."'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
 	foreach($list as $p){
-		$res->script("var d=document.getElementById('".$id."'); d.options[d.options.length]=new Option('".$NETCONNECTORS[$p]."','".$p['id']."');");
+		$res->script("var d=document.getElementById('".$id."'); d.options[d.options.length]=new Option('".$NETCONNECTORS[$p]."','".$p."');");
 	}
 	
 	return $res;

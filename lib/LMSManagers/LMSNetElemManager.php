@@ -293,28 +293,85 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     }
 
     public function NetElemAddActive($netelemdata,$netactivedata) {
-
+        global $SYSLOG_RESOURCE_KEYS;
+        $netelemid=$this->NetElemAdd($netelemdata);
+	if ($netelemid) {
             // EtherWerX support (devices have some limits)
             // We must to replace big ID with smaller (first free)
             if ($id > 99999 && ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.ewx_support', false))) {
                 $this->db->BeginTrans();
                 $this->db->LockTables('ewx_channels');
-
                 if ($newid = $this->db->GetOne('SELECT n.id + 1 FROM ewx_channels n
                                                 LEFT OUTER JOIN ewx_channels n2 ON n.id + 1 = n2.id
                                                 WHERE n2.id IS NULL AND n.id <= 99999
                                                 ORDER BY n.id ASC LIMIT 1')) {
-                    $this->db->Execute('UPDATE ewx_channels SET id = ? WHERE id = ?', array($newid, $id));
-                    $id = $newid;
+                    $this->db->Execute('UPDATE ewx_channels SET id = ? WHERE id = ?', array($newid, $netelemid));
+                    $netelemid = $newid;
                 }
-
                 $this->db->UnLockTables();
                 $this->db->CommitTrans();
             }
+	    $args=array(
+		'netelemid' => $netelemid,
+            	'shortname' => $netactivedata['shortname'],
+            	'nastype' => $netactivedata['nastype'],
+            	'clients' => $netactivedata['clients'],
+		'user' => '',
+            	'secret' => $netactivedata['secret'],
+            	'community' => $netactivedata['community'],
+            	'channelid' => !empty($netactivedata['channelid']) ? $netactivedata['channelid'] : NULL,
+	    );	    
+	    if ($this->db->Execute("INSERT INTO netdevices (netelemid,shortname,nastype,clients,user,secret,community,channelid)
+		    		VALUES (?,?,?,?,?,?,?,?)",array_values($args))) {
+		$netactiveid = $this->db->GetLastInsertID('netdevices');
+                if ($this->syslog) {
+                    $args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]] = $id;
+                    $this->syslog->AddMessage(SYSLOG_RES_NETELEM, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]));
+                }
+                $data=array(
+                    'netelemid'           => $netelemid,
+                    'type'                => 0,
+                    'label'               => '',
+                    'connectortype'       => $netsplitterdata['connector'] ? $netsplitterdata['connector'] : '0',
+                    'technology'          => 0,
+                    'capacity'            => 0
+                );
+		foreach ($netactivedata['ports'] AS $port) {
+		    $data['type']=$port['netporttype'];
+                    $data['label']=$port['label'];
+		    $data['connectortype']=$port['netconnector'];
+		    $data['technology']=$port['nettechnology'];
+		    $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity)
+					VALUES (?,?,?,?,?,?)",array_values($data));
+
+		}
+		return($netelemid);
+	    }
+	}
+	return FALSE;
     }	    
 
     public function NetElemAddPassive($netelemdata,$netpassivedata) {
-	global $SYSLOG_RESOURCE_KEYS;
+        $netelemid=$this->NetElemAdd($netelemdata);
+	if ($netelemid) {
+           $data=array(
+                'netelemid'           => $netelemid,
+                'type'                => 0,
+                'label'               => '',
+                'connectortype'       => 0,
+                'technology'          => 0,
+                'capacity'            => 0
+            );
+            foreach ($netpassivedata['ports'] AS $port) {
+                $data['type']=$port['netporttype'];
+                $data['label']=$port['label'];
+                $data['connectortype']=$port['netconnector'];
+                $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity)
+                                    VALUES (?,?,?,?,?,?)",array_values($data));
+            }
+            return($netelemid);
+	}
+	return FALSE;
     }
 
     public function NetElemAddCable($netelemdata,$netcabledata) {
@@ -336,7 +393,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
               $cableid = $this->db->GetLastInsertID('netcables');
 	      if ($this->syslog) {
-	  	$args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]] = $id;
+	  	$args[$SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]] = $cableid;
 		$this->syslog->AddMessage(SYSLOG_RES_NETELEM, SYSLOG_OPER_ADD, $args, array($SYSLOG_RESOURCE_KEYS[SYSLOG_RES_NETELEM]));
               }
 	      $data=array(
@@ -425,10 +482,6 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     }
     
-    public function NetElemAddPorts($data, $ports){
-	
-	return FALSE;
-    }
     public function GetNetElemType($id)
     {
         return ($this->db->GetOne("SELECT type FROM netelements WHERE id=?", array($id)));
@@ -622,7 +675,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	$result['radiosectors'] = $this->db->GetAll('SELECT * FROM netradiosectors WHERE netdev = ? ORDER BY name', array($id));
 
         if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
-            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); // transform to UNIX timestamp
+            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
         elseif ($result['guaranteeperiod'] == NULL)
             $result['guaranteeperiod'] = -1;
         $result['projectname'] = trans('none');
@@ -645,6 +698,44 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     public function GetNetElemPassive($id)
     {
+        $result = $this->db->GetRow('SELECT e.*, n.name AS nodename,
+                                (CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
+                                (SELECT COUNT(*) FROM netports WHERE netelemid=e.id) AS ports,
+                                lt.name AS street_type,
+                                lc.name AS city_name,
+                                lb.name AS borough_name, lb.type AS borough_type,
+                                ld.name AS district_name, ls.name AS state_name
+                        FROM netelements e
+                        LEFT JOIN netnodes n ON (n.id = e.netnodeid)
+                        LEFT JOIN location_cities lc ON (lc.id = n.location_city)
+                        LEFT JOIN location_streets lst ON (lst.id = n.location_street)
+                        LEFT JOIN location_street_types lt ON (lt.id = lst.typeid)
+                        LEFT JOIN location_boroughs lb ON (lb.id = lc.boroughid)
+                        LEFT JOIN location_districts ld ON (ld.id = lb.districtid)
+                        LEFT JOIN location_states ls ON (ls.id = ld.stateid)
+                        WHERE e.id = ?', array($id));
+        $result['takenports'] = $this->CountNetElemLinks($id);
+
+        if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
+            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
+        elseif ($result['guaranteeperiod'] == NULL)
+            $result['guaranteeperiod'] = -1;
+        $result['projectname'] = trans('none');
+        if ($result['invprojectid']) {
+            $prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id = ?", array($result['invprojectid']));
+            if ($prj) {
+                if ($prj['type'] == INV_PROJECT_SYSTEM && intval($prj['id'])==1) {
+                    /* inherited */
+                    if ($netnode) {
+                        $prj = $this->db->GetRow("SELECT * FROM invprojects WHERE id=?",array($netnode['invprojectid']));
+                            if ($prj)
+                                $result['projectname'] = trans('$a (from network node $b)', $prj['name'], $netnode['name']);
+                    }
+                } else
+                    $result['projectname'] = $prj['name'];
+            }
+        }
+        return $result;
 
     }
 
@@ -671,7 +762,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 			WHERE e.id = ?', array($id));
         #$result['takenports'] = $this->CountNetElemLinks($id);
         if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
-            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); // transform to UNIX timestamp
+            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
         elseif ($result['guaranteeperiod'] == NULL)
             $result['guaranteeperiod'] = -1;
         $result['projectname'] = trans('none');
@@ -718,7 +809,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	#$result['location'] = $result['city_name'].', '.$result['street_type'].' '.$result['street_name'];
 	
         if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
-            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); // transform to UNIX timestamp
+            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
         elseif ($result['guaranteeperiod'] == NULL)
             $result['guaranteeperiod'] = -1;
         $result['projectname'] = trans('none');
@@ -765,7 +856,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	#$result['location'] = $result['city_name'].', '.$result['street_type'].' '.$result['street_name'];
 	
         if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
-            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); // transform to UNIX timestamp
+            $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
         elseif ($result['guaranteeperiod'] == NULL)
             $result['guaranteeperiod'] = -1;
         $result['projectname'] = trans('none');

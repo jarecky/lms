@@ -269,10 +269,10 @@
                         {trans("Net node:")}i
                 </TD>
                 <TD WIDTH="98%">
-                        <SELECT NAME="netactive[netnodeid]" VALUE="{$netactive.netnodeid}" {tip text="Select node"} >
+                        <SELECT NAME="netpassive[netnodeid]" VALUE="{$netpassive.netnodeid}" {tip text="Select node"} >
                                 <OPTION VALUE="-1">{trans("None")}</OPTION>
                                 {section name=nd loop=$NNnodes}
-                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($netactive.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($netpassive.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
                                 {/section}
                         </SELECT>
                 </TD>
@@ -587,13 +587,13 @@ function addports(){
 
 function xaddport(id, label, connector, port_type, cn, pn){
   var port_types='<option value=0>{trans("Select")}</option>';
-  {foreach from=$NETPORTTYPES key=k item=val}
+  {foreach from=$_NETPORTTYPES key=k item=val}
 			      port_types+='<option value="{$k}">{$val}</option>';
   {/foreach}
 
   var connectors='<option value=0>{trans("Select")}</option>';
-  {foreach from=$NETCONNECTORS key=k item=val}
-			      connectors+='<option value="{$k}">{$val}</option>';
+  {foreach from=$_NETCONNECTORS key=k item=val}
+      connectors+='<option value="{$k}">{$val}</option>';
   {/foreach}
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');

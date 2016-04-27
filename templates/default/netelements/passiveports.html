@@ -1,0 +1,218 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 100%;" class="hand nobr" onClick="showOrHide('netports');">
+			<IMG SRC="img/mac.gif" alt="">
+			<span class="bold">{t a=$netports|@count}Ports ($a):{/t}</span>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR id="netports">
+		<TD style="width: 100%;">
+			<TABLE style="border: 1px solid #000;">
+        
+			  <TBODY>
+	{cycle values="light,lucid" print=false}
+	<TR class="{cycle}">
+	{section name=n loop=$netports start=0}
+	{$technology=$netports[n].technology}
+	{$speed=$_NETTECHNOLOGIES[$technology].speed}
+			{if $netports[n].connectortype}
+				{assign var=connector value=","|explode:$netports[n].connectortype}
+			{else}
+				{assign var=connector value=","|explode:$_NETTECHNOLOGIES[$technology].connector}
+			{/if}	
+			{section name=connector loop=$connector}
+				{assign var=conn value=$_NETCONNECTORS[$connector[connector]]} 
+			{/section}
+	{if $netports[n].technology<100}
+		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name,"\nConnector: ",$conn))}
+		{if $netports[n].taken}
+			  {$port_color="lightgreen"}
+		{else}
+			  {$port_color="red"}
+		{/if}
+		{if $netports[n].connectortype<=3}
+			  {$port_img="img/ethernet.png"}
+		{else}
+			  {$port_img="img/ethernet.png"}
+		{/if}
+	{elseif $netports[n].technology<200}
+		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name, "\nRadiosector: ",$netports[n].radiosectors.0.name,"\nUtilization: ",$netports[n].taken,'/',$netports[n].capacity))}
+		{if $netports[n].radiosectors}
+			{if $netports[n].taken/$netports[n].capacity<=0.4}
+				  {$port_color="lightgreen"}
+			{elseif $netports[n].taken/$netports[n].capacity<=0.8}
+				  {$port_color="yellow"}
+			{else}
+				  {$port_color="red"}
+			{/if}
+			{$port_img="img/radiosector.png"}
+		{else}
+			{if $netports[n].taken}
+				  {$port_color="lightgreen"}
+			{else}
+				  {$port_color="red"}
+			{/if}
+			{$port_img="img/radio_cpe.png"}
+		{/if}
+	{elseif $netports[n].technology<300}
+		$port_color="lightgreen"
+		$port_img="img/radiosector.png"}	  
+	{else}
+
+	{/if}
+	<TD class="highlight ftop fbottom fleft fright text-center" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
+			<IMG src="{$port_img}" ALT=""><BR>
+			<B>{$netports[n].label}</B>
+		</TD>
+		{if $smarty.section.n.iteration is div by 12}</tr><tr>{/if}
+	{sectionelse}
+<!--		<TD class="valign-top nobr">
+			{$_NETTECHNOLOGIES[$technology].name}<BR>
+			{if $speed}{$_NETSPEEDS[$speed][0]}Mbps / {$_NETSPEEDS[$speed][1]}MBps{/if}
+		</TD>
+		<TD class="valign-top nobr">
+			{if $netports[n].connectortype}
+				{assign var=connector value=","|explode:$netports[n].connectortype}
+			{else}
+				{assign var=connector value=","|explode:$_NETTECHNOLOGIES[$technology].connector}
+			{/if}	
+			{section name=connector loop=$connector}
+				{$_NETCONNECTORS[$connector[connector]]} 
+			{/section}
+				
+		</TD>
+		<TD class="valign-top nobr" id="elem_{$netelemlist[netelemlist].id}">
+			{if $netelemlist[netelemlist].linktechnology}{$_LINKTECHNOLOGIES[$netelemlist[netelemlist].linktype][$netelemlist[netelemlist].linktechnology]}{/if}{if $netelemlist[netelemlist].linktype == 1 && ($netelemlist[netelemlist].srcradiosector || $netelemlist[netelemlist].dstradiosector)} ({if $netelemlist[netelemlist].srcradiosector}{$netelemlist[netelemlist].srcradiosector}{else}-{/if}/{if $netelemlist[netelemlist].dstradiosector}{$netelemlist[netelemlist].dstradiosector}{else}-{/if}){/if}<BR>
+			{if $netelemlist[netelemlist].linkspeed}{$_LINKSPEEDS[$netelemlist[netelemlist].linkspeed]}{/if}
+		</TD>
+		<TD class="text-right nobr" onClick="return self.location.href='?m=neteleminfo&id={$netelemlist[netelemlist].id}';">
+			<IMG src="img/empty.gif" height="16">[{if $netelemlist[netelemlist].srcport}{$netelemlist[netelemlist].srcport}{/if}]<BR>
+			({$netelemlist[netelemlist].id|string_format:"%04d"})
+		</TD>
+		<TD class="nobr">
+			<span id="elemlinkproperties_{$netelemlist[netelemlist].id}" onClick="javascript:netlinkpropertieschoosewin('{$neteleminfo.id}', '{$netelemlist[netelemlist].id}', true);">
+				<IMG SRC="img/{if $netelemlist[netelemlist].linktype == 1}wireless.gif{elseif $netelemlist[netelemlist].linktype == 2}netelem_takenports.gif{else}netelem_takenports.gif{/if}" alt="[ {trans("Change connection properties")} ]" title="[ {trans("Change connection properties")} ]" {tip trigger="elemlinkproperties_$netelemlist[netelemlist].id" text="<span style=\"white-space: nowrap;\">{trans("Link type:")} {$_LINKTYPES[$netelemlist[netelemlist].linktype]}<br>{if $netelemlist[netelemlist].linktype == 1}{if $netelemlist[netelemlist].srcradiosector}{trans("Radio sector:")} {$netelemlist[netelemlist].srcradiosector}<br>{/if}{if $netelemlist[netelemlist].dstradiosector}{trans("Destination radio sector:")} {$netelemlist[netelemlist].dstradiosector}<br>{/if}{/if}{if $netelemlist[netelemlist].linktechnology}{trans("Link technology:")} {$_LINKTECHNOLOGIES[$netelemlist[netelemlist].linktype][$netelemlist[netelemlist].linktechnology]}<br>{/if}{trans("Link speed:")} {$_LINKSPEEDS[$netelemlist[netelemlist].linkspeed]}</span>"}>
+			</span>
+			<span onClick="return self.location.href='?m=neteleminfo&id={$netelemlist[netelemlist].id}';">
+			[{if $netelemlist[netelemlist].dstport}{$netelemlist[netelemlist].dstport}{/if}]
+			<BR><IMG SRC="img/port.gif" ALT=""> {$netelemlist[netelemlist].ports} ({$netelemlist[netelemlist].takenports})
+			</span>
+		</TD>
+		<TD class="text-right">
+			<A HREF="?m=netelemedit&action=disconnect&id={$neteleminfo.id}&elemid={$netelemlist[netelemlist].id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
+		</TD>
+	</TR> -->
+	<TR>
+		<TD colspan="6" class="empty-table">
+			<P>{trans("No such ports.")}</P>
+		</TD>
+	</TR>
+	{/section}
+	</tr>
+	</TBODY>
+</TABLE>
+               </TD>
+       </TR>
+    </TBODY>
+</TABLE>
+<SCRIPT type="text/javascript">
+<!--
+function change_elemlinktype(linktype) {
+	linktype = parseInt(linktype);
+	var options = xjx.$('connboxlinktechnology').options;
+	while (options.length)
+		options.remove(0);
+	options.add(new Option('{trans("- unknown -")}', 0));
+	switch (linktype) {
+		case 0:
+			{foreach $_LINKTECHNOLOGIES[0] as $linktechnologyidx => $linktechnology}
+			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
+			{/foreach}
+			break;
+		case 1:
+			{foreach $_LINKTECHNOLOGIES[1] as $linktechnologyidx => $linktechnology}
+			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
+			{/foreach}
+			break;
+		case 2:
+			{foreach $_LINKTECHNOLOGIES[2] as $linktechnologyidx => $linktechnology}
+			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
+			{/foreach}
+			break;
+	}
+	xjx.$('connboxsrcradiosector').style.display = (linktype == 1 ? '' : 'none');
+	xjx.$('connboxdstradiosector').style.display = (linktype == 1 ? '' : 'none');
+
+	if (linktype == 1) {
+		var selected = xjx.$('srcnetelem').selectedIndex;
+		if (selected) {
+			netelem = xjx.$('srcnetelem').options[selected].value;
+			xajax_getRadioSectorsForNetelem('radio_sectors_received_for_srcnetelem', netelem);
+		}
+	}
+}
+
+function change_elemlinktechnology(linktechnology) {
+	linktechnology = parseInt(linktechnology);
+	var linktype = xjx.$('connboxlinktype').options[xjx.$('connboxlinktype').selectedIndex].value;
+	if (linktype != 1)
+		return;
+	var netelem = xjx.$('srcnetelem').options[xjx.$('srcnetelem').selectedIndex].value;
+	if (netelem !== undefined) {
+		xjx.$('connboxsrcradiosector').disabled = true;
+		xjx.$('connboxdstradiosector').disabled = true;
+		xajax_getRadioSectorsForNetElem('radio_sectors_received_for_srcnetelem', netelem, linktechnology);
+		xajax_getRadioSectorsForNetElem('radio_sectors_received_for_dstnetelem', {$neteleminfo.id}, linktechnology);
+	}
+}
+
+function get_radio_sectors_for_netelem(netelem) {
+	xjx.$('connboxsrcradiosector').disabled = true;
+	xajax_getRadioSectorsForNetElem('radio_sectors_received_for_srcnetelem', netelem);
+}
+
+function radio_sectors_received_for_srcnetelem(radiosectors) {
+	var options = xjx.$('connboxsrcradiosector').options;
+	var oldvalue = options[xjx.$('connboxsrcradiosector').selectedIndex].value;
+	while (options.length)
+		options.remove(0);
+	options.add(new Option('- {trans("none")} -', 0));
+	if (radiosectors !== null) {
+		radiosectors.forEach(function(elem) {
+			var option = new Option(elem.name, elem.id);
+			if (elem.id == oldvalue)
+				option.selected = true;
+			options.add(option);
+		});
+	}
+	xjx.$('connboxsrcradiosector').disabled = false;
+}
+
+function radio_sectors_received_for_dstnetelem(radiosectors) {
+	var options = xjx.$('connboxdstradiosector').options;
+	var oldvalue = options[xjx.$('connboxdstradiosector').selectedIndex].value;
+	while (options.length)
+		options.remove(0);
+	options.add(new Option('- {trans("none")} -', 0));
+	if (radiosectors !== null) {
+		radiosectors.forEach(function(elem) {
+			var option = new Option(elem.name, elem.id);
+			if (elem.id == oldvalue)
+				option.selected = true;
+			options.add(option);
+		});
+	}
+	xjx.$('connboxdstradiosector').disabled = false;
+}
+
+xajax_getRadioSectorsForNetElem('radio_sectors_received_for_srcnetelem', {$restnetelemlist[0].id});
+
+if (getCookie('netports') == '1')
+	xjx.$('netports').style.display = '';
+
+//-->
+</SCRIPT>

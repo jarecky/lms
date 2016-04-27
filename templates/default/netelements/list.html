@@ -119,7 +119,17 @@ TODO: lista parametrów obiektu w zależności od typu.
                 <TD WIDTH="15%" class="nobr valign-middle">
                         {trans("Fiberoptics:")} <B>{if $netelemlist[netelemlist].fiber}{$netelemlist[netelemlist].fiber}({$netelemlist[netelemlist].fiber_taken}){else}{trans("None")}{/if}</B>
 		</TD>
+		<!-- *********************************** -->
 		{elseif $netelemlist[netelemlist].type==1}
+                <TD WIDTH="33%" class="nobr valign-middle">
+                        <IMG src="img/netdev.gif" ALT=""> {if $netelemlist[netelemlist].netnodeid}<a href="?m=netnodeinfo&id={$netelemlist[netelemlist].netnodeid}">{$netelemlist[netelemlist].netnode}</a>{/if}
+                </TD>
+		{foreach $netelemlist[netelemlist].conn key=id item=count}
+                <TD class="nobr valign-middle">
+			{if $id<100}{trans("Electric::")}{else}{trans("Optic:")}{/if} <B>{$_NETCONNECTORS[$id]} {$count.total}({if $count.taken}{$count.taken}{else}0{/if})</B>
+                </TD>
+		{/foreach}
+		<!-- *********************************** -->
 		{elseif $netelemlist[netelemlist].type==2}
 		<TD WIDTH="25%" class="nobr valign-middle">
                         <IMG src="img/netdev.gif" ALT=""> {if $netelemlist[netelemlist].netnodeid}<a href="?m=netnodeinfo&id={$netelemlist[netelemlist].netnodeid}">{$netelemlist[netelemlist].netnode}</a>{/if}<BR>
