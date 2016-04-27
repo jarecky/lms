@@ -40,9 +40,7 @@
 	{section name=n loop=$netwires start=0}
 	<TR class="{cycle}">
 		<TD>&nbsp;</TD>
-		<TD CLASS="text-center" BGCOLOR="{$fiber[$netwires[n].wire]}">{$netwires[n].wire}</TD>
-		<TD CLASS="text-center" BGCOLOR="{$tube[$netwires[n].bundle]}">{$netwires[n].bundle}</TD>
-		<TD CLASS="text-center" BGCOLOR="{$fiber[$netwires[n].wire]}">{$netwires[n].wire}</TD>
+		<TD CLASS="text-center" style="margin:10px; background-color:{$tube[$netwires[n].bundle]}; height: 15px;"><IMG SRC="img/fiber{$netwires[n].wire}.gif" HEIGHT="12" WIDTH="100%"</TD>
 		<TD>&nbsp;</TD>
 	</TR>	
 	{/section}
