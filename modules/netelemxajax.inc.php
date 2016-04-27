@@ -403,6 +403,7 @@ function changeNetElementType($type) {
 	$res->assign('elem_type_multiplexer','style.display', 'none');
 	$res->assign('elem_type_computer','style.display', 'none');
 	$res->assign('elem_ports','style.display', 'none');
+	$res->assign('porttable', 'innerHTML', '');
 		  $q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
 		      LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
 		      WHERE m.type=".$type;
