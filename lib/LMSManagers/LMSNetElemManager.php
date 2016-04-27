@@ -554,7 +554,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 				break;
 		}
 
-	$netelemlist = $this->db->GetAll('SELECT e.id, e.name, n.location,
+	$netelemlist = $this->db->GetAll('SELECT e.type, e.id, e.name, n.location,
 			e.description, e.producer, e.model, e.serialnumber,
 			(SELECT COUNT(*) FROM netports WHERE netelemid = e.id) AS ports,
 			(SELECT COUNT(*) FROM netlinks LEFT JOIN netports n ON (srcport = n.id OR dstport = n.id) WHERE n.netelemid = e.id) AS takenports, 
@@ -651,7 +651,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     public function GetNetElemCable($id)
     {
         $result = $this->db->GetRow('SELECT e.*, c.*, e.type AS type, 
-				e.netnodeid AS srcnodeid,
+				e.netnodeid AS srcnodeid, n2.name AS dstnetnode,
 				c.type AS cabletype,
 				(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
 				lt.name AS street_type,
@@ -661,6 +661,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 			FROM netelements e
 			LEFT JOIN netnodes n ON (n.id = e.netnodeid)
 			LEFT JOIN netcables c ON (c.netelemid = e.id) 
+			LEFT JOIN netnodes n2 ON (n2.id = c.dstnodeid)
 			LEFT JOIN location_cities lc ON (lc.id = n.location_city)
 			LEFT JOIN location_streets lst ON (lst.id = n.location_street)
 			LEFT JOIN location_street_types lt ON (lt.id = lst.typeid)

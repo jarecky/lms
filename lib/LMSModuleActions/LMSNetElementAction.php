@@ -126,6 +126,23 @@ class LMSNetElemAction extends LMSModuleAction
 			'model' => $model,
 		);
 		$netelemlist = $this->lms->GetNetElemList($o, $search);
+		foreach ($netelemlist AS $id => $netelem) {
+			if (isset($netelem['type']))
+			switch ($netelem['type']) {
+			case '0':
+				break;
+			case '1':
+				break;
+			case '2':
+				$netelemlist[$id]['netcable']=$this->lms->GetNetElemCable($netelem['id']);
+				break;
+			case '3':
+				break;
+			case '4':
+				break;
+			case '99':
+			}
+		}
 		$listdata['total'] = $netelemlist['total'];
 		$listdata['order'] = $netelemlist['order'];
 		$listdata['direction'] = $netelemlist['direction'];
