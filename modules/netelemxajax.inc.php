@@ -402,35 +402,45 @@ function changeNetElementType($type) {
 	$res->assign('elem_type_splitter','style.display', 'none');
 	$res->assign('elem_type_multiplexer','style.display', 'none');
 	$res->assign('elem_type_computer','style.display', 'none');
-	switch($type){
-		case '0':{
-		  $res->assign('elem_type_active','style.display', 'table-row-group');
+	$res->assign('elem_ports','style.display', 'none');
 		  $q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
 		      LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
 		      WHERE m.type=".$type;
 		  $producers = $DB->getAll($q);
+		  $res->script("var d=document.getElementById('producer'); d.options.length=0;");
 		  foreach($producers as $p){
 		      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
 		  }
-	}
-	break;
-		case '1':
-	$res->assign('elem_type_passive','style.display', 'table-row-group');
-	break;
-		case '2':
-	$res->assign('elem_type_cable','style.display', 'table-row-group');
-	break;
-		case '3':
-	$res->assign('elem_type_splitter','style.display', 'table-row-group');
+	switch($type){
+		case '0':{
+		  $res->assign('elem_type_active','style.display', 'table-row-group');
+		  $res->assign('elem_ports','style.display', 'table-row-group');
+		 }
 		break;
-		case '4':
-	$res->assign('elem_type_multiplexer','style.display', 'table-row-group');
+		case '1':{
+		  $res->assign('elem_type_passive','style.display', 'table-row-group');
+		  $res->assign('elem_ports','style.display', 'table-row-group');
+		}
 		break;
-		case '99':
-	$res->assign('elem_type_computer','style.display', 'table-row-group');
+		case '2':{
+		  $res->assign('elem_type_cable','style.display', 'table-row-group');
+		}
 		break;
-		case 'default':
-		$res->assign('elem_main','style.display','none');		
+		case '3':{
+		  $res->assign('elem_type_splitter','style.display', 'table-row-group');
+		}
+		break;
+		case '4':{
+		  $res->assign('elem_type_multiplexer','style.display', 'table-row-group');
+		}
+		break;
+		case '99':{
+		  $res->assign('elem_type_computer','style.display', 'table-row-group');
+		}
+		break;
+		case 'default':{
+		  $res->assign('elem_main','style.display','none');		
+		}
 	}
 	return $res;
 }

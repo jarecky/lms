@@ -14,9 +14,8 @@
 		<TD WIDTH="1%">
 			<IMG SRC="img/netdev.gif" ALT="">
 		</TD>
-		<TD WIDTH="1%">
+		<TD WIDTH="99%" colspan="2">
 			<B>{trans("Name:")}</B>
-		<TD WIDTH="98%">
 			<INPUT TYPE="TEXT" NAME="netelem[name]" VALUE="{$netelem.name}" MAXLENGTH="32" {tip trigger="name" text="Enter device name" bold=1}>
 		</TD>
 	</TR>
@@ -24,18 +23,16 @@
     <TBODY>
         <TR>
                 <TD WIDTH="1%">
-                        <IMG SRC="img/netdev.gif" ALT="">
+                        &nbsp;
                 </TD>
-                <TD WIDTH="1%">
-                        <B>{trans("Type:")}{$netelem.type}</B>
-                <TD WIDTH="98%">
+                <TD WIDTH="99%" colspan="2" class="fright fleft">
+                        <B>{trans("Type:")}</B>
                         <SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} onchange="xajax_changeNetElementType(this.value)">
                           <OPTION VALUE="-1">{trans("Select type:")}</OPTION>
                         {foreach $_NETELEMENTTYPES as $idx => $type}
                           <OPTION VALUE="{$idx}" {if $idx==$netelem.type} SELECTED{/if}>{$type}</OPTION>
                         {/foreach}
                         </SELECT>
-			
                 </TD>
         </TR>
     </TBODY>
@@ -264,27 +261,25 @@
 		</TD>
 	</TR>
 {/if}
-        <TR>
-                <TD WIDTH="1%">
-                        <IMG SRC="img/netdev.gif" ALT="">
-                </TD>
-		<TD WIDTH="1%" NOWRAP>
-			{trans('Ports:')}
-		</TD>
-		<TD WIDTH="98%" ALIGN="text-left">
-			<IMG SRC="img/add.gif" onclick="addports();">
-		</TD>
-	</TR>
-	<TR>
-		<TD COLSPAN=3 WIDTH="100%">
-			<TABLE><TBODY id="porttable"></TBODY></TABLE>
-		</TD>
-        </TR>
-
-	</TBODY>
 <!-- end of elem_type_active -->
 <!-- start of elem_type_passive -->
         <TBODY ID="elem_type_passive" STYLE="display:none">
+        <TR>
+                <TD width="1%">
+                        <img src="img/netdev.gif" alt="">
+                </TD>
+                <TD WIDTH="1%" class="bold nobr">
+                        {trans("Net node:")}i
+                </TD>
+                <TD WIDTH="98%">
+                        <SELECT NAME="netactive[netnodeid]" VALUE="{$netactive.netnodeid}" {tip text="Select node"} >
+                                <OPTION VALUE="-1">{trans("None")}</OPTION>
+                                {section name=nd loop=$NNnodes}
+                                <OPTION VALUE="{$NNnodes[nd].id}" {if ($netactive.netnodeid == $NNnodes[nd].id ) } selected="selected" {/if} >{$NNnodes[nd].name}</OPTION>
+                                {/section}
+                        </SELECT>
+                </TD>
+        </TR>
         </TBODY>
 <!-- end of elem_type_passive -->
 <!-- start of elem_type_cable -->
@@ -535,7 +530,26 @@
         </TR>
         </TBODY>
 <!-- end of elem_type_computer -->
+<!-- start ports -->
+        <TBODY ID="elem_ports" STYLE="display:none">
+        <TR>
+                <TD WIDTH="1%">
+                        <IMG SRC="img/netdev.gif" ALT="">
+                </TD>
+		<TD WIDTH="99%" NOWRAP colspan="2">
+			{trans('Ports:')}
+			<IMG SRC="img/add.gif" onclick="addports();">
+		</TD>
+	</TR>
+	<TR>
+		<TD COLSPAN=3 WIDTH="100%">
+			<TABLE><TBODY id="porttable"></TBODY></TABLE>
+		</TD>
+        </TR>
 
+	</TBODY>
+
+<!-- end ports -->
 	<TR>
 		<TD WIDTH="100%" COLSPAN="3" ALIGN="RIGHT">
 			<A HREF="javascript:document.netelemadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
