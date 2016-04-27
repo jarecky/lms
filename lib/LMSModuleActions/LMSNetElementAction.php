@@ -137,8 +137,10 @@ class LMSNetElemAction extends LMSModuleAction
 				$netelemlist[$id]['netcable']=$this->lms->GetNetElemCable($netelem['id']);
 				break;
 			case '3':
+				$netelemlist[$id]['netsplitter']=$this->lms->GetNetElemSplitter($netelem['id']);
 				break;
 			case '4':
+				$netelemlist[$id]['netmultiplexer']=$this->lms->GetNetElemMultiplexer($netelem['id']);
 				break;
 			case '99':
 			}
