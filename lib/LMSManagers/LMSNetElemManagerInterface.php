@@ -58,6 +58,8 @@ interface LMSNetElemManagerInterface
     public function NetElemAddMultiplexer($netelemdata,$netmultiplexerdata);
 
     public function NetElemAddComputer($netelemdata,$netcomputerdata);
+    
+    public function NetElemAddPorts($id, $netports);
 
     public function DeleteNetElem($id);
     

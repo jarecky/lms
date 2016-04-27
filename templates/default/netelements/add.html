@@ -599,9 +599,12 @@ function xaddport(id, label, connector, port_type, cn, pn){
   var row=document.createElement('tr');
   var index=document.getElementById('porttable').rows.length+1;
   row.innerHTML='<td class="nobr" colspan="3">{trans("Label:")}'+
-	'<input type=text name="netports['+id+'][label]" value="'+label+'"> typ:<select name="netports['+id+'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'+id+'\')">'+
+	'<input type=text name="netports['+id+'][label]" value="'+label+'"> {trans("medium")}:<select name="netports['+id+'][netporttype]" >'+
 			    '<option value='+port_type+'>'+pn+'</option>'+
 			    port_types+'</select>'+
+	'{trans("Technology")}: <select name="netportsp'+id+'][technology]onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'+id+'\')">'+
+			    '<option value="'+'xx'+'">'+'techologia'+'</option>'+
+			    '</select>'+
 	' {trans("connector")}:<select name="netports['+id+'][netconnector]" id="conn'+id+'">'+
 	'<option value='+connector+'>'+cn+'</option>'+
 	connectors+'</select>'+

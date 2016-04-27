@@ -1292,7 +1292,11 @@ class LMS
         $manager = $this->getNetElemManager();
         return $manager->NetElemAddComputer($netelemdata,$netcomputerdata);
     }
-
+    
+    public function NetElemAddPorts($id, $netports){
+	$manager = $this->getNetElemManager();
+	return $manager->NetElemAddPorts($id, $netports);
+    }
     public function NetElemUpdate($data)
     {
         $manager = $this->getNetElemManager();

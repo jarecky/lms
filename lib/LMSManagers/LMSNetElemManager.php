@@ -425,8 +425,14 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     }
     
-    public function NetElemAddPorts($data, $ports){
-	
+    public function NetElemAddPorts($id, $ports=array()){
+	$portlist='';
+	foreach($ports as $p){
+	    $portlist.="('".$id."','".$p['netporttype']."','".$p['label']."','".$p['netconnector']."'),";
+	}
+	$q="INSERT INTO netports (netelemid, type, label, connectortype) VALUES ".substr($portlist,0,-1);
+	error_log($q);
+	$this->db->Execute($q);
 	return FALSE;
     }
     public function GetNetElemType($id)
