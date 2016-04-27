@@ -14,16 +14,16 @@
                         <TABLE class="lmsbox-inner">
         <THEAD>
         <TR>
-                <TD style="width: 20%;" class="nobr">
+                <TD style="width: 35%;" class="nobr">
                         {trans("Element")}/{trans("Port")}
                 </TD>
-                <TD style="width: 20%;" class="nobr">
+                <TD style="width: 10%;" class="nobr">
                 </TD>
-                <TD style="width: 20%;" class="nobr">
+                <TD style="width: 10%;" class="nobr">
                 </TD>
-                <TD style="width: 20%;" class="nobr">
+                <TD style="width: 10%;" class="nobr">
                 </TD>
-                <TD style="width: 20%;" class="nobr text-right">
+                <TD style="width: 35%;" class="nobr text-right">
                         {trans("Element")}/{trans("Port")}
                 </TD>
         </TR>
@@ -39,8 +39,10 @@
 	{cycle values="light,lucid" print=false}
 	{section name=n loop=$netwires start=0}
 	<TR class="{cycle}">
-		<TD>&nbsp;</TD>
-		<TD CLASS="text-center" style="margin:10px; background-color:{$tube[$netwires[n].bundle]}; height: 15px;"><IMG SRC="img/fiber{$netwires[n].wire}.gif" HEIGHT="12" WIDTH="100%"</TD>
+		<TD><BR><BR></TD>
+		<TD CLASS="text-right" STYLE="padding-right:0px";><img src="img/fiber{$netwires[n].wire}.gif" width="50" height="12">
+		<TD CLASS="text-center" style="opacity: 0.4;padding-right:0px; padding-left:0px; background-color:{$tube[$netwires[n].bundle]}; "><IMG STYLE="opacity: 1;" SRC="img/fiber{$netwires[n].wire}.gif" HEIGHT="12" WIDTH="100%"</TD>
+		<TD CLASS="text-left" STYLE="padding-left:0px;"><img src="img/fiber{$netwires[n].wire}.gif" width="50" height="12">
 		<TD>&nbsp;</TD>
 	</TR>	
 	{/section}
