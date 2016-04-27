@@ -899,12 +899,13 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     public function GetNetElemPorts($id) {
 	$ports = $this->db->GetAll('SELECT * FROM netports WHERE netelemid=? ORDER BY label ASC',array($id));
 	if (is_array($ports)) foreach ($ports AS $idx => $port) {
-	    $rss = $this->db->GetAll('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
-	    if (count($rss)) 
-		$ports[$idx]['radiosectors']=$rss;
+	    $rs = $this->db->GetRow('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
+	    if ($rs) 
+		$ports[$idx]['radiosector']=$rs;
 	    $ports[$idx]['taken']=$this->db->GetOne('SELECT COUNT(*) FROM nodes WHERE netport = ? AND ipaddr <> 0 AND ownerid > 0',array($port['id'])) + $this->db->GetOne('SELECT COUNT(*) FROM netlinks WHERE srcport = ? OR dstport = ?',array($port['id'],$port['id']));
 	}
 	return($ports);
     }
+
 
 }
