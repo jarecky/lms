@@ -404,17 +404,12 @@ function changeNetElementType($type) {
 	$res->assign('elem_type_computer','style.display', 'none');
 	switch($type){
 	case '0':
-		  $res->assign('elem_type_active','style.display', 'table-row-group');
-		  $q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
-		      LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
-		      WHERE m.type=".$type;
-		  $producers = $DB->getAll($q);
-		  foreach($producers as $p){
-		      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
-		  }
+		$res->assign('elem_type_active','style.display', 'table-row-group');
+		$res->assign('elem_ports','style.display', 'table-row-group');
 		break;
 	case '1':
 		$res->assign('elem_type_passive','style.display', 'table-row-group');
+		$res->assign('elem_ports','style.display', 'table-row-group');
 		break;
 	case '2':
 		$res->call('xajax_changeWireType',1,0,0);
@@ -430,7 +425,7 @@ function changeNetElementType($type) {
 		$res->assign('elem_type_computer','style.display', 'table-row-group');
 		break;
 	case 'default':
-		$res->assign('elem_main','style.display','none');		
+		#$res->assign('elem_main','style.display','none');		
 	}
 	return $res;
 }
