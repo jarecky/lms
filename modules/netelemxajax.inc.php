@@ -458,7 +458,7 @@ function getModelsByProducerAndType($type, $producer){
 function getModelPortList($id){
 	global $DB, $NETCONNECTORS, $NETPORTTYPES;
 	$res= new xajaxResponse();
-	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id." ORDER by 3");
+	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id." ORDER by connector, label");
 	$res->script("document.getElementById('porttable').innerHTML=''");
 	foreach($ports as $p){
 	  $res->call('xaddport',$p['id'],$p['label'],$p['connector'],$p['port_type'], $NETCONNECTORS[($p['connector'])], $NETPORTTYPES[($p['port_type'])]);

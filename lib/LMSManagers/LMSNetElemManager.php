@@ -424,7 +424,11 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     public function NetElemAddComputer($netelemdata,$netcomputerdata) {
 
     }
-
+    
+    public function NetElemAddPorts($data, $ports){
+	
+	return FALSE;
+    }
     public function GetNetElemType($id)
     {
         return ($this->db->GetOne("SELECT type FROM netelements WHERE id=?", array($id)));
