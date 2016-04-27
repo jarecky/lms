@@ -293,7 +293,9 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
     }
 
     public function NetElemAddActive($netelemdata,$netactivedata) {
-
+	global $SYSLOG_RESOURCE_KEYS;
+	$netelemid=$this->NetElemAdd($netelemdata);
+/* to i tak chyba do porawienia
             // EtherWerX support (devices have some limits)
             // We must to replace big ID with smaller (first free)
             if ($id > 99999 && ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.ewx_support', false))) {
@@ -311,10 +313,16 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 $this->db->UnLockTables();
                 $this->db->CommitTrans();
             }
+*/
+	
+	return $netelemid;
     }	    
 
     public function NetElemAddPassive($netelemdata,$netpassivedata) {
 	global $SYSLOG_RESOURCE_KEYS;
+	$netelemid=$this->NetElemAdd($netelemdata);
+	
+	return $netelemid;
     }
 
     public function NetElemAddCable($netelemdata,$netcabledata) {

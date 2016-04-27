@@ -591,23 +591,19 @@ function xaddport(id, label, connector, port_type, cn, pn){
 			      port_types+='<option value="{$k}">{$val}</option>';
   {/foreach}
 
-  var connectors='<option value=0>{trans("Select")}</option>';
-  {foreach from=$NETCONNECTORS key=k item=val}
-			      connectors+='<option value="{$k}">{$val}</option>';
-  {/foreach}
+  
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');
   var index=document.getElementById('porttable').rows.length+1;
   row.innerHTML='<td class="nobr" colspan="3">{trans("Label:")}'+
-	'<input type=text name="netports['+id+'][label]" value="'+label+'"> {trans("medium")}:<select name="netports['+id+'][netporttype]" >'+
+	'<input type=text name="netports['+id+'][label]" value="'+label+'"> {trans("medium")}:<select id="medium'+id+'" name="netports['+id+'][netporttype]" onchange="xajax_getTechnologyOptionsByDevTypeAndMedium(this.value, document.getElementById(\'type\').value, \'tech'+id+'\')">'+
 			    '<option value='+port_type+'>'+pn+'</option>'+
 			    port_types+'</select>'+
-	'{trans("Technology")}: <select name="netportsp'+id+'][technology]onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'+id+'\')">'+
+	'{trans("Technology")}: <select name="netports['+id+'][technology]" id=\'tech'+id+'\' onchange="xajax_getConnectorOptionsByMediumAndDevType(this.value, document.getElementById(\'medium'+id+'\').value, \'conn'+id+'\')">'+
 			    '<option value="'+'xx'+'">'+'techologia'+'</option>'+
 			    '</select>'+
 	' {trans("connector")}:<select name="netports['+id+'][netconnector]" id="conn'+id+'">'+
-	'<option value='+connector+'>'+cn+'</option>'+
-	connectors+'</select>'+
+	'<option value='+connector+'>'+cn+'</option></select>'+
 	'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
 	'<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
 	'</td>';
