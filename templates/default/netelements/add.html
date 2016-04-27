@@ -22,10 +22,7 @@
     </THEAD>
     <TBODY>
         <TR>
-                <TD WIDTH="1%">
-                        &nbsp;
-                </TD>
-                <TD WIDTH="99%" colspan="2" class="fright fleft">
+                <TD WIDTH="99%" colspan="3" class="fright fleft">
                         <B>{trans("Type:")}</B>
                         <SELECT NAME="netelem[type]" id="type" {tip text="Select element type."} onchange="xajax_changeNetElementType(this.value)">
                           <OPTION VALUE="-1">{trans("Select type:")}</OPTION>
@@ -170,7 +167,7 @@
                         <img src="img/netdev.gif" alt="">
                 </TD>
                 <TD WIDTH="1%" class="bold nobr">
-                        {trans("Net node:")}i
+                        {trans("Net node:")}
                 </TD>
                 <TD WIDTH="98%">
                         <SELECT NAME="netactive[netnodeid]" VALUE="{$netactive.netnodeid}" {tip text="Select node"} >
@@ -637,7 +634,7 @@ function remports(row){
 <!--
 document.forms['netelemadd'].elements['netelem[name]'].focus();
 setNNProject();
-xajax_changeNetElementType({$netelem.type});
+xajax_changeNetElementType(-1);
 //-->
 </SCRIPT>
 {/block}
