@@ -130,8 +130,37 @@ class LMSNetElemAction extends LMSModuleAction
 			if (isset($netelem['type']))
 			switch ($netelem['type']) {
 			case '0':
+				$netelemlist[$id]['copper']=0;
+				$netelemlist[$id]['copper_taken']=0;
+				$netelemlist[$id]['wireless']=0;
+				$netelemlist[$id]['wireless_taken']=0;
+				$netelemlist[$id]['fiber']=0;
+				$netelemlist[$id]['fiber_taken']=0;
+				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
+				foreach ($netelemlist[$id]['ports'] as $port) {
+					if ($port['technology']<100) {
+						$netelemlist[$id]['copper']++;
+						if ($port['taken']==$port['capacity']) 
+							$netelemlist[$id]['copper_taken']++;
+					} elseif ($port['technology']<200) {
+						if (isset($port['radiosector'])) {
+							$port['radiosector']['taken']=$port['taken'];
+							$port['radiosector']['capacity']=$port['capacity'];
+							$netelemlist[$id]['radiosectors'][]=$port['radiosector'];
+						} else {
+							$netelemlist[$id]['wireless']++;
+							if ($port['taken']==$port['capacity'])
+								$netelemlist[$id]['wireless_taken']++;
+						}
+					} else {
+						$netelemlist[$id]['fiber']++;
+						if ($port['taken']==$port['capacity'])
+							$netelemlist[$id]['fiber_taken']++;
+					}
+				}
 				break;
 			case '1':
+				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
 				break;
 			case '2':
 				$netelemlist[$id]['netcable']=$this->lms->GetNetElemCable($netelem['id']);
@@ -143,6 +172,8 @@ class LMSNetElemAction extends LMSModuleAction
 				$netelemlist[$id]['netmultiplexer']=$this->lms->GetNetElemMultiplexer($netelem['id']);
 				break;
 			case '99':
+				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
+				break;
 			}
 		}
 		$listdata['total'] = $netelemlist['total'];

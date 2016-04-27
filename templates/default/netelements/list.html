@@ -56,7 +56,7 @@ TODO: lista parametrów obiektu w zależności od typu.
 			{trans("Network node:")}
 			<SELECT SIZE="1" NAME="n" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1"{if $listdata.netnode == -1} selected{/if}>- {trans("all")} -</OPTION>
-				<OPTION VALUE="-2"{if $listdata.netnode == -2} selected{/if}>- {trans("none")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.netnode == -2} selected{/if}>- {trans("None")} -</OPTION>
 				{foreach $netnodes as $netnode}
 				<OPTION VALUE="{$netnode.id}"{if $listdata.netnode == $netnode.id} selected{/if}>{$netnode.name}</OPTION>
 				{/foreach}
@@ -64,7 +64,7 @@ TODO: lista parametrów obiektu w zależności od typu.
 			{trans("Producer:")}
 			<SELECT SIZE="1" NAME="producer" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1"{if $listdata.producer == -1} selected{/if}>- {trans("all")} -</OPTION>
-				<OPTION VALUE="-2"{if $listdata.producer == -2} selected{/if}>- {trans("none")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.producer == -2} selected{/if}>- {trans("None")} -</OPTION>
 				{foreach $producers as $producer}
 				<OPTION VALUE="{$producer}"{if $listdata.producer == $producer} selected{/if}>{$producer}</OPTION>
 				{/foreach}
@@ -72,7 +72,7 @@ TODO: lista parametrów obiektu w zależności od typu.
 			{trans("Model:")}
 			<SELECT SIZE="1" NAME="model" ONCHANGE="document.choosefilter.submit();">
 				<OPTION VALUE="-1"{if $listdata.model == -1} selected{/if}>- {trans("all")} -</OPTION>
-				<OPTION VALUE="-2"{if $listdata.model == -2} selected{/if}>- {trans("none")} -</OPTION>
+				<OPTION VALUE="-2"{if $listdata.model == -2} selected{/if}>- {trans("None")} -</OPTION>
 				{foreach $models as $model}
 				<OPTION VALUE="{$model}"{if $listdata.model == $model} selected{/if}>{$model}</OPTION>
 				{/foreach}
@@ -97,18 +97,27 @@ TODO: lista parametrów obiektu w zależności od typu.
 		</TD>
 		<TD><TABLE WIDTH="100%"><TR>
 		{if $netelemlist[netelemlist].type==0}
-		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" class="nobr valign-top">
-
+                <TD WIDTH="15%" class="nobr valign-middle">
+                        <IMG src="img/netdev.gif" ALT=""> {if $netelemlist[netelemlist].netnodeid}<a href="?m=netnodeinfo&id={$netelemlist[netelemlist].netnodeid}">{$netelemlist[netelemlist].netnode}</a>{/if}
 		</TD>
-		
-		{if $netelemlist[netelemlist].borough_name}{$tiptext=join("",array($netelemlist[netelemlist].location,"\n",$_BOROUGHTYPES[$netelemlist[netelemlist].borough_type]," ",$netelemlist[netelemlist].borough_name,"\nPowiat ",$netelemlist[netelemlist].district_name,"\nWojewództwo ",$netelemlist[netelemlist].state_name))}
-		{elseif $netelemlist[netelemlist].location}{$tiptext=$netelemlist[netelemlist].location}
-		{else}{$tiptext="aaaa"}
-		{/if}
-			
-		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';" class="nobr valign-top">
-			{if $netelemlist[netelemlist].netnode}<a href="?m=netnodeinfo&id={$netelemlist[netelemlist].netnodeid}" title="{$tiptext}">{$netelemlist[netelemlist].netnode}</a>{/if}
-
+		<TD WIDTH="15%" class="nobr valign-middle">
+			{trans("Copper:")} <B>{if $netelemlist[netelemlist].copper}{$netelemlist[netelemlist].copper}({$netelemlist[netelemlist].copper_taken}){else}{trans("None")}{/if}</B>
+		</TD>		
+                <TD WIDTH="15%" class="nobr valign-middle">
+                        {trans("Wireless:")} <B>{if $netelemlist[netelemlist].wireless}{$netelemlist[netelemlist].wireless}({$netelemlist[netelemlist].wireless_taken}){else}{trans("None")}{/if}</B>
+                </TD>
+                <TD WIDTH="40%" class="nobr valign-middle">
+                        {trans("Radiosectors:")}
+			{if $netelemlist[netelemlist].radiosectors}
+			{foreach from=$netelemlist[netelemlist].radiosectors item=rs}
+			<B><I>{$rs.name}</I> {$rs.capacity}({$rs.taken})</B><BR>
+			{/foreach}
+			{else}
+			<B>{trans("None")}</B>
+			{/if}
+                </TD>
+                <TD WIDTH="15%" class="nobr valign-middle">
+                        {trans("Fiberoptics:")} <B>{if $netelemlist[netelemlist].fiber}{$netelemlist[netelemlist].fiber}({$netelemlist[netelemlist].fiber_taken}){else}{trans("None")}{/if}</B>
 		</TD>
 		{elseif $netelemlist[netelemlist].type==1}
 		{elseif $netelemlist[netelemlist].type==2}
