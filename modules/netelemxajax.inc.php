@@ -408,6 +408,7 @@ function changeNetElementType($type) {
 		      WHERE m.type=".$type;
 		  $producers = $DB->getAll($q);
 		  $res->script("var d=document.getElementById('producer'); d.options.length=0;");
+		  $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('Select','-1');");
 		  foreach($producers as $p){
 		      $res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
 		  }

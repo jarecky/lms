@@ -205,8 +205,10 @@ function save_model($forms) {
 			foreach($form as $key=>$val){
 			  if(is_int($key)) $vals.="('".$form['id']."','".$form[$key]['label']."','".$form[$key]['netporttype']."','".$form[$key]['netconnector']."'),";
 			}
-			$DB->Execute("DELETE FROM netdeviceschema WHERE model =".$formid);
-			$DB->Execute("INSERT INTO netdeviceschema (model,label, port_type, connector) VALUES ".substr($vals,0,-1));
+			$DB->Execute("DELETE FROM netdeviceschema WHERE model=".$formid);
+			$q="INSERT INTO netdeviceschema (model,label, port_type, connector) VALUES ".substr($vals,0,-1);
+			error_log($q);
+			$DB->Execute($q);
 			$obj->script("xajax_cancel_model();");
 			$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=$pid';");
 		} else {
@@ -221,6 +223,7 @@ function save_model($forms) {
 			  foreach($form as $key=>$val){
 			    if(is_int($key)) $vals.="('".$id."','".$form[$key]['label']."','".$form[$key]['netporttype']."','".$form[$key]['netconnector']."'),";
 			  }
+			  error_log(print_r($vals));
 			$DB->Execute("INSERT INTO netdeviceschema (model,label, port_type, connector) VALUES ".substr($vals,0,-1));
 			$DB->CommitTrans();
 			$obj->script("xajax_cancel_model();");
