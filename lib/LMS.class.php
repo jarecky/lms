@@ -1292,7 +1292,7 @@ class LMS
         $manager = $this->getNetElemManager();
         return $manager->NetElemAddComputer($netelemdata,$netcomputerdata);
     }
-
+    
     public function NetElemUpdate($data)
     {
         $manager = $this->getNetElemManager();

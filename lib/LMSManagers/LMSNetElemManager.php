@@ -372,7 +372,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
             return($netelemid);
 	}
 	return FALSE;
-    }
+    }	    
 
     public function NetElemAddCable($netelemdata,$netcabledata) {
         global $SYSLOG_RESOURCE_KEYS;
