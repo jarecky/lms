@@ -33,10 +33,10 @@ $this->Execute("CREATE TABLE netdeviceschema (
   id int(11) NOT NULL AUTO_INCREMENT,
   model int(11) NOT NULL,
   label varchar(20) COLLATE utf8_bin NOT NULL,
-  port_type tinyint(1) NOT NULL,
+  port_type tinyint(4) NOT NULL,
   portcount tinyint(4) NOT NULL,
   continous tinyint(1) NOT NULL DEFAULT '0',
-  connector tinyint(1) NOT NULL,
+  connector tinyint(4) NOT NULL,
   PRIMARY KEY (id),
   KEY model (model)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
