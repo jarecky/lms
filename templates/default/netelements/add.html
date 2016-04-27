@@ -352,6 +352,7 @@
                         <INPUT TYPE="TEXT" NAME="netcable[capacity]" VALUE="{if $netcable.capacity}{$netcable.capacity}{/if}" {tip trigger="capacity" text="Enter number of wires/fibers"}>
                 </TD>
         </TR>
+	{if $netcable.type==0}{$netcable.type=1}{/if}
         <TR>
                 <TD width="1%">
                         <img src="img/netdev_model.gif" alt="">
@@ -391,9 +392,9 @@
                 </TD>
         </TR>
         {if $error}
-        <SCRIPT type="text/javascript">
+        <SCRIPT type="text/javascript"><!--
         xajax_changeWireType({$netcable.type},{$netcable.colorschemaid},{$netcable.wiretype});
-        </SCRIPT>
+	--></SCRIPT>
         {/if}
 	</TBODY>
 <!-- end of elem_type_cable -->
