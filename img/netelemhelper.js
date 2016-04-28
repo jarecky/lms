@@ -86,7 +86,7 @@ function remports(row){
 }
 
 function netelemmodelchoosewin(type, producer, model, porttable){
-    popup('?m=choosemodel',1,100,380);
+    popup('?m=choosemodel&type='+type,1,100,380);
     autoiframe_setsize('autoiframe', 300, 300);
 }
 
