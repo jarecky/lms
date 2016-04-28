@@ -405,6 +405,7 @@ function changeNetElementType($type) {
 	case '1':
 		$res->assign('elem_type_passive','style.display', 'table-row-group');
 		$res->assign('elem_ports','style.display', 'table-row-group');
+		$res->script("medium_types='<option value=\"1\">copper</option>");
 		break;
 	case '2':
 		$res->call('xajax_changeWireType',1,0,0);
