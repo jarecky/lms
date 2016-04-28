@@ -14,9 +14,9 @@
                         <TABLE WIDTH="100%" class="container">
 			{cycle values="light,lucid" print=false}
 			{foreach from=$netports.in item=port}
-			<TR CLASS="{cycle}">
-				<TD><img src="img/netdev_takenports.gif">&nbsp;</TD>
-				<TD><B>{$port.label}</B></TD>
+			<TR CLASS="{cycle} highlight">
+				<TD CLASS="text-left"><img src="img/netdev_takenports.gif">&nbsp;</TD>
+				<TD CLASS="text-center"><B>{$port.label}</B></TD>
 			</TR>
 			{/foreach}
 			</TABLE>
@@ -25,9 +25,9 @@
 			<TABLE WIDTH="100%" class="container">
                         {cycle values="light,lucid" print=false}
                         {foreach from=$netports.out item=port}
-                        <TR CLASS="{cycle}">
-                                <TD><B>{$port.label}</B></TD>
-				<TD>&nbsp;<img src="img/netdev_takenports.gif"></TD>
+                        <TR CLASS="{cycle} highlight">
+                                <TD CLASS="text-center"><B>{$port.label}</B></TD>
+				<TD CLASS="text-right">&nbsp;<img src="img/netdev_takenports.gif"></TD>
                         </TR>
                         {/foreach}
 			</TABLE>
