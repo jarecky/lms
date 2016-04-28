@@ -63,7 +63,8 @@
 			<B>{trans("Manufacturer:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT id="producer" NAME="netelem[producer]" VALUE="{$netelem.producer}" {tip text="Enter producer name (optional)"} onchange="xajax_getModelsByProducerAndType(document.getElementById('type').value, this.value)">
+			<SELECT id="producer" NAME="netelem[producer]" {tip text="Enter producer name (optional)"} onchange="xajax_getModelsByProducerAndType(document.getElementById('type').value, this.value)">
+			<option value="{$netelem.producer}" selected>{$netelem.producer}</option>
 			</SELECT>
 		</TD>
 	</TR>
@@ -76,6 +77,7 @@
 		</TD>
 		<TD WIDTH="98%">
 			<SELECT id="model" NAME="netelem[model]" VALUE="{$netelem.model}" {tip text="Enter device model (optional)"} onchange="xajax_getModelPortList(this.value)" >
+			<option value="{$netelem.model}" selected>{$netelem.model}</option>
 			</SELECT>
                         <A href="javascript:void(0);" onclick="return netelemmodelchoosewin('netelem', 'netelemadd', document.forms['netelemadd'].elements['netelem[netelemicemodelid]'].value, document.forms['netelemadd'].elements['netelem[producer]'].value, document.forms['netelemadd'].elements['netelem[model]'].value)" {tip text="Click to select model"}>&raquo;&raquo;&raquo;</A>
 			<BR>
@@ -529,7 +531,7 @@
         </TBODY>
 <!-- end of elem_type_computer -->
 <!-- start ports -->
-        <TBODY ID="elem_ports" STYLE="display:none">
+        <TBODY ID="elem_ports" STYLE="display:{if $netports}table-row-group;{else}none{/if}">
         <TR>
                 <TD WIDTH="1%">
                         <IMG SRC="img/netdev.gif" ALT="">
@@ -541,7 +543,28 @@
 	</TR>
 	<TR>
 		<TD COLSPAN=3 WIDTH="100%">
-			<TABLE><TBODY id="porttable"></TBODY></TABLE>
+			<TABLE><TBODY id="porttable">
+			{foreach key=k item=i from=$netports}
+			<tr>
+			  <td class="nobr" colspan="3">
+			    {trans("Label:")}<input type=text name="netports[{$k}][label]" value="{$netports[$k].label}">
+			    {trans("Type:")}<select name="netports[{$k}][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, 'conn{$k}')">
+			    {foreach key=o item=i from=$NETPORTTYPES}
+			      <option value="{$o}"{if $o==$netports[$k].netporttype} selected{/if}>{$i}</option>
+			    {/foreach}
+			    </select>
+			    {trans("Technology")}: <select name="netports[{$k}][technology]" id='tech{$k}' onchange="xajax_getConnectorOptionsByMediumAndDevType(this.value, document.getElementById('medium{$k}').value, 'conn{$k}')">
+			      <option value="{$netports.technology}">{$NETTECHNOLOGIES[$netports.technology].name}</option>
+			    </select>
+			    {trans("connector")}:<select name="netports[{$k}][netconnector]" id="conn{$k}">
+			      <option value="{$netports[$k].netconnector}">{$NETCONNECTORS[($netports[$k].netconnector)]}</option>
+			    </select>
+			    <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
+			    <IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">
+			  </td>
+			</tr>
+			{/foreach}
+			</TBODY></TABLE>
 		</TD>
         </TR>
 
@@ -633,7 +656,8 @@ function remports(row){
 <!--
 document.forms['netelemadd'].elements['netelem[name]'].focus();
 setNNProject();
-xajax_changeNetElementType(-1);
+//xajax_changeNetElementType(-1);
+xajax_changeNetElementType({$netelem.type});
 //-->
 </SCRIPT>
 {/block}

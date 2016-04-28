@@ -225,9 +225,10 @@ class LMSNetElemAction extends LMSModuleAction
 	function _add() {
 		include(MODULES_DIR . '/netelemxajax.inc.php');
 		$netelemdata['type']=-1;
-		global $NETPORTTYPES, $NETCONNECTORS;
+		global $NETPORTTYPES, $NETCONNECTORS, $NETTECHNOLOGIES;
 
 		if(isset($_POST['netelem'])) {
+		print_r($_POST);
 			$netelemdata = $_POST['netelem'];
 			if($netelemdata['name'] == '')
 				$error['name'] = trans('Element name is required!');
@@ -385,6 +386,7 @@ class LMSNetElemAction extends LMSModuleAction
 		$this->smarty->assign('netelem', $netelemdata);
 		$this->smarty->assign('NETPORTTYPES',$NETPORTTYPES);
 		$this->smarty->assign('NETCONNECTORS',$NETCONNECTORS);
+		$this->smarty->assign('NETTECHNOLOGIES',$NETTECHNOLOGIES);
 		$layout['pagetitle'] = trans('New Element');
 
 		$this->smarty->assign('nastype', $this->lms->GetNAStypes());
