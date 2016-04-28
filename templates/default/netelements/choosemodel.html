@@ -1,0 +1,46 @@
+<html>
+<head>
+       <link href="img/style.css" rel="stylesheet" type="text/css"> 
+</head>
+<body>
+{$xajax}
+  <form action="javascript:void(0)" method=POST>
+  <table class="lmsbox" width="100%">
+  <thead>
+    <tr>
+      <td>
+	<h1>{trans("Select device model")}</h1>
+      </td>
+    </tr>
+  </thead>
+    <tr>
+      <td>
+	{trans("Producer")}:
+	<select id="producer" onchange="xajax_updateModels({$smarty.get.type}, this.value)">
+	  {foreach key=k item=i from=$producers}
+	  <option value="{$i.id}">{$i.name}</option>
+	  {/foreach}
+	</select>
+      </td>
+    </tr>
+    <tr>
+      <td style="display:none;">
+	{trans("Model")}:
+	<select id="model">
+	   <option value="">xxxx</option>
+	</select>
+      </td>
+    </tr>
+    <tbody id="porttable" style="display:none;">
+	  <tr><td>porty</td></tr>
+    </tbody>
+    <tr>
+      <td style="text-align:right;">
+	<a href="javascript:void(0);">{trans('Save')}<img src="img/save.gif"></a>
+	<a href="javascript:void(0);">{trans('Cancel')}<img src="img/cancel.gif"></a>
+      </td>
+    </tr>
+   </table>
+    </form>
+</body>
+</html>
