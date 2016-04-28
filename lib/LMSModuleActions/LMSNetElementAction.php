@@ -137,6 +137,7 @@ class LMSNetElemAction extends LMSModuleAction
 				$netelemlist[$id]['wireless_taken']=0;
 				$netelemlist[$id]['fiber']=0;
 				$netelemlist[$id]['fiber_taken']=0;
+				if (is_array($netelemlist[$id]['ports'])) 
 				foreach ($netelemlist[$id]['ports'] as $port) {
 					if ($port['technology']<100) {
 						$netelemlist[$id]['copper']++;
@@ -161,6 +162,7 @@ class LMSNetElemAction extends LMSModuleAction
 				break;
 			case '1':
 				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
+				if (is_array($netelemlist[$id]['ports']))
 				foreach ($netelemlist[$id]['ports'] as $port) {
 					if ($port['connectortype']==999)
 						$netelemlist[$id]['conn'][$port['connectortype']]['total']+=$port['capacity'];

@@ -2,7 +2,7 @@
 <TABLE class="lmsbox">
     <THEAD>
         <TR>
-                <TD COLSPAN="2" style="width: 100%;" class="hand nobr" onClick="showOrHide('netports');">
+                <TD COLSPAN="2" style="width: 100%;" class="nobr">
                         <IMG SRC="img/mac.gif" alt="">
                         <span class="bold">{t a=$netports|@count}Ports ($a):{/t}</span>
                 </TD>
@@ -11,7 +11,7 @@
     <TBODY>
         <TR id="netports">
                 <TD class="valign-middle" style="width: 50%;">
-                        <TABLE WIDTH="100%" class="container">
+			<TABLE WIDTH="100%">
 			{cycle values="light,lucid" print=false}
 			{foreach from=$netports.in item=port}
 			<TR CLASS="{cycle} highlight">
@@ -22,7 +22,7 @@
 			</TABLE>
                </TD>
                 <TD class="valign-middle" style="width: 50%;">
-			<TABLE WIDTH="100%" class="container">
+			<TABLE WIDTH="100%">
                         {cycle values="light,lucid" print=false}
                         {foreach from=$netports.out item=port}
                         <TR CLASS="{cycle} highlight">

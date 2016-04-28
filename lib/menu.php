@@ -260,7 +260,8 @@ $menu = array(
 			),
 		),
 
-		'netdevices' => array(
+/*
+ 		'netdevices' => array(
 			'name' => trans('Net Devices'),
 			'img' =>'netdev.gif',
 			'link' =>'?m=netdevlist',
@@ -306,7 +307,7 @@ $menu = array(
 				),
 				),
 			),
-
+ */
 		'networks' => array(
 			'name' => trans('IP Networks'),
 			'img' =>'network.gif',
