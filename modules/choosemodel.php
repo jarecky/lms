@@ -28,9 +28,12 @@ function updatePortlist($modelid){
 	$res = new xajaxResponse();
 	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$modelid." ORDER by connector, label");
 	$res->assign('porttable','innerHTML','');
+	if($ports)
 	foreach($ports as $p){
 	  $list.='<tr width="100%"><td style="white-space: nowrap">'.trans('Label:').$p['label'].'</td><td>'.trans('Medium:').$NETPORTTYPES[($p['port_type'])].' '.trans('Connector:').$NETCONNECTORS[($p['connector'])].'</td></tr>';
 	}
+	else
+	$list.='<tr><td colspan="2">'.trans('No such ports.').'</td></tr>';
 	$res->assign('porttable','innerHTML',$list);
 	$res->assign('porttable','style.display','table-row-group');
 
