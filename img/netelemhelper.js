@@ -8,7 +8,7 @@ function change_producer(elem,type)
                 //model.style.display = 'none';
                 xajax_select_producer(elem.value, type.value);
             }
-function getProducerByType(type){
+function getProducerByType(type){}
 function update_models(data)
             {
 
@@ -83,5 +83,10 @@ function clone(src){
 }
 function remports(row){
   row.parentNode.parentNode.parentNode.removeChild(row.parentNode.parentNode);
+}
+
+function netelemmodelchoosewin(type, producer, model, porttable){
+    popup('?m=choosemodel',1,100,380);
+    autoiframe_setsize('autoiframe', 300, 300);
 }
 

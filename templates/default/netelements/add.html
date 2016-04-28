@@ -5,6 +5,7 @@
 <!--// $Id$ //-->
 {include file="calendar_js.html"}
 <script type="text/javascript" src="img/netnodehelper.js"></script>
+<script type="text/javascript" src="img/netelemhelper.js"></script>
 <H1>{$layout.pagetitle}</H1>
 <FORM NAME="netelemadd" METHOD="POST" ACTION="?m=netelement&action=add">
 <INPUT type="submit" class="hiddenbtn">
@@ -63,9 +64,7 @@
 			<B>{trans("Manufacturer:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT id="producer" NAME="netelem[producer]" {tip text="Enter producer name (optional)"} onchange="xajax_getModelsByProducerAndType(document.getElementById('type').value, this.value)">
-			<option value="{$netelem.producer}" selected>{$netelem.producer}</option>
-			</SELECT>
+			<INPUT type="text" id="producer" NAME="netelem[producer]" {tip text="Enter producer name (optional)"}>
 		</TD>
 	</TR>
 	<TR>
@@ -76,10 +75,8 @@
 			<B>{trans("Model:")}</B>
 		</TD>
 		<TD WIDTH="98%">
-			<SELECT id="model" NAME="netelem[model]" VALUE="{$netelem.model}" {tip text="Enter device model (optional)"} onchange="xajax_getModelPortList(this.value)" >
-			<option value="{$netelem.model}" selected>{$netelem.model}</option>
-			</SELECT>
-                        <A href="javascript:void(0);" onclick="return netelemmodelchoosewin('netelem', 'netelemadd', document.forms['netelemadd'].elements['netelem[netelemicemodelid]'].value, document.forms['netelemadd'].elements['netelem[producer]'].value, document.forms['netelemadd'].elements['netelem[model]'].value)" {tip text="Click to select model"}>&raquo;&raquo;&raquo;</A>
+			<INPUT type="text" id="model" NAME="netelem[model]" VALUE="{$netelem.model}" {tip text="Enter device model (optional)"}>
+                        <A href="javascript:void(0);" onclick="return netelemmodelchoosewin(document.getElementById('type').value, 'producer', 'model', 'porttable')" {tip text="Click to select model"}>&raquo;&raquo;&raquo;</A>
 			<BR>
                         <INPUT type="hidden" name="netelem[netelemicemodelid]" value="{$netelem.netelemicemodelid}">
 		</TD>
