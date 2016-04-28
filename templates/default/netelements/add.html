@@ -544,6 +544,7 @@
 			{foreach key=k item=i from=$netports}
 			<tr>
 			  <td class="nobr" colspan="3">
+			    {$k} |
 			    {trans("Label:")}<input type=text name="netports[{$k}][label]" value="{$netports[$k].label}">
 			    {trans("Type:")}<select name="netports[{$k}][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, 'conn{$k}')">
 			    {foreach key=o item=i from=$NETPORTTYPES}
@@ -556,7 +557,7 @@
 			    {trans("connector")}:<select name="netports[{$k}][netconnector]" id="conn{$k}">
 			      <option value="{$netports[$k].netconnector}">{$NETCONNECTORS[($netports[$k].netconnector)]}</option>
 			    </select>
-			    <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
+			    <IMG src="img/clone.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
 			    <IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">
 			  </td>
 			</tr>
@@ -598,7 +599,7 @@ function addports(){
 			    port_types+'</select>'+
 	' {trans("connector")}:<select name="netports['+index+'][netconnector]" id="conn'+index+'">'+
 	connectors+'</select>'+
-	'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
+	'<IMG src="img/clone.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
 	'<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
 	'</td>';
   node.appendChild(row);
@@ -624,7 +625,7 @@ function xaddport(id, label, connector, port_type, cn, pn){
 			    '</select>'+
 	' {trans("connector")}:<select name="netports['+id+'][netconnector]" id="conn'+id+'">'+
 	'<option value='+connector+'>'+cn+'</option></select>'+
-	'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
+	'<IMG src="img/clone.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
 	'<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
 	'</td>';
   node.appendChild(row);

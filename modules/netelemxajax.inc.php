@@ -617,7 +617,7 @@ function setPortsForModel($modelid){
 		$list.='>'.$val.'</option>';
 	}
 		$list.=	    '</select>
-			    <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
+			    <IMG src="img/clone.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
 			    <IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">
 			  </td>
 		</tr>';
