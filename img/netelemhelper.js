@@ -62,7 +62,7 @@ function addports(){
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');
   var index=document.getElementById('porttable').childNodes.length+1;
-  row.innerHTML='<td>'+index+']{trans("Label:")}'+
+  row.innerHTML='<td>{trans("Label:")}'+
         '<input type=text name="netelem['+index+'][label]" value=""> typ:<select name="netelem['+index+'][typ]"><option selected>typ_portu</option>'+port_types+'</select>'+
         ' {trans("connector")}:<select name="netelem['+index+'][connector]"><option selected>connector1</option>'+connectors+'</select>'+
         '<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
