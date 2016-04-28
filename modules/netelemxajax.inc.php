@@ -405,7 +405,6 @@ function changeNetElementType($type) {
 	case '1':
 		$res->assign('elem_type_passive','style.display', 'table-row-group');
 		$res->assign('elem_ports','style.display', 'table-row-group');
-		$res->script("medium_types='<option value=\"1\">copper</option>");
 		break;
 	case '2':
 		$res->call('xajax_changeWireType',1,0,0);
@@ -426,9 +425,15 @@ function changeNetElementType($type) {
 	return $res;
 }
 
-function addports(){
-  var port_types=medium_types;//smarty rulez
-  var connectors='<option value=0>conn0</option>';//smarty rulez
+function addports($devtype){
+	global $NETPORTTYPES;
+	$res = new xajaxResponse();
+  if($devtype==0)//aktywne
+	$types_allowed=array(1,2,3,4,100,200);
+  if($devtype==1)//aktywne
+	$types_allowed=array(1,2,3,4,100,200);
+/*	
+	var connectors='<option value=0>conn0</option>';//smarty rulez
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');
   var index=document.getElementById('porttable').childNodes.length+1;
@@ -439,8 +444,8 @@ function addports(){
         \'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;\'+
         \'<IMG src="img/delete.gif" alt="" title="'.trans("Delete").'" onclick="remports(this);">'+
         \'</td>\';
-  node.appendChild(row);	
-
+  node.appendChild(row);	';*/
+	return $res;
 }
 function getProducerByType($type){
 	global $DB;
