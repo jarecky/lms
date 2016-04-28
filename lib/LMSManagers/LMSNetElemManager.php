@@ -454,7 +454,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		 $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity) 
 			VALUES (?,?,?,?,?,?)",array_values($data));
               }
-	      $port['type']=202;
+	      $data['type']=202;
               for ($i=1;$i<=$netsplitterdata['out'];$i++) {
                  $data['label']='out'.$i;
                  $this->db->Execute("INSERT INTO netports (netelemid,type,label,connectortype,technology,capacity)
