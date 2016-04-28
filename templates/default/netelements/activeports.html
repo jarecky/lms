@@ -2,14 +2,14 @@
 <TABLE class="lmsbox">
     <THEAD>
 	<TR>
-		<TD style="width: 100%;" class="hand nobr" onClick="showOrHide('netports2');">
+		<TD style="width: 100%;" class="hand nobr" onClick="showOrHide('netports');">
 			<IMG SRC="img/mac.gif" alt="">
 			<span class="bold">{t a=$netports|@count}Ports ($a):{/t}</span>
 		</TD>
 	</TR>
     </THEAD>
     <TBODY>
-	<TR id="netports2">
+	<TR id="netports">
 		<TD style="width: 100%;">
 			<TABLE style="border: 1px solid #000;">
         
@@ -210,8 +210,8 @@ function radio_sectors_received_for_dstnetelem(radiosectors) {
 
 xajax_getRadioSectorsForNetElem('radio_sectors_received_for_srcnetelem', {$restnetelemlist[0].id});
 
-if (getCookie('netports2') == '1')
-	xjx.$('netports2').style.display = '';
+if (getCookie('netports') == '1')
+	xjx.$('netports').style.display = '';
 
 //-->
 </SCRIPT>
