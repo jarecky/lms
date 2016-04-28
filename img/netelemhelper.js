@@ -56,7 +56,7 @@ function update_ports(data){
             }
 var medium_types; //typy mediow zmieniane przy wyborze typu urzadzenia
 
-function addports(){
+/*function addports(){
   var port_types=medium_types;//smarty rulez
   var connectors='<option value=0>conn0</option>';//smarty rulez
   var node=document.getElementById('porttable');
@@ -69,7 +69,7 @@ function addports(){
         '<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
         '</td>';
   node.appendChild(row);
-}
+}*/
 
 function clone(src){
   var ports=document.getElementById('porttable');

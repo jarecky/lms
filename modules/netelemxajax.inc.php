@@ -690,7 +690,7 @@ $LMS->RegisterXajaxFunction(array(
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
 	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
 	'getModelPortList','getConnectorOptionsByMediumAndDevType','getTechnologyOptionsByDevTypeAndMedium',
-	'changeNetElementType','changeWireType','setPortsForModel',
+	'changeNetElementType','changeWireType','setPortsForModel','addports',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 
