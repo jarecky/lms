@@ -54,8 +54,10 @@ function update_ports(data){
                     if(data[i].continous=='0')t=0; else t=a;
                 }
             }
+var medium_types; //typy mediow zmieniane przy wyborze typu urzadzenia
+
 function addports(){
-  var port_types='<option value=0>port0</option>';//smarty rulez
+  var port_types=medium_types;//smarty rulez
   var connectors='<option value=0>conn0</option>';//smarty rulez
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');
