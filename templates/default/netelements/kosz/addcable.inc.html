@@ -1,0 +1,56 @@
+	      <tr>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Shortname:")}</B>
+		</TD>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[shortname]" VALUE="{$netdev.shortname}" MAXLENGTH="32" {tip trigger="shortname" text="Enter shortname (optional)"}>
+		</TD>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Type:")}</B>
+		</TD>
+		<TD WIDTH="8%">
+			<SELECT NAME="netelem[nastype]" {tip text="Select type (optional)" trigger="nastype"}>
+				<OPTION VALUE="0"></OPTION>
+				{foreach from=$nastype item=item key=key}
+				<OPTION VALUE="{$key}" {if $key==$netdevices.nastype} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	      </tr>
+	      <tr>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Max clients:")}</B>
+		</TD>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[clients]" VALUE="{if $netdev.clients}{$netdev.clients}{/if}" {tip trigger="clients" text="Enter max clients (optional)"}>
+		</TD>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Secret:")}</B>
+		</TD>
+		<TD WIDTH="8%">
+			<INPUT TYPE="TEXT" NAME="netelem[secret]" VALUE="{$netdev.secret}" MAXLENGTH="60" {tip text="Enter secret (optional)"}>
+		</TD>
+	      </tr>
+	      <tr>
+		<TD WIDTH="1%">
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Community:")}</B>
+		</TD>
+		<TD WIDTH="8%" colspan="4">
+			<INPUT TYPE="TEXT" NAME="netelem[community]" VALUE="{$netdev.community}" MAXLENGTH="50" {tip text="Enter community (optional)"}>
+		</TD>
+	      </tr>
