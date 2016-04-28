@@ -1329,6 +1329,18 @@ class LMS
         return $manager->GetNetElemIPs($id);
     }
 
+    public function GetNetElemUnconnectedList($netnodeid,$id)
+    {
+        $manager = $this->getNetElemManager();
+	return $manager->GetNetElemUnconnectedList($netnodeid,$id);
+    }
+
+    public function GetConnectionForWire($id)
+    {
+        $manager = $this->getNetElemManager();
+        return $manager->GetConnectionForWire($id);
+    }
+	 
     /*
      *   Request Tracker (Helpdesk)
      */

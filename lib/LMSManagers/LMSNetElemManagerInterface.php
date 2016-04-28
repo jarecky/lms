@@ -97,4 +97,7 @@ interface LMSNetElemManagerInterface
 
     public function GetNetElemPorts($id);
 
+    public function GetNetElemUnconnectedList($netnodeid,$id);
+
+    public function GetConnectionForWire($id);
 }

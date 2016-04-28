@@ -757,9 +757,9 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 
     public function GetNetElemCable($id)
     {
-        $result = $this->db->GetRow('SELECT e.*, c.*, e.type AS type, 
-				e.netnodeid AS srcnodeid, n2.name AS dstnetnode,
-				c.type AS cabletype,
+        $result = $this->db->GetRow('SELECT e.*, e.netnodeid AS srcnodeid,
+				c.label, c.type AS cabletype, c.capacity, c.distance, c.colorschemaid, 
+				c.dstnodeid, n2.name AS dstnetnode,
 				(CASE WHEN lst.name2 IS NOT NULL THEN ' . $this->db->Concat('lst.name2', "' '", 'lst.name') . ' ELSE lst.name END) AS street_name,
 				lt.name AS street_type,
 				lc.name AS city_name,
@@ -1008,5 +1008,64 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	return($ports);
     }
 
+    public function GetNetElemUnconnectedList($netnodeid,$id) {
+	$type=$this->GetNetElemType($id);
+	switch ($type) { // lista typów ktore mozemy laczyc ze soba
+	case 0: // aktywne z: aktywnym, pasywnym, splitterem, mux, computer
+		$typelist="0,1,3,4,5";
+		break;
+	case 1: // pasywne - z wszystkim
+		$typelist="0,1,2,3,4,5";
+		break;
+	case 2: // kabel
+		$typelist="0,1,4,5";
+		break;
+	case 3: // splitter
+		$typelist="0,1,2,3,4,5";
+		break;
+	case 4: // multiplexer
+		$typelist="0,1,2,3,4,5";
+		break;
+	case 99: // komputer
+		$typelist="0,1,2,3,4,5";
+		break;
+	default:
+		return FALSE;
+	}
+	$elems=$this->db->GetAll("SELECT * FROM netelements WHERE type IN (?) AND netnodeid=? AND id<>?",array($typelist,$netnodeid,$id));
+	foreach ($elems AS $id => $elem) {
+		
+	}
+	echo '<PRE>';print_r($elems);echo '</PRE>';
+	return($elems);
+    }
 
+    public function GetConnectionForWire($id) {
+        $wires=$this->db->GetRow("SELECT * FROM netconnections WHERE wires ?LIKE? ?",array("%".$id."%"));
+	if (count($wires)) {
+	    $port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($wires['ports']));
+	    if ($port['type']<>300) {
+		// port nie jest tacka - kabel w port
+	        $elem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+		$elem['port']=$port;
+	    	$elem['connid']=$wires['id'];
+	    } elseif (preg_match('/^([0-9]+):([0-9]+)$/',$wires['wires'],$x)) {
+		// kabel+kabel w tacke
+		if ($x[1]==$id) 
+		    $wire=$this->db->GetRow("SELECT * FROM netwires WHERE id=?",array($x[2]));
+		else 
+		    $wire=$this->db->GetRow("SELECT * FROM netwires WHERE id=?",array($x[1]));
+		$elem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($wire['netcableid']));
+		$elem['wire']=$wire;
+		$elem['cable']=$this->db->GetRow("SELECT * FROM netcables WHERE netelemid=?",array($wire['netcableid']));
+		$elem['tray']=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+		$elem['tray']['port']=$port;
+	    	$elem['connid']=$wires['id'];
+	    } else {
+		return FALSE;
+	    }
+	    return($elem);
+	}
+	return FALSE;
+    }
 }

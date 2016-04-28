@@ -627,6 +627,7 @@ error_log('log:'.$list);
 	$res->assign('porttable','innerHTML',$list);
 	return $res;
 }
+
 function changeWireType($type,$tschemaid,$ttype) {
 	global $COPPERCOLORSCHEMAS,$FIBEROPTICCOLORSCHEMAS,$NETWIRETYPES;
 	$res = new xajaxResponse();
@@ -660,6 +661,9 @@ function changeWireType($type,$tschemaid,$ttype) {
 	return $res;
 }
 
+function getxx() {
+
+}
 
 global $LMS,$SMARTY;
 $LMS->InitXajax();
@@ -668,7 +672,7 @@ $LMS->RegisterXajaxFunction(array(
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
 	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
 	'getModelPortList','getConnectorOptionsByMediumAndDevType','getTechnologyOptionsByDevTypeAndMedium',
-	'changeNetElementType','changeWireType','setPortsForModel',
+	'changeNetElementType','changeWireType','setPortsForModel', 'getxx:',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 

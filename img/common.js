@@ -129,10 +129,10 @@ function netdevfrommapchoosewin(netdevid)
 	return openSelectWindow('?m=choosenetdevfrommap', 'choosenetdevfrommap', 450, 300, 'true', netdevid);
 }
 
-function netlinkpropertieschoosewin(id, devid, isnetlink)
+function netfiberconnect(netnodeid, id, bundle, wire)
 {
-	return openSelectWindow('?m=netlinkproperties&id=' + id + '&devid=' + devid + '&isnetlink=' + (isnetlink ? 1 : 0),
-		'netlinkproperties', 350, 100, 'true');
+	return openSelectWindow('?m=netelement&action=connect&netnodeid=' + netnodeid + '&id=' + id + '&bundle=' + bundle + '&wire=' + wire,
+		'netconnect', 350, 100, 'true');
 }
 
 function sendvalue(targetfield, value)
