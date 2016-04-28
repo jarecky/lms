@@ -425,6 +425,32 @@ function changeNetElementType($type) {
 	return $res;
 }
 
+function addports($devtype){
+	global $NETPORTTYPES;
+	$res = new xajaxResponse();
+  if($devtype==0)//aktywne
+	$types_allowed=array(1,2,3,4,100,200);
+  if($devtype==1)//aktywne
+	$types_allowed=array(1,2,3,4,100,200);
+	foreach($types_allowed as $t){
+		$options.='<option value="'.$t.'">'.$NETPORTTYPES[$t].'<option>';		
+	}
+	$res->assign('porttable','innerHTML','<tr><td><select>'.$options.'</select></td></tr>');
+/*	
+	var connectors='<option value=0>conn0</option>';//smarty rulez
+  var node=document.getElementById('porttable');
+  var row=document.createElement('tr');
+  var index=document.getElementById('porttable').childNodes.length+1;
+  row.innerHTML='<td>'.trans("Label:").'<input type=text name="netelem[\'+index+\'][label]" value="">'.trans("Type").
+		':<select name="netelem[\'+index+\'][typ]"><option selected>typ_portu</option>\'+port_types+\'</select>'
+        .trans("connector").':<select name="netelem[\'+index+\'][connector]"><option selected>connector1</option>
+		\'+connectors+\'</select>\'+
+        \'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;\'+
+        \'<IMG src="img/delete.gif" alt="" title="'.trans("Delete").'" onclick="remports(this);">'+
+        \'</td>\';
+  node.appendChild(row);	';*/
+	return $res;
+}
 function getProducerByType($type){
 	global $DB;
 	$res = new xajaxResponse();
@@ -661,10 +687,6 @@ function changeWireType($type,$tschemaid,$ttype) {
 	return $res;
 }
 
-function getxx() {
-
-}
-
 global $LMS,$SMARTY;
 $LMS->InitXajax();
 $LMS->RegisterXajaxFunction(array(
@@ -672,7 +694,7 @@ $LMS->RegisterXajaxFunction(array(
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
 	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
 	'getModelPortList','getConnectorOptionsByMediumAndDevType','getTechnologyOptionsByDevTypeAndMedium',
-	'changeNetElementType','changeWireType','setPortsForModel', 'getxx:',
+	'changeNetElementType','changeWireType','setPortsForModel','addports',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 

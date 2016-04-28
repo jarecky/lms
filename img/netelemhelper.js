@@ -54,20 +54,22 @@ function update_ports(data){
                     if(data[i].continous=='0')t=0; else t=a;
                 }
             }
-function addports(){
-  var port_types='<option value=0>port0</option>';//smarty rulez
+var medium_types; //typy mediow zmieniane przy wyborze typu urzadzenia
+
+/*function addports(){
+  var port_types=medium_types;//smarty rulez
   var connectors='<option value=0>conn0</option>';//smarty rulez
   var node=document.getElementById('porttable');
   var row=document.createElement('tr');
   var index=document.getElementById('porttable').childNodes.length+1;
-  row.innerHTML='<td>'+index+']{trans("Label:")}'+
+  row.innerHTML='<td>{trans("Label:")}'+
         '<input type=text name="netelem['+index+'][label]" value=""> typ:<select name="netelem['+index+'][typ]"><option selected>typ_portu</option>'+port_types+'</select>'+
         ' {trans("connector")}:<select name="netelem['+index+'][connector]"><option selected>connector1</option>'+connectors+'</select>'+
         '<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;'+
         '<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
         '</td>';
   node.appendChild(row);
-}
+}*/
 
 function clone(src){
   var ports=document.getElementById('porttable');
