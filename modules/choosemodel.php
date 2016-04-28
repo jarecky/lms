@@ -18,7 +18,7 @@ function updateModels($type, $producer){
 	foreach($producers as $p){
 		$res->script("var d=document.getElementById('model'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
 	}
-	$res->assign('model','style.display','block');
+	$res->assign('model','style.display','table-row-group');
 	return $res;
 
 }
@@ -32,10 +32,12 @@ function updatePortlist($modelid){
 	  $list.='<tr width="100%"><td style="white-space: nowrap">'.trans('Label:').$p['label'].'</td><td>'.trans('Medium:').$NETPORTTYPES[($p['port_type'])].' '.trans('Connector:').$NETCONNECTORS[($p['connector'])].'</td></tr>';
 	}
 	$res->assign('porttable','innerHTML',$list);
-	$res->assign('porttable','style.display','block');
+	$res->assign('porttable','style.display','table-row-group');
 
 	return $res;
 }
+
+
 
 $LMS->InitXajax();
 $LMS->RegisterXajaxFunction(array(

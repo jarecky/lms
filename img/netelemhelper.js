@@ -90,3 +90,6 @@ function netelemmodelchoosewin(type, producer, model, porttable){
     autoiframe_setsize('autoiframe', 300, 300);
 }
 
+function testtt(){
+  alert('dziala');
+}

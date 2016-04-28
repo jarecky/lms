@@ -6,7 +6,13 @@
 {$xajax}
   <form action="javascript:void(0)" method=POST>
   <table class="lmsbox" width="100%">
-  <thead>
+  <thead>{if $smarty.get.type==-1}
+    <tr>
+      <td colspan="2">
+	<h1 style="color:red">{trans("First select type of device !!!!!")}</h1>
+      </td>
+    </tr>
+    {else}
     <tr>
       <td colspan="2">
 	<h1>{trans("Select device model")}</h1>
@@ -38,16 +44,16 @@
     </tr>
     </tbody>
     <tbody id="porttable" style="display:none;" width="100%">
-	  <tr><td></td><td>pppppppp</td></tr>
     </tbody>
-    <tblody>
+    <tbody>
     <tr>
       <td style="text-align:right;" colspan="2">
-	<a href="javascript:void(0);">{trans('Save')}<img src="img/save.gif"></a>
+	<a href="javascript:void(0);" onclick="window.parent.parent.xajax_setPortsForModel(document.getElementById('model').value);">{trans('Save')}<img src="img/save.gif"></a>
 	<a href="javascript:void(0);">{trans('Cancel')}<img src="img/cancel.gif"></a>
       </td>
     </tr>
     </tbody>
+    {/if}
    </table>
     </form>
 </body>

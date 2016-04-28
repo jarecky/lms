@@ -375,22 +375,6 @@ function getRadioSectorsForNetElem($callback_name, $elemid, $technology = 0) {
 	return $result;
 }
 
-function getProducerByType($type){
-	global $DB;
-	$res = new xajaxResponse();
-	$q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
-		LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
-		WHERE m.type=".$type;
-//error_log($q);
-error_log($q.MODULES_DIR.'/../templates/default/netelements/addactive.inc.html');
-	$producers = $DB->getAll($q);
-	$res->script("var d=document.getElementById('producer'); d.options.length=0;");
-	$res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
-	foreach($producers as $p){
-		$res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
-	}
-	return $res;
-}
 
 function changeNetElementType($type) {
 	global $DB;
@@ -437,6 +421,23 @@ function changeNetElementType($type) {
 		break;
 	case 'default':
 		#$res->assign('elem_main','style.display','none');		
+	}
+	return $res;
+}
+
+function getProducerByType($type){
+	global $DB;
+	$res = new xajaxResponse();
+	$q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
+		LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
+		WHERE m.type=".$type;
+//error_log($q);
+error_log($q.MODULES_DIR.'/../templates/default/netelements/addactive.inc.html');
+	$producers = $DB->getAll($q);
+	$res->script("var d=document.getElementById('producer'); d.options.length=0;");
+	$res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".trans('Select option')."','-1');");
+	foreach($producers as $p){
+		$res->script("var d=document.getElementById('producer'); d.options[d.options.length]=new Option('".$p['name']."','".$p['id']."');");
 	}
 	return $res;
 }
@@ -587,6 +588,45 @@ function getTechnologyOptionsByDevTypeAndMedium($medium, $devtype, $target){
 
 }
 
+function setPortsForModel($modelid){
+	global $NETTECHNOLOGIES, $NETPORTTYPES, $NETCONNECTORS, $DB;
+	$res= new xajaxResponse();
+	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$modelid." ORDER by connector, label");
+	$res->assign('window.top.porttable','innerHTML','duuupa');
+	foreach($ports as $p){
+	  $list.='<tr>
+			  <td class="nobr" colspan="3">
+			    '.trans("Label:").'<input type=text name="netports['.$p['id'].'][label]" value="'.$p['label'].'">
+			    '.trans("Type:").'<select name="netports['.$p['id'].'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'.$p['id'].'\')">';		    
+	foreach( $NETPORTTYPES as $key=>$val){
+		$list.='<option value="'.$key.'"';
+			if( $key==$p['port_type']) $list.='selected';
+		$list.='>'.$val.'</option>';
+	}
+		$list.='</select>'.trans("Technology")
+		  .': <select name="netports['.$p['id'].'][technology]" id=\'tech'.$p['id'].'\' onchange="xajax_getConnectorOptionsByMediumAndDevType(this.value, document.getElementById(\'medium'.$p['id'].'\').value, \'conn'.$p['id'].'\')">';
+	foreach( $NETTECHNOLOGIES as $key=>$val){
+		$list.='<option value="'.$key.'"';
+			if( $key==$p['technology']) $list.='selected';
+		$list.='>'.$val['name'].'</option>';
+	}
+		 $list.='</select>'.trans("connector").':<select name="netports['.$p['id'].'][netconnector]" id="conn'.$p['id'].'">';
+	foreach( $NETCONNECTORS as $key=>$val){
+		$list.='<option value="'.$key.'"';
+			if( $key==$p['connector']) $list.='selected';
+		$list.='>'.$val.'</option>';
+	}
+		$list.=	    '</select>
+			    <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
+			    <IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">
+			  </td>
+		</tr>';
+			
+	}
+error_log('log:'.$list);
+	$res->assign('porttable','innerHTML',$list);
+	return $res;
+}
 function changeWireType($type,$tschemaid,$ttype) {
 	global $COPPERCOLORSCHEMAS,$FIBEROPTICCOLORSCHEMAS,$NETWIRETYPES;
 	$res = new xajaxResponse();
@@ -628,7 +668,7 @@ $LMS->RegisterXajaxFunction(array(
 	'getRadioSectors', 'addRadioSector', 'delRadioSector', 'updateRadioSector',
 	'getRadioSectorsForNetElem','getProducerByType','getModelsByProducerAndType',
 	'getModelPortList','getConnectorOptionsByMediumAndDevType','getTechnologyOptionsByDevTypeAndMedium',
-	'changeNetElementType','changeWireType',
+	'changeNetElementType','changeWireType','setPortsForModel',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 
