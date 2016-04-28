@@ -2,7 +2,7 @@
 <TABLE class="lmsbox">
     <THEAD>
 	<TR>
-		<TD style="width: 100%;" class="hand nobr" onClick="showOrHide('netports');">
+		<TD style="width: 100%;" class="nobr">
 			<IMG SRC="img/mac.gif" alt="">
 			<span class="bold">{t a=$netports|@count}Ports ($a):{/t}</span>
 		</TD>
@@ -119,100 +119,3 @@
        </TR>
     </TBODY>
 </TABLE>
-<SCRIPT type="text/javascript">
-<!--
-function change_elemlinktype(linktype) {
-	linktype = parseInt(linktype);
-	var options = xjx.$('connboxlinktechnology').options;
-	while (options.length)
-		options.remove(0);
-	options.add(new Option('{trans("- unknown -")}', 0));
-	switch (linktype) {
-		case 0:
-			{foreach $_LINKTECHNOLOGIES[0] as $linktechnologyidx => $linktechnology}
-			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
-			{/foreach}
-			break;
-		case 1:
-			{foreach $_LINKTECHNOLOGIES[1] as $linktechnologyidx => $linktechnology}
-			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
-			{/foreach}
-			break;
-		case 2:
-			{foreach $_LINKTECHNOLOGIES[2] as $linktechnologyidx => $linktechnology}
-			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
-			{/foreach}
-			break;
-	}
-	xjx.$('connboxsrcradiosector').style.display = (linktype == 1 ? '' : 'none');
-	xjx.$('connboxdstradiosector').style.display = (linktype == 1 ? '' : 'none');
-
-	if (linktype == 1) {
-		var selected = xjx.$('srcnetelem').selectedIndex;
-		if (selected) {
-			netelem = xjx.$('srcnetelem').options[selected].value;
-			xajax_getRadioSectorsForNetelem('radio_sectors_received_for_srcnetelem', netelem);
-		}
-	}
-}
-
-function change_elemlinktechnology(linktechnology) {
-	linktechnology = parseInt(linktechnology);
-	var linktype = xjx.$('connboxlinktype').options[xjx.$('connboxlinktype').selectedIndex].value;
-	if (linktype != 1)
-		return;
-	var netelem = xjx.$('srcnetelem').options[xjx.$('srcnetelem').selectedIndex].value;
-	if (netelem !== undefined) {
-		xjx.$('connboxsrcradiosector').disabled = true;
-		xjx.$('connboxdstradiosector').disabled = true;
-		xajax_getRadioSectorsForNetElem('radio_sectors_received_for_srcnetelem', netelem, linktechnology);
-		xajax_getRadioSectorsForNetElem('radio_sectors_received_for_dstnetelem', {$neteleminfo.id}, linktechnology);
-	}
-}
-
-function get_radio_sectors_for_netelem(netelem) {
-	xjx.$('connboxsrcradiosector').disabled = true;
-	xajax_getRadioSectorsForNetElem('radio_sectors_received_for_srcnetelem', netelem);
-}
-
-function radio_sectors_received_for_srcnetelem(radiosectors) {
-	var options = xjx.$('connboxsrcradiosector').options;
-	var oldvalue = options[xjx.$('connboxsrcradiosector').selectedIndex].value;
-	while (options.length)
-		options.remove(0);
-	options.add(new Option('- {trans("none")} -', 0));
-	if (radiosectors !== null) {
-		radiosectors.forEach(function(elem) {
-			var option = new Option(elem.name, elem.id);
-			if (elem.id == oldvalue)
-				option.selected = true;
-			options.add(option);
-		});
-	}
-	xjx.$('connboxsrcradiosector').disabled = false;
-}
-
-function radio_sectors_received_for_dstnetelem(radiosectors) {
-	var options = xjx.$('connboxdstradiosector').options;
-	var oldvalue = options[xjx.$('connboxdstradiosector').selectedIndex].value;
-	while (options.length)
-		options.remove(0);
-	options.add(new Option('- {trans("none")} -', 0));
-	if (radiosectors !== null) {
-		radiosectors.forEach(function(elem) {
-			var option = new Option(elem.name, elem.id);
-			if (elem.id == oldvalue)
-				option.selected = true;
-			options.add(option);
-		});
-	}
-	xjx.$('connboxdstradiosector').disabled = false;
-}
-
-xajax_getRadioSectorsForNetElem('radio_sectors_received_for_srcnetelem', {$restnetelemlist[0].id});
-
-if (getCookie('netports') == '1')
-	xjx.$('netports').style.display = '';
-
-//-->
-</SCRIPT>
