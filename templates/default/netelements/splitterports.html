@@ -1,0 +1,38 @@
+<!--// $Id$ //-->
+<TABLE class="lmsbox">
+    <THEAD>
+        <TR>
+                <TD COLSPAN="2" style="width: 100%;" class="hand nobr" onClick="showOrHide('netports');">
+                        <IMG SRC="img/mac.gif" alt="">
+                        <span class="bold">{t a=$netports|@count}Ports ($a):{/t}</span>
+                </TD>
+        </TR>
+    </THEAD>
+    <TBODY>
+        <TR id="netports">
+                <TD class="valign-middle" style="width: 50%;">
+                        <TABLE WIDTH="100%" class="container">
+			{cycle values="light,lucid" print=false}
+			{foreach from=$netports.in item=port}
+			<TR CLASS="{cycle}">
+				<TD><img src="img/netdev_takenports.gif">&nbsp;</TD>
+				<TD><B>{$port.label}</B></TD>
+			</TR>
+			{/foreach}
+			</TABLE>
+               </TD>
+                <TD class="valign-middle" style="width: 50%;">
+			<TABLE WIDTH="100%" class="container">
+                        {cycle values="light,lucid" print=false}
+                        {foreach from=$netports.out item=port}
+                        <TR CLASS="{cycle}">
+                                <TD><B>{$port.label}</B></TD>
+				<TD>&nbsp;<img src="img/netdev_takenports.gif"></TD>
+                        </TR>
+                        {/foreach}
+			</TABLE>
+               </TD>
+       </TR>
+    </TBODY>
+</TABLE>
+

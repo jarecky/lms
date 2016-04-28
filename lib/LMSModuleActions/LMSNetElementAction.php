@@ -40,9 +40,9 @@ class LMSNetElemAction extends LMSModuleAction
 			case 'add':
 				$this->_add();
 				break;
-			case 'edit':
-				$this->_edit();
-				break;
+			#case 'edit':
+			#	$this->_edit();
+			#	break;
 			case 'info':
 				$this->_info();
 				break;
@@ -50,7 +50,7 @@ class LMSNetElemAction extends LMSModuleAction
 				$this->_models();
 				break;
 			default:
-				$this->_list();
+				$this->_error();
 				break;
 		}
 	}
@@ -378,9 +378,9 @@ class LMSNetElemAction extends LMSModuleAction
 			$this->smarty->assign('netelem', $netelemdata);
 		} 
 		elseif (isset($_GET['id'])) {
-			$netelemdata = $this->lms->GetNetElem($_GET['id']);
-			$netelemdata['name'] = trans('$a (clone)', $netelemdata['name']);
-			$netelemdata['teryt'] = !empty($netelemdata['location_city']) && !empty($netelemdata['location_street']);
+			#$netelemdata = $this->lms->GetNetElem($_GET['id']);
+			#$netelemdata['name'] = trans('$a (clone)', $netelemdata['name']);
+			#$netelemdata['teryt'] = !empty($netelemdata['location_city']) && !empty($netelemdata['location_street']);
 			
 		}
 		$this->smarty->assign('netelem', $netelemdata);
@@ -513,15 +513,28 @@ class LMSNetElemAction extends LMSModuleAction
 				break;
 			case '3':
 				$neteleminfo=$this->lms->GetNetElemSplitter($_GET['id']);
-				$netports=$this->lms->GetNetElemPorts($_GET['id']);
-
+				$netport=$this->lms->GetNetElemPorts($_GET['id']);
+				foreach ($netport AS $port) {
+					if ($port['type']==201) {
+						$netports['in'][]=$port;
+					} elseif ($port['type']==202) {
+						$netports['out'][]=$port;
+					}
+				}
 				$this->smarty->assign('neteleminfo',$neteleminfo);
 				$this->smarty->assign('netports',$netports);
 				$this->smarty->display('netelements/splitterinfo.html');
 				break;
 			case '4':
                                 $neteleminfo=$this->lms->GetNetElemMultiplexer($_GET['id']);
-                                $netports=$this->lms->GetNetElemPorts($_GET['id']);
+                                $netport=$this->lms->GetNetElemPorts($_GET['id']);
+                                foreach ($netport AS $port) {
+                                        if ($port['type']==201) {
+                                                $netports['in'][]=$port;
+                                        } elseif ($port['type']==202) {
+                                                $netports['out'][]=$port;
+                                        }
+                                }
 
                                 $this->smarty->assign('neteleminfo',$neteleminfo);
                                 $this->smarty->assign('netports',$netports);
@@ -583,5 +596,12 @@ class LMSNetElemAction extends LMSModuleAction
                 $this->smarty->assign('start',$start);
                 $this->smarty->display('netelements/models.html');
 	}		
-
+	
+	function _error() {
+                $layout['module'] = 'notfound';
+                $layout['pagetitle'] = trans('Error!');
+                $this->smarty->assign('layout', $layout);
+                $this->smarty->assign('server', $_SERVER);
+                $this->smarty->display('notfound.html');
+	}
 }
