@@ -27,42 +27,35 @@
 			{section name=connector loop=$connector}
 				{assign var=conn value=$_NETCONNECTORS[$connector[connector]]} 
 			{/section}
-	{if $netports[n].technology<100}
-		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name,"\nConnector: ",$conn))}
-		{if $netports[n].taken}
+	{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\nConnector: ",$conn))}
+	{if $netports[n].connectortype<50}
+		{if $netports[n].taken==0}
+			{$port_color="lightgray"}
+		{elseif $netports[n].taken<$netports[n].capacity}
+			  {$port_color="red"}
+		{else}
+			  {$port_color="lightgreen"}
+		{/if}
+		{if $netports[n].connectortype<=3}
+			  {$port_img="img/ethernet.png"}
+		{elseif $netports[n].connectortype<=4}
+			  {$port_img="img/ethernet.png"}
+		{elseif $netports[n].connectortype<=6}
+			  {$port_img="img/ethernet.png"}
+		{else}
+			{$port_img="img/bnc.png"}
+		{/if}
+	{elseif $netports[n].connectortype<300}
+		{$port_color="lightgray"}
+		{$port_img="img/sc.png"}	  
+	{else}
+		{if $netports[n].taken<$netports[n].capacity}
 			  {$port_color="lightgreen"}
 		{else}
 			  {$port_color="red"}
 		{/if}
-		{if $netports[n].connectortype<=3}
-			  {$port_img="img/ethernet.png"}
-		{else}
-			  {$port_img="img/ethernet.png"}
-		{/if}
-	{elseif $netports[n].technology<200}
-		{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\ntech: ",$_NETTECHNOLOGIES[$technology].name, "\nRadiosector: ",$netports[n].radiosectors.0.name,"\nUtilization: ",$netports[n].taken,'/',$netports[n].capacity))}
-		{if $netports[n].radiosectors}
-			{if $netports[n].taken/$netports[n].capacity<=0.4}
-				  {$port_color="lightgreen"}
-			{elseif $netports[n].taken/$netports[n].capacity<=0.8}
-				  {$port_color="yellow"}
-			{else}
-				  {$port_color="red"}
-			{/if}
-			{$port_img="img/radiosector.png"}
-		{else}
-			{if $netports[n].taken}
-				  {$port_color="lightgreen"}
-			{else}
-				  {$port_color="red"}
-			{/if}
-			{$port_img="img/radio_cpe.png"}
-		{/if}
-	{elseif $netports[n].technology<300}
-		$port_color="lightgreen"
-		$port_img="img/radiosector.png"}	  
-	{else}
-
+		{$port_img="img/tray.png"}	  
+		{$tiptext=join("",array($tiptext,"\n",trans("Capacity:"),$netports[n].taken,"/",$netports[n].capacity))}
 	{/if}
 	<TD class="highlight ftop fbottom fleft fright text-center" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
 			<IMG src="{$port_img}" ALT=""><BR>
