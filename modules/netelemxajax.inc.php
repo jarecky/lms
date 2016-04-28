@@ -435,7 +435,7 @@ function addports($devtype){
 	foreach($types_allowed as $t){
 		$options.='<option value="'.$t.'">'.$NETPORTTYPES[$t].'<option>';		
 	}
-	$res->assign('porttable','appendChild','<select>'.$options.'</select>');
+	$res->assign('porttable','innerHTML','<tr><td><select>'.$options.'</select></td></tr>');
 /*	
 	var connectors='<option value=0>conn0</option>';//smarty rulez
   var node=document.getElementById('porttable');
