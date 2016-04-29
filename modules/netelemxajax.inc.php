@@ -430,12 +430,13 @@ function addports($devtype){
 	$res = new xajaxResponse();
 	$index=substr(microtime(),2,8);
   switch($devtype){
-    case 0://aktywne
+    case 0://active
+    case 99: //client computer
   	$types_allowed=array(1,2,3,4,100,200);
 	$connectors_allowed=array(1,2,3,4,5,6,50,51, 100,101,102,103,104,151, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
 	$tech_allowed=array();
     break;
-    case 1://pasywne
+    case 1://passive
 	$types_allowed=array(1,2,3,4,200);
   	$connectors_allowed=array(1,2,3,4,5,6,50,51, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
     break;
