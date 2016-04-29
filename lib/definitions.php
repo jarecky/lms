@@ -572,7 +572,7 @@ $NETCONNECTORS = array(
 	51 => 'F',
 	// RADIO
 	100 => '2,4GHz',
-	101 => '3GHz,',
+	101 => '3GHz',
 	102 => '5GHz',
 	103 => '10GHz',
 	104 => '24GHz', 
