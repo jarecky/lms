@@ -67,7 +67,7 @@
 		{if $netwire.conn.src.wire.id}
 		<TD CLASS="text-right"><TABLE STYLE="float:right;"><TR>
 		<TD CLASS="text-left"> <a href="?m=netelement&action=info&id={$netwire.conn.src.id}"><IMG SRC="img/cable.png" height="16" {tip text="{$netwire.conn.src.name} {$netwire.conn.src.cable.dstnode}"}></A></TD>
-		<TD CLASS="text-center" style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$netwire.conn.src.cable.colorschemaid].tubes[$netwire.conn.src.wire.bundle]}; ">{trans("tube #")}{$netwire.conn.src.wire.bundle} {trans("wire #")}{$netwire.conn.wire.wire}</TD>
+		<TD CLASS="text-center" style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$netwire.conn.src.cable.colorschemaid].tubes[$netwire.conn.src.wire.bundle]}; ">{trans("tube #")}{$netwire.conn.src.wire.bundle} {trans("wire #")}{$netwire.conn.src.wire.wire}</TD>
 		<TD CLASS="text-left"><img src="img/fiber{$netwire.conn.src.wire.wire}.gif" width="50" height="12"></TD>
 		<TD CLASS="text-left"><a href="?m=netelement&action=info&id={$netwire.conn.src.tray.id}"><img src="img/splice.png" height="16" {tip text="{$netwire.conn.src.tray.port.label} {trans("in")} {$netwire.conn.src.tray.name}"}</A></TD>
 		</TR></TABLE></TD>
@@ -85,7 +85,7 @@
 		<TD CLASS="text-right"><TABLE><TR>
                 <TD CLASS="text-left"><a href="?m=netelement&action=info&id={$netwire.conn.dst.tray.id}"><img src="img/splice.png" height="16" {tip text="{$netwire.conn.dst.tray.port.label} {trans("in")} {$netwire.conn.dst.tray.name}"}</A></TD>
                 <TD CLASS="text-left"><img src="img/fiber{$netwire.conn.dst.wire.wire}.gif" width="50" height="12"></TD>
-                <TD CLASS="text-center" style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$netwire.conn.dst.cable.colorschemaid].tubes[$netwire.conn.dst.wire.bundle]}; ">{trans("tube #")}{$netwire.conn.dst.wire.bundle} {trans("wire #")}{$netwire.conn.wire.wire}</TD>
+                <TD CLASS="text-center" style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$netwire.conn.dst.cable.colorschemaid].tubes[$netwire.conn.dst.wire.bundle]}; ">{trans("tube #")}{$netwire.conn.dst.wire.bundle} {trans("wire #")}{$netwire.conn.dst.wire.wire}</TD>
                 <TD CLASS="text-left"> <a href="?m=netelement&action=info&id={$netwire.conn.dst.id}"><IMG SRC="img/cable.png" height="16" {tip text="{$netwire.conn.dst.name} {$netwire.conn.dst.cable.dstnode}"}></A></TD>
 		</TR></TABLE></TD>
                 {elseif $netwire.conn.dst.port.id}
