@@ -73,7 +73,7 @@
 		<TD CLASS="text-left"><a href="?m=netelement&action=info&id={$netwire.conn.src.tray.id}"><img src="img/splice.png" height="16" {tip text="{$netwire.conn.src.tray.port.label} {trans("in")} {$netwire.conn.src.tray.name}"}</A></TD>
 		</TR></TABLE></TD>
 		{elseif $netwire.conn.src.port.id}
-                <TD CLASS="text-left"> <a href="?m=netelement&action=info&id={$netwire.conn.src.id}" {tip text="{trans("Element:")} {$netwire.conn.src.name}<BR>{trans("Port:")} {$netwire.conn.src.port.label}<BR>{trans("Type:")} {$_NETPORTTYPES[$netwire.conn.src.port.type]}<BR>{trans("Connector:")} {$_NETCONNECTORS[$netwire.conn.src.port.connectortype]}<BR>{if $netwire.conn.src.port.technology}{trans("Technology:")} {$_NETTECHNOLOGIES[$netwire.conn.src.port.technology].name}<BR>{/if}"}><img src="img/sc.png" height="16"></a></TD>
+                <TD CLASS="text-right"> <a href="?m=netelement&action=info&id={$netwire.conn.src.id}" {tip text="{trans("Element:")} {$netwire.conn.src.name}<BR>{trans("Port:")} {$netwire.conn.src.port.label}<BR>{trans("Type:")} {$_NETPORTTYPES[$netwire.conn.src.port.type]}<BR>{trans("Connector:")} {$_NETCONNECTORS[$netwire.conn.src.port.connectortype]}<BR>{if $netwire.conn.src.port.technology}{trans("Technology:")} {$_NETTECHNOLOGIES[$netwire.conn.src.port.technology].name}<BR>{/if}"}><img src="img/sc.png" height="16"></a></TD>
 		{/if}
 <!-- ************************************************************************* -->
 		<TD CLASS="text-right" STYLE="padding-right:0px;"><img src="img/fiber{$netwire.wire}.gif" width="50" height="12"></TD>
