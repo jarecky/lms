@@ -546,7 +546,7 @@
 			  <td class="nobr" colspan="3">
 			    
 			    {trans("Label:")}<input type=text name="netports[{$k}][label]" value="{$netports[$k].label}">
-			    {trans("Type:")}<select name="netports[{$k}][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, 'conn{$k}')">
+			    <select name="netports[{$k}][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, 'conn{$k}')">
 			    {foreach key=o item=i from=$NETPORTTYPES}
 			      <option value="{$o}"{if $o==$netports[$k].netporttype} selected{/if}>{$i}</option>
 			    {/foreach}

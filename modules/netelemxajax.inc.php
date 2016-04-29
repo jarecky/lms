@@ -530,6 +530,92 @@ error_log('i:'.$index.' typ:'.$devtype.' med:'.$medium);
 	return $res;
 }
 
+function updateConnectorOnMediumAndTechnology($medium, $tech){
+      global $NETTECHNOLOGIES, $NETCONNECTORS;
+      $res= new xajaxResponse();
+ /*     switch($tech){
+	case 1:	
+	case 2:	
+	case 3:	
+	case 12:
+	//6
+	break;
+	
+	case 4:
+	case 5:
+	case 10:
+	case 11:
+	//3
+	break;
+
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	  if($tech==6 || $tech==7) //connector 1 and 2
+	  //1
+	break;
+	
+	case 50:
+	case 51:
+	case 52:
+	  //8
+	break;
+	case 70:
+	//6
+	break;
+	case 100:
+	break;
+	case 101:
+	break;
+	case 102:
+	break;
+	case 103:
+	break;
+	case 104:
+	break;
+	case 105:
+	break;
+	case 106:
+	break;
+	case 107:
+	break;
+	case 108:
+	break;
+	case 109:
+	break;
+	case 110:
+	break;
+	case 111:
+	break;
+	case 112:
+	break;
+	case 113:
+	break;
+	case 114:
+	break;
+	case 200:
+	case 201:
+	case 202:
+	case 203:
+	case 204:
+	case 205:
+	case 206:
+	case 207:
+	case 208:
+	case 209:
+	case 210:
+	case 211:
+	case 212:
+	case 213:
+	//201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243
+	break;
+
+      }
+*/      
+      return $res;
+}
+
 function setPortsForModel($modelid){
 	global $NETTECHNOLOGIES, $NETPORTTYPES, $NETCONNECTORS, $DB;
 	$res= new xajaxResponse();

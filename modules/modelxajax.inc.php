@@ -132,18 +132,17 @@ function add_model() {
 	$obj->assign("id_model_action_name","innerHTML",trans("New model"));
 	$obj->assign("id_model","value","");
 	$obj->assign("id_model_name","value","");
+	$obj->assign("porttable","innerHTML","");
 	$obj->assign("id_model_alternative_name","value","");
 	$obj->script("xajax.$('id_model_name').focus();");
 
 	return $obj;
 }
-
-function edit_model($id, $medium_type=0) {
-	global $DB, $NETPORTTYPES, $NETCONNECTORS;
-	$obj = new xajaxResponse();
-
-	$model = $DB->GetRow('SELECT * FROM netdevicemodels WHERE id = ?', array($id));
-	switch($medium_type){
+function addports($devtype){
+	global $NETPORTTYPES, $NETCONNECTORS, $NETTECHNOLOGIES;
+	$res = new xajaxResponse();
+	$index=substr(microtime(),2,8);
+  switch($devtype){
     case 0://active
     case 99: //client computer
   	$types_allowed=array(1,2,3,4,100,200);
@@ -156,6 +155,53 @@ function edit_model($id, $medium_type=0) {
   	$tech_allowed=array('null');
     break;
   }
+	foreach($types_allowed as $t){
+		$toptions.='<option value="'.$t.'">'.$NETPORTTYPES[$t].'</option>';		
+	}
+	foreach($connectors_allowed as $c){
+		$coptions.='<option value="'.$c.'">'.$NETCONNECTORS[$c].'</option>';
+	}
+	foreach($tech_allowed as $tn){
+		if($tn=='null')$techoptions.='<option value="null">N/A</option>';
+		else $techoptions.='<option value="'.$tn.'">'.$NETTECHNOLOGIES[$tn]['name'].'</option>';
+	}
+	$res->append('porttable','innerHTML','<tr><td class="nobr" colspan="3">'.trans('Label:').'<input name="netports['.$index.'][label]">
+		      <select name="netports['.$index.'][netporttype]" id="ptype'.$index.'" onchange="xajax_updateTechnologyAndConnector(\''.$index.'\', document.getElementById(\'devtype\').value, this.value)">'.$toptions.'</select>
+		      '.trans("Technology").':<select name="netports['.$index.'][technology]" id="ptech'.$index.'">'.$techoptions.'</select>
+		      '.trans("Connector").':<select name="netports['.$index.'][netconnector]" id="pconn'.$index.'">'.$coptions.'</select>
+		      <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
+		      <IMG src="img/delete.gif" alt="" title="'.trans("Delete").'" onclick="remports(this);">
+		      </td></tr>');
+
+	
+	
+	return $res;
+}
+
+function edit_model($id, $dev_type=0) {
+error_log('i:'.$id.' med:'.$dev_type);
+	global $DB, $NETPORTTYPES, $NETCONNECTORS, $NETELEMENTTYPES, $NETTECHNOLOGIES;
+	$obj = new xajaxResponse();
+
+	$model = $DB->GetRow('SELECT * FROM netdevicemodels WHERE id = ?', array($id));
+	$obj->assign('porttable','innerHTML','');
+	switch($dev_type){
+    case 0://active
+    case 99: //client computer
+  	$types_allowed=array(1,2,3,4,100,200);
+	$connectors_allowed=array(1,2,3,4,5,6,50,51, 100,101,102,103,104,151, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	$tech_allowed=array(1,2,3,4,5,6,7,8,9,10,11,12,50,51,52,70,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114, 200,201,202,203,204,205,206,207,208,209,210,211,212,213);
+    break;
+    case 1://passive
+	$types_allowed=array(1,2,200);
+  	$connectors_allowed=array(1,2,3,4,5,6,50,51, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+  	$tech_allowed=array('null');
+    break;
+    default:
+	$types_allowed=array();
+  	$connectors_allowed=array();
+  	$tech_allowed=array('null');
+  }
 	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id." ORDER by port_type, label");
 
 //	  $obj->call('xaddport',$p['id'],$p['label'],$p['connector'],$p['port_type'], $NETCONNECTORS[($p['connector'])], $NETPORTTYPES[($p['port_type'])]);
@@ -165,27 +211,27 @@ function edit_model($id, $medium_type=0) {
 		if( $t==$p['port_type']) $tsel='selected';
 		$toptions.='<option value="'.$t.'" '.$tsel.'>'.$NETPORTTYPES[$t].'</option>';		
 	  }
-	  foreach($connectors_allowed as $c){
-		if( $c==$p['port_type']) $csel='selected';
-		$coptions.='<option value="'.$c.'" '.$tsel.'>'.$NETCONNECTORS[$c].'</option>';
-	  }
 	  foreach($tech_allowed as $tn){
 		if( $tn==$p['port_type']) $tsel='selected';
 		if($tn=='null')$techoptions.='<option value="null">N/A</option>';
 		else $techoptions.='<option value="'.$tn.'" '.$tsel.'>'.$NETTECHNOLOGIES[$tn]['name'].'</option>';
 	  }
+	  foreach($connectors_allowed as $c){
+		if( $c==$p['port_type']) $csel='selected';
+		$coptions.='<option value="'.$c.'" '.$tsel.'>'.$NETCONNECTORS[$c].'</option>';
+	  }
 	
 	  $list='<tr>
 			  <td class="nobr" colspan="3">
 			    '.trans("Label:").'<input type=text name="netports['.$p['id'].'][label]" value="'.$p['label'].'">
-			    '.trans("Type:").'<select name="netports['.$p['id'].'][netporttype]" id="ptype'.$p['id'].'" onchange="xajax_getConnectorOptionsByPortType(this.value, \'pconn'.$p['id'].'\')">';		    
+			    '.trans("Type:").'<select name="netports['.$p['id'].'][netporttype]" id="ptype'.$p['id'].'" onchange="xajax_updateTechnologyAndConnector(\''.$p['id'].'\', document.getElementById(\'devtype\').value, this.value)">';		    
 	$list.=$toptions;
 	$list.='</select>'.trans("Technology")
 		  .': <select name="netports['.$p['id'].'][nettechnology]" id="ptech'.$p['id'].'" onchange="xajax_getConnectorOptionsByMediumAndDevType(this.value, document.getElementById(\'medium'.$p['id'].'\').value, \'pconn'.$p['id'].'\')">';
-	$list.=$techoptions;
-		  $list.=trans("connector").':<select name="netports['.$p['id'].'][netconnector]" id="pconn'.$p['id'].'">';
+	$list.=$techoptions.'</select>';
+		  $list.=trans("Connector").':<select name="netports['.$p['id'].'][netconnector]" id="pconn'.$p['id'].'">';
 
-	$list.=$coptions;
+	$list.=$coptions.'</select>';
 	$list.='<IMG src="img/clone.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
 			    <IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">
 			  </td>
@@ -193,6 +239,13 @@ function edit_model($id, $medium_type=0) {
 			
 	$obj->append('porttable','innerHTML',$list);
 	}
+	$devtypes='';
+	foreach($NETELEMENTTYPES as $k=>$v){ 
+	    if($k==$dev_type) $asel='selected';
+	    $devtypes.='<option value="'.$k.'" '.$asel.'>'.$v.'</option>';
+	    $asel='';
+	}
+	$obj->assign('devtype', 'innerHTML', $devtypes);
 	$obj->script("xajax.$('div_modeledit').style.display='';");
 	$obj->script("removeClass(xajax.$('id_model_name'),'alert');");
 	$obj->assign("id_model_action_name","innerHTML", trans('Model edit: $a', $model['name']));
@@ -203,6 +256,71 @@ function edit_model($id, $medium_type=0) {
 	$obj->script("xajax.$('id_model_name').focus();");
 
 	return $obj;
+}
+
+function updateTechnologyAndConnector($index, $devtype, $medium){
+	global $NETTECHNOLOGIES, $NETCONNECTORS;
+	$res= new xajaxResponse();
+error_log('i:'.$index.' typ:'.$devtype.' med:'.$medium);
+  switch($devtype){
+    case 0://active
+    case 99: //client computer
+	switch($medium){
+	    case 1:
+	      $connectors_allowed=array(1,2,3,4,5,6,50,51);
+	      $tech_allowed=array(1,2,3,4,5,6,7,8,9,10,11,12,50,51,52,70);
+	    break;
+	    case 2:
+	      $connectors_allowed=array(3,6);
+	      $tech_allowed=array(1,2,3,4,5,10,11,12,70);
+	    break;
+	    case 3:
+	    case 4:
+	      $connectors_allowed=array(1,2,200,201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	      $tech_allowed=array(6,7,8,9,10,200,201,202,203,204,205,206,207,208,209,210,211,212,213);
+	    break;
+	    case 100:
+	      $connectors_allowed=array(100,101,102,103,104,151);
+	      $tech_allowed=array(100,101,102,103,104,105,106,107,108,109,110,111,112,113,114);
+	    break;
+	    case 200:
+	      $connectors_allowed=array(200,201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	      $tech_allowed=array(200,201,202,203,204,205,206,207,208,209,210,211,212,213);
+	    break;
+	}
+    break;
+    case 1://passive
+  	switch($medium){
+	    case 1:
+	      $connectors_allowed=array(1,2,3,4,5,6,50,51);
+	      $tech_allowed=array('null');
+	    break;
+	    case 2:
+	      $connectors_allowed=array(3,6);
+	      $tech_allowed=array('null');
+	    break;
+	    case 3:
+	    case 4:
+	      $connectors_allowed=array(1,2,200,201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	      $tech_allowed=array('null');
+	    break;
+	    case 200:
+	      $connectors_allowed=array(200,201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	      $tech_allowed=array('null');
+	    break;
+	}
+    break;
+  }
+	foreach($connectors_allowed as $c){
+		$coptions.='<option value="'.$c.'">'.$NETCONNECTORS[$c].'</option>';
+	}
+	foreach($tech_allowed as $tn){
+		if($tn=='null')$techoptions.='<option value="null">N/A</option>';
+		else $techoptions.='<option value="'.$tn.'">'.$NETTECHNOLOGIES[$tn]['name'].'</option>';
+	}
+	$res->assign('ptech'.$index, 'innerHTML', $techoptions);
+	$res->assign('pconn'.$index, 'innerHTML', $coptions);
+	return $res;
 }
 
 function save_model($forms) {
@@ -307,6 +425,8 @@ $LMS->RegisterXajaxFunction(array(
 	'edit_model',
 	'save_model',
 	'delete_model',
+	'updateTechnologyAndConnector',
+	'addports',
 ));
 
 $SMARTY->assign('xajax', $LMS->RunXajax());

@@ -134,7 +134,7 @@ function remports(row){
 		</tr>
 		<tr class="light">
 			<td class="fleft nobr valign-top">
-				<select NAME="modeledit[type]" {tip text="Select device type"}>
+				<select NAME="modeledit[type]" id="devtype" {tip text="Select device type"} onchange="xajax_edit_model(document.getElementById('id_model').value, this.value);">
                                 {foreach from=$NETELEMENTTYPES key=idx item=type}
                                 <OPTION VALUE="{$idx}"{if $modeledit.type == $idx} selected{/if}>{$type}</OPTION>
                                 {/foreach}
@@ -147,7 +147,7 @@ function remports(row){
 			</td>
 		</tr>
 		<tr class="light">
-			  <td class="fleft fright" colspan=3>{trans('Ports')}:<IMG src="img/add.gif" alt="" {tip text="Add"} onclick="addports();"></td>
+			  <td class="fleft fright" colspan=3>{trans('Ports')}:<IMG src="img/add.gif" alt="" {tip text="Add"} onclick="xajax_addports(document.getElementById('devtype').value);"></td>
 			</tr>
 		    <tbody id="porttable" style="text-align:left;" class="lmsbox">
 
@@ -200,7 +200,7 @@ function remports(row){
 		<td width="1%" class="text-center nobr">{if $modellist[modellist].netdevcount}{$modellist[modellist].netdevcount}{/if}</td>
 		<td width="1%" class="fright text-right nobr">
 			<img src="img/delete.gif" onclick="xajax_delete_model({$modelid});">
-			<img src="img/edit.gif" onclick="xajax_edit_model({$modelid});">
+			<img src="img/edit.gif" onclick="xajax_edit_model({$modelid}, {$modellist[modellist].type});">
 		</td>
 	</tr>
 	{/section}
