@@ -1335,10 +1335,10 @@ class LMS
 	return $manager->GetNetElemUnconnectedList($netnodeid,$id);
     }
 
-    public function GetConnectionForWire($id)
+    public function GetConnectionForWire($id,$srcnodeid,$dstnodeid)
     {
         $manager = $this->getNetElemManager();
-        return $manager->GetConnectionForWire($id);
+        return $manager->GetConnectionForWire($id,$srcnodeid,$dstnodeid);
     }
 	 
     /*

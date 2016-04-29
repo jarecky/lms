@@ -1040,13 +1040,17 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	return($elems);
     }
 
-    public function GetConnectionForWire($id) {
-        $wires=$this->db->GetRow("SELECT * FROM netconnections WHERE wires ?LIKE? ?",array("%".$id."%"));
-	if (count($wires)) {
+    public function GetConnectionForWire($id,$srcnodeid,$dstnodeid) {
+        $netwires=$this->db->GetAll("SELECT * FROM netconnections WHERE wires ?LIKE? ?",array("%".$id."%"));
+	#echo '<HR>netwires:<PRE>';print_r($netwires);echo '</PRE>';
+	if (count($netwires)==0) 
+		return FALSE;
+	foreach ($netwires AS $wires) {
 	    $port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($wires['ports']));
+	    $pelem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+	    #echo 'port:<PRE>';print_r($port);echo '</PRE>';
 	    if ($port['type']<>300) {
 		// port nie jest tacka - kabel w port
-	        $elem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
 		$elem['port']=$port;
 	    	$elem['connid']=$wires['id'];
 	    } elseif (preg_match('/^([0-9]+):([0-9]+)$/',$wires['wires'],$x)) {
@@ -1058,14 +1062,18 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		$elem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($wire['netcableid']));
 		$elem['wire']=$wire;
 		$elem['cable']=$this->db->GetRow("SELECT * FROM netcables WHERE netelemid=?",array($wire['netcableid']));
-		$elem['tray']=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+		#if ($elem['netnodeid']==$
+		$elem['tray']=$pelem;
 		$elem['tray']['port']=$port;
 	    	$elem['connid']=$wires['id'];
-	    } else {
-		return FALSE;
 	    }
-	    return($elem);
+	    #echo "($srcnodeid,$dstnodeid) -> ".$pelem['netnodeid']."<BR>";
+	    if ($pelem['netnodeid']==$srcnodeid) 
+		    $conn['src']=$elem;
+	    else
+		    $conn['dst']=$elem;
 	}
-	return FALSE;
+	#echo 'conn:<PRE>';print_r($conn);echo '</PRE>';
+	return($conn);
     }
 }

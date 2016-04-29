@@ -503,10 +503,7 @@ class LMSNetElemAction extends LMSModuleAction
 				$netwires=$this->db->GetAll("SELECT * FROM netwires WHERE netcableid=?",array($_GET['id']));
 				if (count($netwires)) 
 				foreach ($netwires AS $id => $netwire) {
-					$netwires[$id]['conn']=$this->lms->GetConnectionForWire($netwire['id']);
-					if ($netwires[$id]['conn']['cable']['dstnodeid']==$neteleminfo['netnodeid'])
-						$netwires[$id]['conn']['cable']['dstnodeid']=$netwires[$id]['conn']['netnodeid'];
-					$netwires[$id]['conn']['cable']['dstnode']=$this->db->GetOne("SELECT name FROM netnodes WHERE id=?",array($netwires[$id]['conn']['cable']['dstnodeid']));
+					$netwires[$id]['conn']=$this->lms->GetConnectionForWire($netwire['id'],$neteleminfo['srcnodeid'],$neteleminfo['dstnodeid']);
 				}
 				$srcnode=$this->db->GetRow("SELECT * FROM netnodes WHERE id=".$neteleminfo['srcnodeid']);
 				$dstnode=$this->db->GetRow("SELECT * FROM netnodes WHERE id=".$neteleminfo['dstnodeid']);
