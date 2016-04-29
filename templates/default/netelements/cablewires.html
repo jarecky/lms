@@ -15,8 +15,8 @@
         <THEAD>
         <TR>
 		<TD style="width: 1%;" class="nobr">&nbsp;</TD>
-                <TD style="width: 35%;" COLSPAN="6" class="nobr">
-                        {trans("Element")}/{trans("Port")}
+                <TD style="width: 35%;" COLSPAN="5" class="nobr">
+			{trans("Connections for side:")} {$srcnode.name}
                 </TD>
                 <TD style="width: 10%;" class="nobr">
                 </TD>
@@ -25,7 +25,7 @@
                 <TD style="width: 10%;" class="nobr">
                 </TD>
                 <TD style="width: 35%;" class="nobr text-right">
-                        {trans("Element")}/{trans("Port")}
+			{trans("Connections for side:")} {$dstnode.name}
                 </TD>
 		<TD style="width: 1%;" class="nobr">&nbsp;</TD>
         </TR>
@@ -59,15 +59,17 @@
 		 <IMG SRC="img/netdev_takenports.gif">
 		</SPAN>
 		</TD>
-		<TD CLASS="valign-middle text-left" COLSPAN="6">x </TD>
+		<TD CLASS="valign-middle text-center" COLSPAN="5">x </TD>
 		{/if}
 		{if $netwire.conn.wire.id}
 		<TD CLASS="valign-middle text-left">
-		<TD CLASS="valign-middle text-left"><a href="?m=netnodeinfo&id={$netwire.conn.cable.dstnodeid}" class="bold">{$netwire.conn.cable.dstnode}</A></TD> 
-		<TD CLASS="valign-middle text-left"><a href="?m=netelement&action=info&id={$netwire.conn.id}">{$netwire.conn.name}</A></TD>
+		<TD CLASS="valign-middle text-left">
+			<a
+				href="?m=netelement&action=info&id={$netwire.conn.id}"><IMG
+				SRC="img/cable.png" {tip text="{$netwire.conn.name} {$netwire.conn.cable.dstnode}"}></A></TD>
 		<TD CLASS="valign-middle text-center" style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$netwire.conn.cable.colorschemaid].tubes[$netwire.conn.wire.bundle]}; ">{trans("tube #")}{$netwire.conn.wire.bundle} {trans("wire #")}{$netwire.conn.wire.wire}</TD>
 		<TD CLASS="valign-middle text-left"><img src="img/fiber{$netwire.conn.wire.wire}.gif" width="50" height="12"></TD>
-		<TD CLASS="valign-middle text-left"><a href="?m=netelement&action=info&id={$netwire.conn.tray.id}">{$netwire.conn.tray.port.label} {trans("in")} {$netwire.conn.tray.name}</A></TD>
+		<TD CLASS="valign-middle text-left"><a href="?m=netelement&action=info&id={$netwire.conn.tray.id}"><img src="img/splice.png" {tip text="{$netwire.conn.tray.port.label} {trans("in")} {$netwire.conn.tray.name}"}</A></TD>
 		{elseif $netwire.conn.port.id}
 		<TD CLASS="valign-middle text-left">
 		port
