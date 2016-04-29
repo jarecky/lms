@@ -66,10 +66,12 @@
 		<TD CLASS="valign-middle text-left">
 			<a
 				href="?m=netelement&action=info&id={$netwire.conn.id}"><IMG
-				SRC="img/cable.png" {tip text="{$netwire.conn.name} {$netwire.conn.cable.dstnode}"}></A></TD>
+				SRC="img/cable.png" height="16" {tip text="{$netwire.conn.name} {$netwire.conn.cable.dstnode}"}></A></TD>
 		<TD CLASS="valign-middle text-center" style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$netwire.conn.cable.colorschemaid].tubes[$netwire.conn.wire.bundle]}; ">{trans("tube #")}{$netwire.conn.wire.bundle} {trans("wire #")}{$netwire.conn.wire.wire}</TD>
 		<TD CLASS="valign-middle text-left"><img src="img/fiber{$netwire.conn.wire.wire}.gif" width="50" height="12"></TD>
-		<TD CLASS="valign-middle text-left"><a href="?m=netelement&action=info&id={$netwire.conn.tray.id}"><img src="img/splice.png" {tip text="{$netwire.conn.tray.port.label} {trans("in")} {$netwire.conn.tray.name}"}</A></TD>
+		<TD CLASS="valign-middle text-left"><a
+				href="?m=netelement&action=info&id={$netwire.conn.tray.id}"><img
+				src="img/splice.png" height="16" {tip text="{$netwire.conn.tray.port.label} {trans("in")} {$netwire.conn.tray.name}"}</A></TD>
 		{elseif $netwire.conn.port.id}
 		<TD CLASS="valign-middle text-left">
 		port
