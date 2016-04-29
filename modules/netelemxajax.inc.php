@@ -387,7 +387,7 @@ function changeNetElementType($type) {
 	$res->assign('elem_type_multiplexer','style.display', 'none');
 	$res->assign('elem_type_computer','style.display', 'none');
 	$res->assign('elem_ports','style.display', 'none');
-	if($type==-1)$res->assign('porttable', 'innerHTML', '');
+	if($type==-1 || !isset($_POST['netports']))$res->assign('porttable', 'innerHTML', '');
 		  $q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
 		      LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
 		      WHERE m.type=".$type;
@@ -426,29 +426,38 @@ function changeNetElementType($type) {
 }
 
 function addports($devtype){
-	global $NETPORTTYPES;
+	global $NETPORTTYPES, $NETCONNECTORS, $NETTECHNOLOGIES;
 	$res = new xajaxResponse();
-  if($devtype==0)//aktywne
-	$types_allowed=array(1,2,3,4,100,200);
-  if($devtype==1)//aktywne
-	$types_allowed=array(1,2,3,4,100,200);
+	$index=substr(microtime(),2,8);
+  switch($devtype){
+    case 0://aktywne
+  	$types_allowed=array(1,2,3,4,100,200);
+	$connectors_allowed=array(1,2,3,4,5,6,50,51, 100,101,102,103,104,151, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	$tech_allowed=array();
+    break;
+    case 1://pasywne
+	$types_allowed=array(1,2,3,4,200);
+  	$connectors_allowed=array(1,2,3,4,5,6,50,51, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+    break;
+  }
 	foreach($types_allowed as $t){
-		$options.='<option value="'.$t.'">'.$NETPORTTYPES[$t].'<option>';		
+		$toptions.='<option value="'.$t.'">'.$NETPORTTYPES[$t].'</option>';		
 	}
-	$res->assign('porttable','innerHTML','<tr><td><select>'.$options.'</select></td></tr>');
-/*	
-	var connectors='<option value=0>conn0</option>';//smarty rulez
-  var node=document.getElementById('porttable');
-  var row=document.createElement('tr');
-  var index=document.getElementById('porttable').childNodes.length+1;
-  row.innerHTML='<td>'.trans("Label:").'<input type=text name="netelem[\'+index+\'][label]" value="">'.trans("Type").
-		':<select name="netelem[\'+index+\'][typ]"><option selected>typ_portu</option>\'+port_types+\'</select>'
-        .trans("connector").':<select name="netelem[\'+index+\'][connector]"><option selected>connector1</option>
-		\'+connectors+\'</select>\'+
-        \'<IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;\'+
-        \'<IMG src="img/delete.gif" alt="" title="'.trans("Delete").'" onclick="remports(this);">'+
-        \'</td>\';
-  node.appendChild(row);	';*/
+	foreach($connectors_allowed as $c){
+		$coptions.='<option value="'.$c.'">'.$NETCONNECTORS[$c].'</option>';
+	}
+	foreach($tech_allowed as $tn){
+		$coptions.='<option value="'.$tn.'">'.$NETCONNECTORS[$tn].'</option>';
+	}$res->append('porttable','innerHTML','<tr><td>'.trans('Label:').'<input name="netports['.$index.'][label]">
+		      <select name="netports['.$index.'][netporttype]" id="ptype'.$index.'">'.$toptions.'</select>
+		      '.trans("Technology").':<select name="netports['.$index.'][technology]" id="ptech'.$index.'">'.$techoptions.'</select>
+		      '.trans("Connector").':<select name="netports['.$index.'][netconnector]" id="pconn'.$index.'">'.$coptions.'</select>
+		      <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
+		      <IMG src="img/delete.gif" alt="" title="'.trans("Delete").'" onclick="remports(this);">
+		      </td></tr>');
+
+	
+	
 	return $res;
 }
 function getProducerByType($type){
@@ -623,20 +632,20 @@ function setPortsForModel($modelid){
 	  $list.='<tr>
 			  <td class="nobr" colspan="3">
 			    '.trans("Label:").'<input type=text name="netports['.$p['id'].'][label]" value="'.$p['label'].'">
-			    '.trans("Type:").'<select name="netports['.$p['id'].'][netporttype]" onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'.$p['id'].'\')">';		    
+			    '.trans("Type:").'<select name="netports['.$p['id'].'][netporttype]" id="ptype'.$p['id'].'" onchange="xajax_getConnectorOptionsByPortType(this.value, \'pconn'.$p['id'].'\')">';		    
 	foreach( $NETPORTTYPES as $key=>$val){
 		$list.='<option value="'.$key.'"';
 			if( $key==$p['port_type']) $list.='selected';
 		$list.='>'.$val.'</option>';
 	}
 		$list.='</select>'.trans("Technology")
-		  .': <select name="netports['.$p['id'].'][technology]" id=\'tech'.$p['id'].'\' onchange="xajax_getConnectorOptionsByMediumAndDevType(this.value, document.getElementById(\'medium'.$p['id'].'\').value, \'conn'.$p['id'].'\')">';
+		  .': <select name="netports['.$p['id'].'][technology]" id="ptech'.$p['id'].'" onchange="xajax_getConnectorOptionsByMediumAndDevType(this.value, document.getElementById(\'medium'.$p['id'].'\').value, \'pconn'.$p['id'].'\')">';
 	foreach( $NETTECHNOLOGIES as $key=>$val){
 		$list.='<option value="'.$key.'"';
 			if( $key==$p['technology']) $list.='selected';
 		$list.='>'.$val['name'].'</option>';
 	}
-		 $list.='</select>'.trans("connector").':<select name="netports['.$p['id'].'][netconnector]" id="conn'.$p['id'].'">';
+		 $list.='</select>'.trans("connector").':<select name="netports['.$p['id'].'][netconnector]" id="pconn'.$p['id'].'">';
 	foreach( $NETCONNECTORS as $key=>$val){
 		$list.='<option value="'.$key.'"';
 			if( $key==$p['connector']) $list.='selected';
