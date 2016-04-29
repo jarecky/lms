@@ -36,7 +36,7 @@
                             <TBODY>
 				{cycle values="light,lucid" print=false}
 				{section name=netelemlist loop=$netelemlist start=$start}
-				<tr class="highlight {cycle}"  id="ndsp{$netelemlist[netelemlist].id}" onclick="window.location='?m=neteleminfo&id={$netelemlist[netelemlist].id}'" >
+				<tr class="highlight {cycle}"  id="ndsp{$netelemlist[netelemlist].id}" onclick="window.location='?m=netelement&action=info&id={$netelemlist[netelemlist].id}'" >
 					<td width="95%" style="vertical-align: top;" class="nobr">
 						<img src="img/netdev.gif" alt=""><b>{$netelemlist[netelemlist].name}</b><br/>
 							<img src="img/producer.gif" alt="">{$netelemlist[netelemlist].producer} / {$netelemlist[netelemlist].model} /	{if $netelemlist[netelemlist].location} {$netelemlist[netelemlist].location|truncate:60:"...":true}	{/if}
@@ -49,7 +49,7 @@
 					</td>
 					<td class="nobr">
 						<A href="?m=netnodedelelem&id={$objectid}&did={$netelemlist[netelemlist].id}" OnClick="return confirmLink(this, '{t a=$netelemlist[netelemlist].name}Are you sure, you want to remove net element  \'$a\' from node?{/t}');"><img src="img/delete.gif"  alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></A>
-						<a href="?m=neteleminfo&id={$netelemlist[netelemlist].id}"><img src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></A>
+						<a href="?m=netelement&action=info&id={$netelemlist[netelemlist].id}"><img src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></A>
 					</td>
 				</tr>
 				{sectionelse}

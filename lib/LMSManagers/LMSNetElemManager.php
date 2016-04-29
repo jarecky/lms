@@ -1048,10 +1048,11 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	foreach ($netwires AS $wires) {
 	    $port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($wires['ports']));
 	    $pelem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+	    $pelem['port']=$port;
 	    #echo 'port:<PRE>';print_r($port);echo '</PRE>';
 	    if ($port['type']<>300) {
 		// port nie jest tacka - kabel w port
-		$elem['port']=$port;
+	        $elem=$pelem;
 	    	$elem['connid']=$wires['id'];
 	    } elseif (preg_match('/^([0-9]+):([0-9]+)$/',$wires['wires'],$x)) {
 		// kabel+kabel w tacke
@@ -1064,7 +1065,6 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		$elem['cable']=$this->db->GetRow("SELECT * FROM netcables WHERE netelemid=?",array($wire['netcableid']));
 		#if ($elem['netnodeid']==$
 		$elem['tray']=$pelem;
-		$elem['tray']['port']=$port;
 	    	$elem['connid']=$wires['id'];
 	    }
 	    #echo "($srcnodeid,$dstnodeid) -> ".$pelem['netnodeid']."<BR>";
@@ -1072,6 +1072,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		    $conn['src']=$elem;
 	    else
 		    $conn['dst']=$elem;
+	    unset($elem);
 	}
 	#echo 'conn:<PRE>';print_r($conn);echo '</PRE>';
 	return($conn);

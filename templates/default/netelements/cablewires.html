@@ -52,18 +52,19 @@
 	{foreach from=$netwires item=netwire}
 	<TR class="{cycle} highlight">
 <!-- ************************************************************************* -->
-		{if $netwire.conn.src.id}
 		<TD CLASS="text-left">
+		{if $netwire.conn.src}
 		<A HREF="?m=netelement&action=disconnect&id={$netwire.conn.src.connid}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
 		</TD>
 		{else}
-		<TD CLASS="text-left">
 		<SPAN id="devlinkproperties_{$srcnode.id}_{$neteleminfo.id}_{$netwire.bundle}_{$netwire.wire}" onClick="javascript:netfiberconnect('{$srcnode.id}', '{$neteleminfo.id}', '{$netwire.bundle}', '{$netwire.wire}');">
 		 <IMG SRC="img/netdev_takenports.gif">
 		</SPAN>
 		</TD>
-		<TD CLASS="valign-middle text-center">x </TD>
+		<TD CLASS="valign-middle text-center">
+			x 
 		{/if}
+		</TD>
 		{if $netwire.conn.src.wire.id}
 		<TD CLASS="text-right"><TABLE STYLE="float:right;"><TR>
 		<TD CLASS="text-left"> <a href="?m=netelement&action=info&id={$netwire.conn.src.id}"><IMG SRC="img/cable.png" height="16" {tip text="{$netwire.conn.src.name} {$netwire.conn.src.cable.dstnode}"}></A></TD>
@@ -72,9 +73,7 @@
 		<TD CLASS="text-left"><a href="?m=netelement&action=info&id={$netwire.conn.src.tray.id}"><img src="img/splice.png" height="16" {tip text="{$netwire.conn.src.tray.port.label} {trans("in")} {$netwire.conn.src.tray.name}"}</A></TD>
 		</TR></TABLE></TD>
 		{elseif $netwire.conn.src.port.id}
-		<TD CLASS="text-left">
-		port
-		</TD>
+                <TD CLASS="text-left"> <a href="?m=netelement&action=info&id={$netwire.conn.src.id}" {tip text="{trans("Element:")} {$netwire.conn.src.name}<BR>{trans("Port:")} {$netwire.conn.src.port.label}<BR>{trans("Type:")} {$_NETPORTTYPES[$netwire.conn.src.port.type]}<BR>{trans("Connector:")} {$_NETCONNECTORS[$netwire.conn.src.port.connectortype]}<BR>{if $netwire.conn.src.port.technology}{trans("Technology:")} {$_NETTECHNOLOGIES[$netwire.conn.src.port.technology].name}<BR>{/if}"}><img src="img/sc.png" height="16"></a></TD>
 		{/if}
 <!-- ************************************************************************* -->
 		<TD CLASS="text-right" STYLE="padding-right:0px;"><img src="img/fiber{$netwire.wire}.gif" width="50" height="12"></TD>
@@ -89,21 +88,20 @@
                 <TD CLASS="text-left"> <a href="?m=netelement&action=info&id={$netwire.conn.dst.id}"><IMG SRC="img/cable.png" height="16" {tip text="{$netwire.conn.dst.name} {$netwire.conn.dst.cable.dstnode}"}></A></TD>
 		</TR></TABLE></TD>
                 {elseif $netwire.conn.dst.port.id}
-                <TD CLASS="text-left">
-                port
-                </TD>
+                <TD CLASS="text-left"> <a href="?m=netelement&action=info&id={$netwire.conn.dst.id}" {tip text="{trans("Element:")} {$netwire.conn.dst.name}<BR>{trans("Port:")} {$netwire.conn.dst.port.label}<BR>{trans("Type:")} {$_NETPORTTYPES[$netwire.conn.dst.port.type]}<BR>{trans("Connector:")} {$_NETCONNECTORS[$netwire.conn.dst.port.connectortype]}<BR>{if $netwire.conn.dst.port.technology}{trans("Technology:")} {$_NETTECHNOLOGIES[$netwire.conn.dst.port.technology].name}<BR>{/if}"}><img src="img/sc.png" height="16"></a></TD>
                 {/if}
-                {if $netwire.conn.dst.id}
                 <TD CLASS="valign-middle text-left">
+                {if $netwire.conn.dst}
                 <A HREF="?m=netelement&action=disconnect&id={$netwire.conn.dst.connid}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
                 {else}
-		<TD CLASS="valign-middle text-center">x </TD>
+			x 
+		</TD>
                 <TD CLASS="valign-middle text-left">
                 <SPAN id="devlinkproperties_{$dstnode.id}_{$neteleminfo.id}_{$netwire.bundle}_{$netwire.wire}" onClick="javascript:netfiberconnect('{$dstnode.id}', '{$neteleminfo.id}', '{$netwire.bundle}', '{$netwire.wire}');">
                  <IMG SRC="img/netdev_takenports.gif">
                 </SPAN>
-		</TD>
 		{/if}
+		</TD>
 <!-- ************************************************************************* -->
 	</TR>	
 	{/foreach}
