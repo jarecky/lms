@@ -27,7 +27,7 @@
 			{section name=connector loop=$connector}
 				{assign var=conn value=$_NETCONNECTORS[$connector[connector]]} 
 			{/section}
-	{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\nConnector: ",$conn))}
+	{$tiptext="{trans("Label:")} {$netports[n].label}<BR>{trans("Type:")} {$_NETPORTTYPES[$netports[n].type]}<BR>{trans("Connector:")} {$conn}"}
 	{if $netports[n].connectortype<50}
 		{if $netports[n].taken==0}
 			{$port_color="lightgray"}
@@ -46,8 +46,15 @@
 			{$port_img="img/bnc.png"}
 		{/if}
 	{elseif $netports[n].connectortype<300}
-		{$port_color="lightgray"}
+		{if $netports[n].taken==0}
+			{$port_color="lightgray"}
+		{elseif $netports[n].taken<$netports[n].capacity}
+			{$port_color="red"}
+		{elseif $netports[n].taken==$netports[n].capacity}
+			{$port_color="lightgreen"}
+		{/if}
 		{$port_img="img/sc.png"}	  
+		{$tiptext="{$tiptext}<BR>{trans("Capacity:")} {$netports[n].taken}/{$netports[n].capacity}"}
 	{else}
 		{if $netports[n].taken<$netports[n].capacity}
 			  {$port_color="lightgreen"}
@@ -55,7 +62,7 @@
 			  {$port_color="red"}
 		{/if}
 		{$port_img="img/tray.png"}	  
-		{$tiptext=join("",array($tiptext,"\n",trans("Capacity:"),$netports[n].taken,"/",$netports[n].capacity))}
+		{$tiptext="{$tiptext}<BR>{trans("Capacity:")} {$netports[n].taken}/{$netports[n].capacity}"}
 	{/if}
 	<TD class="highlight ftop fbottom fleft fright text-center" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
 			<IMG src="{$port_img}" ALT=""><BR>
@@ -82,7 +89,7 @@
 			{if $netelemlist[netelemlist].linktechnology}{$_LINKTECHNOLOGIES[$netelemlist[netelemlist].linktype][$netelemlist[netelemlist].linktechnology]}{/if}{if $netelemlist[netelemlist].linktype == 1 && ($netelemlist[netelemlist].srcradiosector || $netelemlist[netelemlist].dstradiosector)} ({if $netelemlist[netelemlist].srcradiosector}{$netelemlist[netelemlist].srcradiosector}{else}-{/if}/{if $netelemlist[netelemlist].dstradiosector}{$netelemlist[netelemlist].dstradiosector}{else}-{/if}){/if}<BR>
 			{if $netelemlist[netelemlist].linkspeed}{$_LINKSPEEDS[$netelemlist[netelemlist].linkspeed]}{/if}
 		</TD>
-		<TD class="text-right nobr" onClick="return self.location.href='?m=neteleminfo&id={$netelemlist[netelemlist].id}';">
+		<TD class="text-right nobr" onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';">
 			<IMG src="img/empty.gif" height="16">[{if $netelemlist[netelemlist].srcport}{$netelemlist[netelemlist].srcport}{/if}]<BR>
 			({$netelemlist[netelemlist].id|string_format:"%04d"})
 		</TD>
@@ -90,7 +97,7 @@
 			<span id="elemlinkproperties_{$netelemlist[netelemlist].id}" onClick="javascript:netlinkpropertieschoosewin('{$neteleminfo.id}', '{$netelemlist[netelemlist].id}', true);">
 				<IMG SRC="img/{if $netelemlist[netelemlist].linktype == 1}wireless.gif{elseif $netelemlist[netelemlist].linktype == 2}netelem_takenports.gif{else}netelem_takenports.gif{/if}" alt="[ {trans("Change connection properties")} ]" title="[ {trans("Change connection properties")} ]" {tip trigger="elemlinkproperties_$netelemlist[netelemlist].id" text="<span style=\"white-space: nowrap;\">{trans("Link type:")} {$_LINKTYPES[$netelemlist[netelemlist].linktype]}<br>{if $netelemlist[netelemlist].linktype == 1}{if $netelemlist[netelemlist].srcradiosector}{trans("Radio sector:")} {$netelemlist[netelemlist].srcradiosector}<br>{/if}{if $netelemlist[netelemlist].dstradiosector}{trans("Destination radio sector:")} {$netelemlist[netelemlist].dstradiosector}<br>{/if}{/if}{if $netelemlist[netelemlist].linktechnology}{trans("Link technology:")} {$_LINKTECHNOLOGIES[$netelemlist[netelemlist].linktype][$netelemlist[netelemlist].linktechnology]}<br>{/if}{trans("Link speed:")} {$_LINKSPEEDS[$netelemlist[netelemlist].linkspeed]}</span>"}>
 			</span>
-			<span onClick="return self.location.href='?m=neteleminfo&id={$netelemlist[netelemlist].id}';">
+			<span onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';">
 			[{if $netelemlist[netelemlist].dstport}{$netelemlist[netelemlist].dstport}{/if}]
 			<BR><IMG SRC="img/port.gif" ALT=""> {$netelemlist[netelemlist].ports} ({$netelemlist[netelemlist].takenports})
 			</span>

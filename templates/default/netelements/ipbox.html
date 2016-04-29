@@ -30,19 +30,19 @@
 	{cycle values="light,lucid" print=false}
 	{section name=list loop=$netelemips}
 	<TR class="highlight {cycle}{if ! $netelemips[list].access} blend{/if}"  >
-		<TD WIDTH="95%" onClick="return self.location.href='?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';" class="nobr">
+		<TD WIDTH="95%" onClick="return self.location.href='?m=netelement&action=info&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';" class="nobr">
 			<B>{$netelemips[list].name}</B>
 			{if $netelemips[list].location}<BR>
 			    {$netelemips[list].info|truncate:50:"...":true}
 			{/if}
 		</TD>
-		<TD WIDTH="1%" onClick="return self.location.href='?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';">
+		<TD WIDTH="1%" onClick="return self.location.href='?m=netelement&action=info&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';">
 			({$netelemips[list].id|string_format:"%04d"})
 		</TD>
-		<TD WIDTH="1%" align="right" onClick="return self.location.href='?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';" NOWRAP>
+		<TD WIDTH="1%" align="right" onClick="return self.location.href='?m=netelement&action=info&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';" NOWRAP>
 			{$netelemips[list].ip}{if $netelemips[list].ip_pub!="0.0.0.0"} ({$netelemips[list].ip_pub}){/if}<BR>
 		</TD>
-		<TD WIDTH="1%" onClick="return self.location.href='?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';">
+		<TD WIDTH="1%" onClick="return self.location.href='?m=netelement&action=info&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}';">
 			{$netelemips[list].mac|replace:",":"<BR>"}
 		</TD>
 		<TD class="bold" WIDTH="1%" align="right" NOWRAP>
@@ -52,7 +52,7 @@
 			<A href="?m=netelemedit&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&action=ipset&ip={$netelemips[list].id}"><IMG src="img/{if ! $netelemips[list].access}no{/if}access.gif" ALT="" {if ! $netelemips[list].access}{tip text="Connect"}{else}{tip text="Disconnect"}{/if}></A>
 			<A HREF="?m=netelemedit&action=ipdel&id={$neteleminfo.id}&ip={$netelemips[list].id}" onClick="return confirmLink(this, '{t a=$netelemips[list].name}Are you sure, you want to delete address \'$a\' from database?{/t}')"><IMG SRC="img/delete.gif" ALT="" {tip text="Delete"}></A>
 			<A HREF="?m=netelemedit&action=editip&id={$neteleminfo.id}&ip={$netelemips[list].id}"><IMG SRC="img/edit.gif" ALT="" {tip text="Edit"}></A>
-			<A HREF="?m=neteleminfo&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}"><IMG SRC="img/info.gif" ALT="" {tip text="Info"}></A>
+			<A HREF="?m=netelement&action=info&id={if $neteleminfo.id}{$neteleminfo.id}{else}{$netelemedit.id}{/if}&ip={$netelemips[list].id}"><IMG SRC="img/info.gif" ALT="" {tip text="Info"}></A>
 		</TD>
 	</TR>
 	{/section}

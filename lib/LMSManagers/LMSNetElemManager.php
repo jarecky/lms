@@ -730,7 +730,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                         LEFT JOIN location_districts ld ON (ld.id = lb.districtid)
                         LEFT JOIN location_states ls ON (ls.id = ld.stateid)
                         WHERE e.id = ?', array($id));
-        $result['takenports'] = $this->CountNetElemLinks($id);
+        #$result['takenports'] = $this->CountNetElemLinks($id);
 
         if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
             $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
@@ -1003,8 +1003,9 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	    $rs = $this->db->GetRow('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
 	    if ($rs) 
 		$ports[$idx]['radiosector']=$rs;
-	    $ports[$idx]['taken']=$this->db->GetOne('SELECT COUNT(*) FROM nodes WHERE netport = ? AND ipaddr <> 0 AND ownerid > 0',array($port['id'])) + $this->db->GetOne('SELECT COUNT(*) FROM netlinks WHERE srcport = ? OR dstport = ?',array($port['id'],$port['id']));
+	    $ports[$idx]['taken']=$this->db->GetOne('SELECT COUNT(*) FROM netconnections WHERE ports ?LIKE? ?',array("%".$port['id']."%"));
 	}
+	#echo '<PRE>';print_r($ports);echo '</PRE>';
 	return($ports);
     }
 
@@ -1048,10 +1049,11 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	foreach ($netwires AS $wires) {
 	    $port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($wires['ports']));
 	    $pelem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+	    $pelem['port']=$port;
 	    #echo 'port:<PRE>';print_r($port);echo '</PRE>';
 	    if ($port['type']<>300) {
 		// port nie jest tacka - kabel w port
-		$elem['port']=$port;
+	        $elem=$pelem;
 	    	$elem['connid']=$wires['id'];
 	    } elseif (preg_match('/^([0-9]+):([0-9]+)$/',$wires['wires'],$x)) {
 		// kabel+kabel w tacke
@@ -1064,7 +1066,6 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		$elem['cable']=$this->db->GetRow("SELECT * FROM netcables WHERE netelemid=?",array($wire['netcableid']));
 		#if ($elem['netnodeid']==$
 		$elem['tray']=$pelem;
-		$elem['tray']['port']=$port;
 	    	$elem['connid']=$wires['id'];
 	    }
 	    #echo "($srcnodeid,$dstnodeid) -> ".$pelem['netnodeid']."<BR>";
@@ -1072,6 +1073,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		    $conn['src']=$elem;
 	    else
 		    $conn['dst']=$elem;
+	    unset($elem);
 	}
 	#echo 'conn:<PRE>';print_r($conn);echo '</PRE>';
 	return($conn);
