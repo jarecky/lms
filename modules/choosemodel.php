@@ -23,14 +23,14 @@ function updateModels($type, $producer){
 
 }
 function updatePortlist($modelid){
-	global $NETCONNECTORS, $NETPORTTYPES;
+	global $NETCONNECTORS, $NETPORTTYPES, $NETTECHNOLOGIES;
 	$DB=LMSDB::getInstance();
 	$res = new xajaxResponse();
-	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$modelid." ORDER by connector, label");
+	$ports = $DB->getAll("SELECT id, label, connector, port_type, technology FROM netdeviceschema WHERE model=".$modelid." ORDER by connector, label");
 	$res->assign('porttable','innerHTML','');
 	if($ports)
 	foreach($ports as $p){
-	  $list.='<tr width="100%"><td style="white-space: nowrap">'.trans('Label:').$p['label'].'</td><td>'.trans('Medium:').$NETPORTTYPES[($p['port_type'])].' '.trans('Connector:').$NETCONNECTORS[($p['connector'])].'</td></tr>';
+	  $list.='<tr width="100%"><td style="white-space: nowrap">'.trans('Label:').$p['label'].',</td><td>'.trans('Medium:').$NETPORTTYPES[($p['port_type'])].', '.trans('Technology:').$NETTECHNOLOGIES[($p['technology'])]['name'].', '.trans('Connector:').$NETCONNECTORS[($p['connector'])].'</td></tr>';
 	}
 	else
 	$list.='<tr><td colspan="2">'.trans('No such ports.').'</td></tr>';

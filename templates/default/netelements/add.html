@@ -535,7 +535,7 @@
                 </TD>
 		<TD WIDTH="99%" NOWRAP colspan="2">
 			{trans('Ports:')}
-			<IMG SRC="img/add.gif" onclick="xajax_addports(document.getElementById('type').value);">
+			<IMG SRC="img/add.gif" onclick="addports();">
 		</TD>
 	</TR>
 	<TR>
@@ -579,7 +579,7 @@
 </TABLE>
 </FORM>
 <script>
-function addports1(){
+function addports(){
   var port_types='<option value=0>{trans("Select")}</option>';
   {foreach from=$NETPORTTYPES key=k item=val}
 			      port_types+='<option value="{$k}">{$val}</option>';
