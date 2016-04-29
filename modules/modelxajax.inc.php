@@ -138,17 +138,60 @@ function add_model() {
 	return $obj;
 }
 
-function edit_model($id) {
-	global $DB;
-	global $NETPORTTYPES;
-	global $NETCONNECTORS;
+function edit_model($id, $medium_type=0) {
+	global $DB, $NETPORTTYPES, $NETCONNECTORS;
 	$obj = new xajaxResponse();
 
 	$model = $DB->GetRow('SELECT * FROM netdevicemodels WHERE id = ?', array($id));
-	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id." ORDER by 3");
+	switch($medium_type){
+    case 0://active
+    case 99: //client computer
+  	$types_allowed=array(1,2,3,4,100,200);
+	$connectors_allowed=array(1,2,3,4,5,6,50,51, 100,101,102,103,104,151, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	$tech_allowed=array(1,2,3,4,5,6,7,8,9,10,11,12,50,51,52,70,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114, 200,201,202,203,204,205,206,207,208,209,210,211,212,213);
+    break;
+    case 1://passive
+	$types_allowed=array(1,2,200);
+  	$connectors_allowed=array(1,2,3,4,5,6,50,51, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+  	$tech_allowed=array('null');
+    break;
+  }
+	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id." ORDER by port_type, label");
 
+//	  $obj->call('xaddport',$p['id'],$p['label'],$p['connector'],$p['port_type'], $NETCONNECTORS[($p['connector'])], $NETPORTTYPES[($p['port_type'])]);
 	foreach($ports as $p){
-	  $obj->call('xaddport',$p['id'],$p['label'],$p['connector'],$p['port_type'], $NETCONNECTORS[($p['connector'])], $NETPORTTYPES[($p['port_type'])]);
+
+	  foreach($types_allowed as $t){
+		if( $t==$p['port_type']) $tsel='selected';
+		$toptions.='<option value="'.$t.'" '.$tsel.'>'.$NETPORTTYPES[$t].'</option>';		
+	  }
+	  foreach($connectors_allowed as $c){
+		if( $c==$p['port_type']) $csel='selected';
+		$coptions.='<option value="'.$c.'" '.$tsel.'>'.$NETCONNECTORS[$c].'</option>';
+	  }
+	  foreach($tech_allowed as $tn){
+		if( $tn==$p['port_type']) $tsel='selected';
+		if($tn=='null')$techoptions.='<option value="null">N/A</option>';
+		else $techoptions.='<option value="'.$tn.'" '.$tsel.'>'.$NETTECHNOLOGIES[$tn]['name'].'</option>';
+	  }
+	
+	  $list='<tr>
+			  <td class="nobr" colspan="3">
+			    '.trans("Label:").'<input type=text name="netports['.$p['id'].'][label]" value="'.$p['label'].'">
+			    '.trans("Type:").'<select name="netports['.$p['id'].'][netporttype]" id="ptype'.$p['id'].'" onchange="xajax_getConnectorOptionsByPortType(this.value, \'pconn'.$p['id'].'\')">';		    
+	$list.=$toptions;
+	$list.='</select>'.trans("Technology")
+		  .': <select name="netports['.$p['id'].'][nettechnology]" id="ptech'.$p['id'].'" onchange="xajax_getConnectorOptionsByMediumAndDevType(this.value, document.getElementById(\'medium'.$p['id'].'\').value, \'pconn'.$p['id'].'\')">';
+	$list.=$techoptions;
+		  $list.=trans("connector").':<select name="netports['.$p['id'].'][netconnector]" id="pconn'.$p['id'].'">';
+
+	$list.=$coptions;
+	$list.='<IMG src="img/clone.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
+			    <IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">
+			  </td>
+		</tr>';
+			
+	$obj->append('porttable','innerHTML',$list);
 	}
 	$obj->script("xajax.$('div_modeledit').style.display='';");
 	$obj->script("removeClass(xajax.$('id_model_name'),'alert');");

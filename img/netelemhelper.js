@@ -69,7 +69,7 @@ var medium_types; //typy mediow zmieniane przy wyborze typu urzadzenia
         '<IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">'+
         '</td>';
   node.appendChild(row);
-}*/
+}
 
 function clone(src){
   var ports=document.getElementById('porttable');
@@ -86,7 +86,7 @@ function clone(src){
 function remports(row){
   row.parentNode.parentNode.parentNode.removeChild(row.parentNode.parentNode);
 }
-
+*/
 function netelemmodelchoosewin(type, producer, model, porttable){
     popup('?m=choosemodel&type='+type,1,100,380);
     autoiframe_setsize('autoiframe', 300, 300);
