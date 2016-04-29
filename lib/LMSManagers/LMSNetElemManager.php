@@ -730,7 +730,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                         LEFT JOIN location_districts ld ON (ld.id = lb.districtid)
                         LEFT JOIN location_states ls ON (ls.id = ld.stateid)
                         WHERE e.id = ?', array($id));
-        $result['takenports'] = $this->CountNetElemLinks($id);
+        #$result['takenports'] = $this->CountNetElemLinks($id);
 
         if ($result['guaranteeperiod'] != NULL && $result['guaranteeperiod'] != 0)
             $result['guaranteetime'] = strtotime('+' . $result['guaranteeperiod'] . ' month', $result['purchasetime']); 
@@ -1003,8 +1003,9 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	    $rs = $this->db->GetRow('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
 	    if ($rs) 
 		$ports[$idx]['radiosector']=$rs;
-	    $ports[$idx]['taken']=$this->db->GetOne('SELECT COUNT(*) FROM nodes WHERE netport = ? AND ipaddr <> 0 AND ownerid > 0',array($port['id'])) + $this->db->GetOne('SELECT COUNT(*) FROM netlinks WHERE srcport = ? OR dstport = ?',array($port['id'],$port['id']));
+	    $ports[$idx]['taken']=$this->db->GetOne('SELECT COUNT(*) FROM netconnections WHERE ports ?LIKE? ?',array("%".$port['id']."%"));
 	}
+	#echo '<PRE>';print_r($ports);echo '</PRE>';
 	return($ports);
     }
 

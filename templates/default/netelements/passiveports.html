@@ -27,7 +27,7 @@
 			{section name=connector loop=$connector}
 				{assign var=conn value=$_NETCONNECTORS[$connector[connector]]} 
 			{/section}
-	{$tiptext=join("", array("Label: ",$netports[n].label,"\nType: ",$_NETPORTTYPES[$netports[n].type],"\nConnector: ",$conn))}
+	{$tiptext="{trans("Label:")} {$netports[n].label}<BR>{trans("Type:")} {$_NETPORTTYPES[$netports[n].type]}<BR>{trans("Connector:")} {$conn}"}
 	{if $netports[n].connectortype<50}
 		{if $netports[n].taken==0}
 			{$port_color="lightgray"}
@@ -46,8 +46,15 @@
 			{$port_img="img/bnc.png"}
 		{/if}
 	{elseif $netports[n].connectortype<300}
-		{$port_color="lightgray"}
+		{if $netports[n].taken==0}
+			{$port_color="lightgray"}
+		{elseif $netports[n].taken<$netports[n].capacity}
+			{$port_color="red"}
+		{elseif $netports[n].taken==$netports[n].capacity}
+			{$port_color="lightgreen"}
+		{/if}
 		{$port_img="img/sc.png"}	  
+		{$tiptext="{$tiptext}<BR>{trans("Capacity:")} {$netports[n].taken}/{$netports[n].capacity}"}
 	{else}
 		{if $netports[n].taken<$netports[n].capacity}
 			  {$port_color="lightgreen"}
@@ -55,7 +62,7 @@
 			  {$port_color="red"}
 		{/if}
 		{$port_img="img/tray.png"}	  
-		{$tiptext=join("",array($tiptext,"\n",trans("Capacity:"),$netports[n].taken,"/",$netports[n].capacity))}
+		{$tiptext="{$tiptext}<BR>{trans("Capacity:")} {$netports[n].taken}/{$netports[n].capacity}"}
 	{/if}
 	<TD class="highlight ftop fbottom fleft fright text-center" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
 			<IMG src="{$port_img}" ALT=""><BR>
