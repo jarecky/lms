@@ -57,7 +57,7 @@
 		<A HREF="?m=netelement&action=disconnect&id={$netwire.conn.src.connid}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
 		</TD>
 		{else}
-		<SPAN id="devlinkproperties_{$srcnode.id}_{$neteleminfo.id}_{$netwire.bundle}_{$netwire.wire}" onClick="javascript:netfiberconnect('{$srcnode.id}', '{$neteleminfo.id}', '{$netwire.bundle}', '{$netwire.wire}');">
+		<SPAN id="devlinkproperties_{$srcnode.id}_{$netwire.id}" onClick="javascript:netfiberconnect('{$srcnode.id}', '{$netwire.id}');">
 		 <IMG SRC="img/netdev_takenports.gif">
 		</SPAN>
 		</TD>
@@ -97,7 +97,7 @@
 			x 
 		</TD>
                 <TD CLASS="valign-middle text-left">
-                <SPAN id="devlinkproperties_{$dstnode.id}_{$neteleminfo.id}_{$netwire.bundle}_{$netwire.wire}" onClick="javascript:netfiberconnect('{$dstnode.id}', '{$neteleminfo.id}', '{$netwire.bundle}', '{$netwire.wire}');">
+                <SPAN id="devlinkproperties_{$dstnode.id}_{$netwire.id}" onClick="javascript:netfiberconnect('{$dstnode.id}', '{$netwire.id}');">
                  <IMG SRC="img/netdev_takenports.gif">
                 </SPAN>
 		{/if}

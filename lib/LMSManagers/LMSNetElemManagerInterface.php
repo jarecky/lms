@@ -100,4 +100,7 @@ interface LMSNetElemManagerInterface
     public function GetNetElemUnconnectedList($netnodeid,$id);
 
     public function GetConnectionForWire($id,$srcnodeid,$dstnodeid);
+
+    public function GetConnPossForWire($nodeid,$wireid);
+
 }

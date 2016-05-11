@@ -1340,7 +1340,12 @@ class LMS
         $manager = $this->getNetElemManager();
         return $manager->GetConnectionForWire($id,$srcnodeid,$dstnodeid);
     }
-	 
+
+    public function GetConnPossForWire($nodeid,$wireid) 
+    {
+	$manager = $this->getNetElemManager();
+	return $manager->GetConnPossForWire($nodeid,$wireid);
+    }
     /*
      *   Request Tracker (Helpdesk)
      */

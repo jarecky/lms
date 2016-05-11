@@ -13,195 +13,125 @@
 <body class="light">
 <div id="overDiv" style="position: absolute; visibility: hidden; z-index: 100;"></div>
 <script type="text/javascript" language="JavaScript" src="img/overlib.js"></script>
-	<FORM name="netlinkproperties" method="GET">
+	<FORM id="fiberconnect" name="fiberconnect" method="GET">
+	<input type="hidden" name="wireid" value="{$wireid}">
 	<table id="propertiestable" style="width: 100%;" cellpadding="3">
+		{assign "typelist" ""}
+		{assign "elemlist" ""}
+		{foreach from=$connlist key=type item=netelem}
+		{assign var="typelist1" value="`$typelist`,`$type`"}{assign var="typelist" value="`$typelist1`"}
+		{foreach from=$netelem key=elemid item=$element}
+		{assign var="elemlist1" value="`$elemlist`,`$element.id`"}{assign var="elemlist" value="`$elemlist1`"}
+		{/foreach}
+		{/foreach}
 		<tr class="light">
-			<td style="width: 1%; white-space: nowrap;">{trans("Network element:")}</td>
-			<td style="width: 99%;">
-				<select name="netelements" id="netelements" {tip text="Select element to connect"} style="width: 100%;" onchange="xajax_()">
-				{foreach from=$netelemlist item=elem}
-				<option value="{$elem.id}">{$elem.name}</option>
+			<td style="width: 1%; white-space: nowrap;"><b>{trans("Type:")}</b></td>
+			<td style="width: 99%;"> <select name="type" {tip text="Select element type to connect"} style="width: 100%;" onchange="xajax_changeType(this.value,'{$typelist}');xajax_changeNetElem(0,'{$elemlist}')">
+				<option value="-1" SELECTED>{trans("Select element type to connect")}</option>
+				{foreach from=$connlist key=type item=netelem}
+				<option value="{$type}">{$_NETELEMENTTYPES[$type]}</option>
 				{/foreach}
 				</select>
 			</td>
 		</tr>
-		<tr class="light">
-			<td class="nobr">{trans("Radio sector:")}</td>
-			<td>
-				<SELECT NAME="srcradiosector" id="srcradiosector" {tip trigger="srcradiosector" text="Select radio sector"}{if $link.type != 1} disabled{/if}>
-					<OPTION value="0">- {trans("none")} -</OPTION>
-					{foreach $radiosectors.src as $radiosector}
-					<OPTION value="{$radiosector.id}"{if $link.type == 1 && $radiosectors.srcradiosector == $radiosector.id} selected{/if}>{$radiosector.name}</OPTION>
-					{/foreach}
-				</SELECT>
-			</td>
+		{foreach from=$connlist key=type item=netelem}
+		<tr class="lucida" id="level1_{$type}" style="display:none;">
+			<td class="nobr"><b>{trans("Select element:")}</b></td>
+			<td><SELECT name="netelement_{$type}" style="width: 100%;" {tip text="Select element"} onchange="xajax_changeNetElem(this.value,'{$elemlist}')">
+			<option value="-1" SELECTED>{trans("Select network element")}</option>
+			{foreach from=$netelem key=elemid item=$element}
+				{if $element.ports or $element.wires}<option value="{$element.id}">{$element.name}</option>{/if}
+			{/foreach}
+			</select></td>
 		</tr>
-		<tr class="light">
-			<td class="nobr">{trans("Destination radio sector:")}</td>
-			<td>
-				<SELECT NAME="dstradiosector" id="dstradiosector" {tip trigger="dstradiosector" text="Select radio sector"}{if $link.type != 1} disabled{/if}>
-					<OPTION value="0">- {trans("none")} -</OPTION>
-					{foreach $radiosectors.dst as $radiosector}
-					<OPTION value="{$radiosector.id}"{if $link.type == 1 && $radiosectors.dstradiosector == $radiosector.id} selected{/if}>{$radiosector.name}</OPTION>
-					{/foreach}
-				</SELECT>
-			</td>
-		</tr>
-		<tr class="light">
-			<td class="nobr">{trans("Radio sector:")}</td>
-			<td>
-				<SELECT NAME="radiosector" id="radiosector" {tip trigger="radiosector" text="Select radio sector"}{if $link.type != 1} disabled{/if}>
-					<OPTION value="0">- {trans("none")} -</OPTION>
-					{foreach $radiosectors as $radiosector}
-					<OPTION value="{$radiosector.id}"{if $link.type == 1 && $link.radiosector == $radiosector.id} selected{/if}>{$radiosector.name}</OPTION>
-					{/foreach}
-				</SELECT>
-			</td>
-		</tr>
-		<tr class="light">
-			<td class="nobr">{trans("Link technology:")}</td>
-			<td>
-				<SELECT NAME="linktechnology" id="linktechnology" {tip trigger="linktechnology" text="Select link technology"} onchange="change_linktechnology(this.options[this.selectedIndex].value)">
-					<OPTION value="0">{trans("- unknown -")}</OPTION>
-					{foreach $_LINKTECHNOLOGIES[$link.type] as $linktechnologyidx => $linktechnology}
-					<OPTION value="{$linktechnologyidx}"{if $link.technology == $linktechnologyidx} selected{/if}>{$linktechnology}</OPTION>
-					{/foreach}
-				</SELECT>
-			</td>
-		</tr>
-		<tr class="light">
-			<td style="white-space: nowrap;">{trans("Link speed:")}</td>
-			<td>
-				<select name="linkspeed" {tip text="Select link speed"} style="width: 100%;">
-				{foreach from=$_LINKSPEEDS item=item key=key}
-					<option value="{$key}"{if $key==$link.speed} selected{/if}>{$item}</option>
+			{foreach from=$netelem key=elemid item=$element}
+			<tr class="light" id="level2_{$element.id}"  style="display:none;">
+				<td class="nobr"><b>{if $type==2}{trans("Select wire:")}{else}{trans("Select port:")}{/if}</b></td>
+				{if $element.ports}
+				<td><SELECT name="port_{$element.id}" style="width: 100%;" {tip text="Select destination port"}>
+				<option value="-1" SELECTED>{trans("Select port:")}</option>
+				{foreach from=$element.ports key=pid item=port}
+				<option value="{$port.id}">{$port.label}</option>
 				{/foreach}
-				</select>
-			</td>
+				{elseif $element.wires}
+				<td><SELECT name="wire_{$element.id}" style="width: 100%;" {tip text="Select destination wire"}>
+				<option value="-1">{trans("Select wire:")}</option>
+				{foreach from=$element.wires key=wid item=wire}
+				<option value="{$wire.id}">#{$wire.bundle} #{$wire.wire}</option>
+				{/foreach}
+				{/if}
+				</select></td>
+			</tr>
+			{/foreach}
+		{/foreach}
+		<tr class="light" id="level3" style="display:none;">
+			<td class="nobr"><b>{trans("Select tray for splice:")}</b></td>
+			<td><SELECT name="tray" style="width: 100%;" {tip text="Select tray for splice"}>
+			<option value="-1">{trans("Select tray:")}</option>
+			{foreach from=$connlist[1] item=$element}
+			{if $element.trays}
+				{foreach from=$element.trays item=tray}
+				<option value="{$tray.id}">{$element.name} / {$tray.label} </option>
+				{/foreach}
+			{/if}
+			{/foreach}
+			</select></td>
 		</tr>
-		<tr class="light">
+		<tr class="light" id="level4" style="display:none;">
+			<td class="nobr"><b>{trans("Parameter for connection:")}</b></td>
+			<td><input style="width: 100%" type="text" name="parameter" value="" {tip text="Enter parameter for connection"}></td>
+		</tr>
+		<tr class="light" id="level5" style="display:none;">
+			<td class="nobr"><b>{trans("Description for connection:")}</b></td>
+			<td><input style="width: 100%" type="text" name="description" value="" {tip text="Enter description for connection"}></td>
+		</tr>
+		<tr class="light" id="level6" style="display:none;">
 			<td colspan="2" style="text-align: right; white-space: nowrap;">
-				<a href="javascript:submit_netlink_properties()" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></a>
+				<a href="javascript:submit_connect_fiber();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></a>
 			</td>
 		</tr>
 	</table>
-	<input type="hidden" name="linkspeedname" id="linkspeedname" value="">
 	</FORM>
+
 <script type="text/javascript">
 <!--
-function change_linktype(linktype) {
-	linktype = parseInt(linktype);
-	var options = xjx.$('linktechnology').options;
-	while (options.length)
-		options.remove(0);
-	options.add(new Option('{trans("- unknown -")}', 0));
-	switch (linktype) {
-		case 0:
-			{foreach $_LINKTECHNOLOGIES[0] as $linktechnologyidx => $linktechnology}
-			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
-			{/foreach}
-			break;
-		case 1:
-			{foreach $_LINKTECHNOLOGIES[1] as $linktechnologyidx => $linktechnology}
-			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
-			{/foreach}
-			break;
-		case 2:
-			{foreach $_LINKTECHNOLOGIES[2] as $linktechnologyidx => $linktechnology}
-			options.add(new Option('{$linktechnology}', {$linktechnologyidx}));
-			{/foreach}
-			break;
-	}
-	if (xjx.$('radiosector') != null) {
-		if (linktype != 1)
-			xjx.$('radiosector').selectedIndex = 0;
-		xjx.$('radiosector').disabled = (linktype != 1);
+
+function update_fiber_info(content1, content2) {
+	window.parent.location.reload();
+        window.parent.popclick();
+}
+
+function submit_connect_fiber() {
+        var form = document.forms['fiberconnect'];
+	var wire = form.elements['wireid'].value;
+        var type = form.elements['type'].value;
+	var itype = 'netelement_' + type;
+	var element = form.elements[itype].value;
+	if (type==2) {
+		var iwire= 'wire_' + element;
+		wire += ':' + form.elements[iwire].value;
+		var port = form.elements['tray'].value;
 	} else {
-		if (linktype != 1) {
-			xjx.$('srcradiosector').selectedIndex = 0;
-			xjx.$('dstradiosector').selectedIndex = 0;
-		}
-		xjx.$('srcradiosector').disabled = (linktype != 1);
-		xjx.$('dstradiosector').disabled = (linktype != 1);
+		var iport= 'port_' + element;
+		var port = form.elements[iport].value;
 	}
-}
+        xajax_connectFiber({
+                        wires: wire,
+                        ports: port,
+                        parameter: form.elements['parameter'].value,
+                        description: form.elements['description'].value
+                } );
 
-function change_linktechnology(linktechnology) {
-	linktechnology = parseInt(linktechnology);
-	var linktype = xjx.$('linktype').options[xjx.$('linktype').selectedIndex].value;
-	if (linktype != 1)
-		return;
-	if (xjx.$('radiosector') != null)
-		xjx.$('radiosector').disabled = true;
-	else {
-		xjx.$('srcradiosector').disabled = true;
-		xjx.$('dstradiosector').disabled = true;
-	}
-	xajax_get_radio_sectors_for_technology(linktechnology);
-}
-
-function update_radio_sector_list(radiosectors) {
-	Object.keys(radiosectors).forEach(function(control) {
-		var options = xjx.$(control).options;
-		var oldvalue = options[xjx.$(control).selectedIndex].value;
-		while (options.length)
-			options.remove(0);
-		options.add(new Option('- {trans("none")} -', 0));
-		if (radiosectors[control] !== null) {
-			radiosectors[control].forEach(function(elem) {
-				var option = new Option(elem.name, elem.id);
-				if (elem.id == oldvalue)
-					option.selected = true;
-				options.add(option);
-			});
-		}
-	});
-	if (xjx.$('radiosector') != null)
-		xjx.$('radiosector').disabled = false;
-	else {
-		xjx.$('srcradiosector').disabled = false;
-		xjx.$('dstradiosector').disabled = false;
-	}
-}
-
-function submit_netlink_properties() {
-	var form = document.forms['netlinkproperties'];
-	var linktype = form.elements['linktype'].value;
-	var radiosector = (form.elements['radiosector'] != null ? form.elements['radiosector'].value : null);
-	var srcradiosector = (form.elements['srcradiosector'] != null ? form.elements['srcradiosector'].value : null);
-	var dstradiosector = (form.elements['dstradiosector'] != null ? form.elements['dstradiosector'].value : null);
-	var linktechnology = form.elements['linktechnology'].value;
-	var linkspeed = form.elements['linkspeed'].value;
-
-	xajax_update_netlink_properties({$link.id}, {$link.devid}, {
-			type: linktype,
-			radiosector: radiosector,
-			srcradiosector: srcradiosector,
-			dstradiosector: dstradiosector,
-			technology: linktechnology,
-			speed: linkspeed
-		} );
-}
-
-function update_netlink_info(content1, content2) {
-	var elem = window.parent.document.getElementById(
-		'{if $link.isnetlink}dev{else}node{/if}_' + '{$link.devid}');
-	elem.innerHTML = content1;
-	elem = window.parent.document.getElementById(
-		'{if $link.isnetlink}dev{else}node{/if}linkproperties_' + '{$link.devid}');
-	elem.innerHTML = content2;
-
-	window.parent.popclick();
 }
 
 function resize_frame() {
-	var pt = xjx.$('propertiestable'),
-	h = pt.offsetHeight;
-	autoiframe_setsize('autoiframe', 350, Math.max(h, 10));
+	var pt = xjx.$('propertiestable'), h = pt.offsetHeight; autoiframe_setsize('autoiframe', 450, Math.max(h, 10));
 }
 
 resize_frame();
 //-->
 </script>
+
+
 </body>
 </html>

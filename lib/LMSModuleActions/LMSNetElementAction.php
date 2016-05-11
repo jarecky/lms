@@ -612,62 +612,18 @@ class LMSNetElemAction extends LMSModuleAction
 	}		
 
 	function _connect() {
-		echo '<PRE>';print_r($_GET);echo '</PRE>';
-		include(MODULES_DIR . '/netelemxajax.inc.php');
-		$elemid=$_GET['id'];
-		$neteleminfo=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($elemid));
-		$type=$neteleminfo['type'];
-		if ($type==2) {
-			$cabletype=$this->db->GetOne("SELECT type FROM netcables WHERE netelemid=?",array($elemid));
-			$wiretype=$this->db->GetOne("SELECT type FROM netwires WHERE netcableid=? AND bundle=? AND wire=?",array($elemid,$_GET['bundle'],$_GET['wire']));
-			echo "Kabel: cabletype=$cabletype,wiretype=$wiretype<BR>";
-		}
-		$netelemlist=$this->db->GetAll("SELECT id,type,name FROM netelements WHERE netnodeid=? AND id<>? ORDER BY name ASC",array($_GET['netnodeid'],$elemid));
-		if (count($netelemlist))
-		foreach ($netelemlist AS $id => $elem) {
-			echo "ELEMENT: ".$elem['name'].'<BR>';
-			if ($elem['type']==0) {
-				$ports=$this->lms->GetNetElemPorts($elemid);
-			} elseif ($elem['type']==1)  {
-				$ports=$this->lms->GetNetElemPorts($elemid);
-				foreach ($ports AS $pid => $port) {
-					
-
-				}
-			} elseif ($elem['type']==2)  {
-				$wires=$this->db->GetAll("SELECT * FROM netwires WHERE netcableid=?",array($elem['id']));
-				if (count($wires))
-				foreach ($wires AS $wid => $wire) {
-					$conn=$this->db->GetAll("SELECT * FROM netconnections WHERE wires ?LIKE? ?",array('%'.$wire['id'].'%'));
-					if (	(count($conn)) OR  // włólno zajęte
-						($wire['type']<100 AND $wire['type']<>$wiretype) OR // miedz musi pasowac do siebie
-						($wiretype<250 AND $wire['type']>=250) OR // SM do MM
-						($wiretype>=250 AND $wire['type']<250)  // MM do SM
-					) {
-						unset($wires[$wid]); 
-						#echo 'Usuwamy wlokno #'.$wire['wire'].' wiązka '.$wire['bundle'].'<BR>';
-					}  #else echo 'wlokno #'.$wire['id'].'|'.$wire['bundle'].'|'.$wire['wire'].' ('.$wire['type'].') jest OK<BR>';
-				}
-				if (!count($wires)) { // Nie ma pasujących włókien!
-					#echo 'Usuwamy kabel "'.$elem['name'].'"<BR>';
-					unset($netelemlist[$id]);
-				} else {
-					$netelemlist[$id]['cable']=$wires;
-				}
-			} elseif ($elem['type']==3)  {
-
-			} elseif ($elem['type']==4)  {
-
-			} elseif ($elem['type']==99)  {
-
-			}
+		global $NETTECHNOLOGIES;
+		include(MODULES_DIR . '/netelemconnect.inc.php');
+		if (isset($_GET['wireid'])) {
+			$connlist=$this->lms->GetConnPossForWire($_GET['netnodeid'],$_GET['wireid']);
+		} else {
+			//
 		}
 
-		echo '<HR>Błędy bazy:<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
-
-		echo '<HR>Netelemlist:<PRE>';print_r($netelemlist);echo '</PRE>';
-		$this->smarty->assign('netelemlist',$netelemlist);
-		#$this->smarty->display('netelements/connect.html');
+		#echo '<HR>connlist:<PRE>';print_r($connlist);echo '</PRE>';
+		$this->smarty->assign('wireid',$_GET['wireid']);
+		$this->smarty->assign('connlist',$connlist);
+		$this->smarty->display('netelements/connect.html');
 	}
 
 	function _error() {
