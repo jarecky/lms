@@ -1129,8 +1129,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                                         unset($ports[$pid]);
 				} elseif ($port['type']==300) {
 					#echo ' tacka na spawy ';
+					$trays[$pid]=$port;
 					unset($ports[$pid]);
-					$list[$id]['trays'][]=$port;
                                 } else {
                                         $portmedium=floor($port['type']/100);
                                         $mediumfit=($portmedium-$wiremedium) ? 0 : 1;
@@ -1140,11 +1140,16 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                                 }
                                 #echo "</LI>";
                         }
-                        if (count($ports)) {
-                                #echo '<LI>Pasujące porty: <PRE>';print_r($ports);echo '</PRE></LI>';
-                                $list[$id]['ports']=$ports;
+                        if (count($ports) OR count($trays)) {
+                                if (count($ports)) {
+                                        #echo '<LI>Pasujące porty: <PRE>';print_r($ports);echo '</PRE></LI>';
+                                        $list[$id]['ports']=$ports;
+                                }
+                                if (count($trays)) {
+                                        #echo '<LI>Pasujące tacki: <PRE>';print_r($trays);echo '</PRE></LI>';
+                                        $list[$id]['trays']=$trays;
+                                }
                                 $connlist[$elem['type']][$elem['id']]=$list[$id];
-
                         } else {
                                 #echo '<LI>Brak pasujących portów</LI>';
                         }
