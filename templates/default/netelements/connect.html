@@ -15,6 +15,7 @@
 <script type="text/javascript" language="JavaScript" src="img/overlib.js"></script>
 	<FORM id="fiberconnect" name="fiberconnect" method="GET">
 	<input type="hidden" name="wireid" value="{$wireid}">
+	<input type="hidden" id="validated" name="validated" value="0">
 	<table id="propertiestable" style="width: 100%;" cellpadding="3">
 		{assign "typelist" ""}
 		{assign "elemlist" ""}
@@ -26,7 +27,7 @@
 		{/foreach}
 		<tr class="light">
 			<td style="width: 1%; white-space: nowrap;"><b>{trans("Type:")}</b></td>
-			<td style="width: 99%;"> <select name="type" {tip text="Select element type to connect"} style="width: 100%;" onchange="xajax_changeType(this.value,'{$typelist}');xajax_changeNetElem(0,'{$elemlist}')">
+			<td style="width: 99%;"> <select id="type" name="type" {tip text="Select element type to connect"} style="width: 100%;" onchange="xajax_changeType(this.value,'{$typelist}');xajax_changeNetElem(0,'{$elemlist}')">
 				<option value="-1" SELECTED>{trans("Select element type to connect")}</option>
 				{foreach from=$connlist key=type item=netelem}
 				<option value="{$type}">{$_NETELEMENTTYPES[$type]}</option>
@@ -37,7 +38,7 @@
 		{foreach from=$connlist key=type item=netelem}
 		<tr class="lucida" id="level1_{$type}" style="display:none;">
 			<td class="nobr"><b>{trans("Select element:")}</b></td>
-			<td><SELECT name="netelement_{$type}" style="width: 100%;" {tip text="Select element"} onchange="xajax_changeNetElem(this.value,'{$elemlist}')">
+			<td><SELECT id="netelement_{$type}" name="netelement_{$type}" style="width: 100%;" {tip text="Select element"} onchange="xajax_changeNetElem(this.value,'{$elemlist}')">
 			<option value="-1" SELECTED>{trans("Select network element")}</option>
 			{foreach from=$netelem key=elemid item=$element}
 				{if $element.ports or $element.wires}<option value="{$element.id}">{$element.name}</option>{/if}
@@ -48,13 +49,13 @@
 			<tr class="light" id="level2_{$element.id}"  style="display:none;">
 				<td class="nobr"><b>{if $type==2}{trans("Select wire:")}{else}{trans("Select port:")}{/if}</b></td>
 				{if $element.ports}
-				<td><SELECT name="port_{$element.id}" style="width: 100%;" {tip text="Select destination port"}>
+				<td><SELECT id="port_{$element.id}" name="port_{$element.id}" style="width: 100%;" {tip text="Select destination port"}>
 				<option value="-1" SELECTED>{trans("Select port:")}</option>
 				{foreach from=$element.ports key=pid item=port}
 				<option value="{$port.id}">{$port.label}</option>
 				{/foreach}
 				{elseif $element.wires}
-				<td><SELECT name="wire_{$element.id}" style="width: 100%;" {tip text="Select destination wire"}>
+				<td><SELECT id="wire_{$element.id}" name="wire_{$element.id}" style="width: 100%;" {tip text="Select destination wire"}>
 				<option value="-1">{trans("Select wire:")}</option>
 				{foreach from=$element.wires key=wid item=wire}
 				<option value="{$wire.id}">#{$wire.bundle} #{$wire.wire}</option>
@@ -66,7 +67,7 @@
 		{/foreach}
 		<tr class="light" id="level3" style="display:none;">
 			<td class="nobr"><b>{trans("Select tray for splice:")}</b></td>
-			<td><SELECT name="tray" style="width: 100%;" {tip text="Select tray for splice"}>
+			<td><SELECT id="tray" name="tray" style="width: 100%;" {tip text="Select tray for splice"}>
 			<option value="-1">{trans("Select tray:")}</option>
 			{foreach from=$connlist[1] item=$element}
 			{if $element.trays}
@@ -79,11 +80,11 @@
 		</tr>
 		<tr class="light" id="level4" style="display:none;">
 			<td class="nobr"><b>{trans("Parameter for connection:")}</b></td>
-			<td><input style="width: 100%" type="text" name="parameter" value="" {tip text="Enter parameter for connection"}></td>
+			<td><input style="width: 100%" type="text" id="parameter" name="parameter" value="" {tip text="Enter parameter for connection"}></td>
 		</tr>
 		<tr class="light" id="level5" style="display:none;">
 			<td class="nobr"><b>{trans("Description for connection:")}</b></td>
-			<td><input style="width: 100%" type="text" name="description" value="" {tip text="Enter description for connection"}></td>
+			<td><input style="width: 100%" type="text" id="description" name="description" value="" {tip text="Enter description for connection"}></td>
 		</tr>
 		<tr class="light" id="level6" style="display:none;">
 			<td colspan="2" style="text-align: right; white-space: nowrap;">
@@ -102,6 +103,7 @@ function update_fiber_info(content1, content2) {
 }
 
 function submit_connect_fiber() {
+	xajax_validateConnectFiber(xajax.getFormValues('fiberconnect'));
         var form = document.forms['fiberconnect'];
 	var wire = form.elements['wireid'].value;
         var type = form.elements['type'].value;
@@ -115,13 +117,14 @@ function submit_connect_fiber() {
 		var iport= 'port_' + element;
 		var port = form.elements[iport].value;
 	}
-        xajax_connectFiber({
+	if (form.elements['validated'].value==1) {
+	        xajax_connectFiber({
                         wires: wire,
                         ports: port,
                         parameter: form.elements['parameter'].value,
                         description: form.elements['description'].value
                 } );
-
+	}
 }
 
 function resize_frame() {

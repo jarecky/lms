@@ -89,10 +89,53 @@ function connectFiber($params) {
 	return($res);
 }
 
+function validateConnectFiber($data) {
+	$res = new xajaxResponse();
+	$error=0;
+	$type=$data['type'];
+	$element=$data['netelement_'.$type];
+	if ($type==2) {
+		$wire=$data['wire_'.$element];
+		if ($wire<0) {
+			$error=1;
+			$res->assign('wire_'.$element,'className', 'bold alert');
+		} else {
+			$res->assign('wire_'.$element,'className', '');
+		}
+		$tray=$data['tray'];
+		if ($tray<0) {
+			$error=1;
+			$res->assign('tray','className', 'bold alert');
+		} else {
+			$res->assign('tray','className', '');
+		}
+	} else {
+		$port=$data['port_'.$element];
+		if ($port<0) {
+			$error=1;
+			$res->assign('port_'.$element,'className', 'bold alert');
+		} else {
+			$res->assign('port_'.$element,'className', '');
+		}
+	}
+	if ($data['parameter']<>'' AND !preg_match('/^[0-9]+,?[0-9]*$/',$data['parameter'])) {
+		$error=1;
+		$res->assign('parameter','className', 'bold alert');
+	} else {
+		$res->assign('parameter','className', '');
+	}
+	if (!$error)
+		$res->assign('validated','value',1);
+	else 
+		$res->assign('validated','value',0);
+
+	return($res);
+}
+
 global $LMS,$SMARTY;
 $LMS->InitXajax();
 $LMS->RegisterXajaxFunction(array(
-	'changeType','changeNetElem','connectFiber',
+	'changeType','changeNetElem','connectFiber','validateConnectFiber',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 
