@@ -552,7 +552,7 @@
 			    {/foreach}
 			    </select>
 			    {trans("Technology")}: <select name="netports[{$k}][nettechnology]" id='tech{$k}' onchange="xajax_getConnectorOptionsByMediumAndDevType(this.value, document.getElementById('medium{$k}').value, 'conn{$k}')">
-			      <option value="{$netports.technology}">{$NETTECHNOLOGIES[$netports.technology].name}</option>
+			      <option value="{$netports.technology}">{$NETTECHNOLOGIES[($netports.technology)].name}</option>
 			    </select>
 			    {trans("connector")}:<select name="netports[{$k}][netconnector]" id="conn{$k}">
 			      <option value="{$netports[$k].netconnector}">{$NETCONNECTORS[($netports[$k].netconnector)]}</option>

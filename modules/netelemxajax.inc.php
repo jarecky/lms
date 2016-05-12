@@ -387,6 +387,8 @@ function changeNetElementType($type,$clearports) {
 	$res->assign('elem_type_multiplexer','style.display', 'none');
 	$res->assign('elem_type_computer','style.display', 'none');
 	$res->assign('elem_ports','style.display', 'none');
+	$res->assign('model', 'innerHTML', '');
+	$res->assign('producer', 'innerHTML', '');
 	if($clearports)$res->assign('porttable', 'innerHTML', '');
 		  $q="SELECT distinct(p.id), p.name FROM netdeviceproducers p 
 		      LEFT JOIN netdevicemodels m ON p.id=m.netdeviceproducerid
@@ -619,7 +621,9 @@ function updateConnectorOnMediumAndTechnology($medium, $tech){
 function setPortsForModel($modelid){
 	global $NETTECHNOLOGIES, $NETPORTTYPES, $NETCONNECTORS, $DB;
 	$res= new xajaxResponse();
-	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$modelid." ORDER by connector, label");
+	$model = $DB->GetRow("SELECT m.name model , p.name producer FROM netdevicemodels m LEFT JOIN netdeviceproducers p ON p.id=m.netdeviceproducerid WHERE m.id=".$modelid." LIMIT 0,1");
+error_log("model:".print_r($model, true));
+	$ports = $DB->getAll("SELECT id, label, connector, port_type, technology FROM netdeviceschema WHERE model=".$modelid." ORDER by connector, label");
 	$res->assign('window.top.porttable','innerHTML','duuupa');
 	foreach($ports as $p){
 	  $list.='<tr>
@@ -652,6 +656,8 @@ function setPortsForModel($modelid){
 			
 	}
 	$res->assign('porttable','innerHTML',$list);
+	$res->assign('producer', 'value', $model['producer']);
+	$res->assign('model', 'value', $model['model']);
 	return $res;
 }
 

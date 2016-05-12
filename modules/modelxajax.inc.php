@@ -167,7 +167,7 @@ function addports($devtype){
 	}
 	$res->append('porttable','innerHTML','<tr><td class="nobr" colspan="3">'.trans('Label:').'<input name="netports['.$index.'][label]">
 		      <select name="netports['.$index.'][netporttype]" id="ptype'.$index.'" onchange="xajax_updateTechnologyAndConnector(\''.$index.'\', document.getElementById(\'devtype\').value, this.value)">'.$toptions.'</select>
-		      '.trans("Technology").':<select name="netports['.$index.'][technology]" id="ptech'.$index.'">'.$techoptions.'</select>
+		      '.trans("Technology").':<select name="netports['.$index.'][nettechnology]" id="ptech'.$index.'">'.$techoptions.'</select>
 		      '.trans("Connector").':<select name="netports['.$index.'][netconnector]" id="pconn'.$index.'">'.$coptions.'</select>
 		      <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
 		      <IMG src="img/delete.gif" alt="" title="'.trans("Delete").'" onclick="remports(this);">
@@ -202,23 +202,28 @@ error_log('i:'.$id.' med:'.$dev_type);
   	$connectors_allowed=array();
   	$tech_allowed=array('null');
   }
-	$ports = $DB->getAll("SELECT id, label, connector, port_type FROM netdeviceschema WHERE model=".$id." ORDER by port_type, label");
+	$ports = $DB->getAll("SELECT id, label, connector, port_type, technology FROM netdeviceschema WHERE model=".$id." ORDER by port_type, label");
 
 //	  $obj->call('xaddport',$p['id'],$p['label'],$p['connector'],$p['port_type'], $NETCONNECTORS[($p['connector'])], $NETPORTTYPES[($p['port_type'])]);
 	foreach($ports as $p){
-
+	  $toptions='';
+	  $techoptions='';
+	  $coptions='';
 	  foreach($types_allowed as $t){
 		if( $t==$p['port_type']) $tsel='selected';
-		$toptions.='<option value="'.$t.'" '.$tsel.'>'.$NETPORTTYPES[$t].'</option>';		
+		$toptions.='<option value="'.$t.'" '.$tsel.'>'.$NETPORTTYPES[$t].'</option>';
+		$tsel='';
 	  }
 	  foreach($tech_allowed as $tn){
-		if( $tn==$p['port_type']) $tsel='selected';
+		if( $tn==$p['technology']) $tesel='selected';
 		if($tn=='null')$techoptions.='<option value="null">N/A</option>';
-		else $techoptions.='<option value="'.$tn.'" '.$tsel.'>'.$NETTECHNOLOGIES[$tn]['name'].'</option>';
+		else $techoptions.='<option value="'.$tn.'" '.$tesel.'>'.$NETTECHNOLOGIES[$tn]['name'].'</option>';
+		$tesel='';
 	  }
 	  foreach($connectors_allowed as $c){
-		if( $c==$p['port_type']) $csel='selected';
+		if( $c==$p['connector']) $csel='selected';
 		$coptions.='<option value="'.$c.'" '.$tsel.'>'.$NETCONNECTORS[$c].'</option>';
+		$csel='';
 	  }
 	
 	  $list='<tr>
@@ -363,11 +368,11 @@ function save_model($forms) {
 					$formid,
 				));
 			$vals='';
-			foreach($form as $key=>$val){
-			  if(is_int($key)) $vals.="('".$form['id']."','".$form[$key]['label']."','".$form[$key]['netporttype']."','".$form[$key]['netconnector']."'),";
+			foreach($forms['netports'] as $key=>$val){
+			  if(preg_match("/\d+/",$key)) $vals.="('".$form['id']."','".$forms['netports']["$key"]['label']."','".$forms['netports']["$key"]['netporttype']."','".$forms['netports']["$key"]['netconnector']."','".$forms['netports']["$key"]['nettechnology']."'),";
 			}
 			$DB->Execute("DELETE FROM netdeviceschema WHERE model=".$formid);
-			$q="INSERT INTO netdeviceschema (model,label, port_type, connector) VALUES ".substr($vals,0,-1);
+			$q="INSERT INTO netdeviceschema (model,label, port_type, connector, technology) VALUES ".substr($vals,0,-1);
 			error_log($q);
 			$DB->Execute($q);
 			$obj->script("xajax_cancel_model();");
@@ -381,11 +386,11 @@ function save_model($forms) {
 					$form['type'],
 				));
 			$id=$DB->GetLastInsertId();
-			  foreach($form as $key=>$val){
-			    if(is_int($key)) $vals.="('".$id."','".$form[$key]['label']."','".$form[$key]['netporttype']."','".$form[$key]['netconnector']."'),";
+			  foreach($forms['netports'] as $key=>$val){
+			    if(preg_match("/\d+/",$key)) $vals.="('".$id."','".$forms['netports']["$key"]['label']."','".$forms['netports']["$key"]['netporttype']."','".$forms['netports']["$key"]['netconnector']."','".$forms['netports']["$key"]['nettechnology']."'),";
 			  }
 			  error_log(print_r($vals));
-			$DB->Execute("INSERT INTO netdeviceschema (model,label, port_type, connector) VALUES ".substr($vals,0,-1));
+			$DB->Execute("INSERT INTO netdeviceschema (model,label, port_type, connector, technology) VALUES ".substr($vals,0,-1));
 			$DB->CommitTrans();
 			$obj->script("xajax_cancel_model();");
 			$obj->script("self.location.href='?m=netelement&action=models&page=1&p_id=$pid';");
