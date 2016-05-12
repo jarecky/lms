@@ -150,8 +150,8 @@ function addports($devtype){
 	$tech_allowed=array(1,2,3,4,5,6,7,8,9,10,11,12,50,51,52,70,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114, 200,201,202,203,204,205,206,207,208,209,210,211,212,213);
     break;
     case 1://passive
-	$types_allowed=array(1,2,200);
-  	$connectors_allowed=array(1,2,3,4,5,6,50,51, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	$types_allowed=array(1,2,200,300);
+  	$connectors_allowed=array(1,2,3,4,5,6,50,51, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243,999);
   	$tech_allowed=array('null');
     break;
   }
@@ -166,7 +166,7 @@ function addports($devtype){
 		else $techoptions.='<option value="'.$tn.'">'.$NETTECHNOLOGIES[$tn]['name'].'</option>';
 	}
 	$res->append('porttable','innerHTML','<tr><td class="nobr" colspan="3">'.trans('Label:').'<input name="netports['.$index.'][label]">
-		      <select name="netports['.$index.'][netporttype]" id="ptype'.$index.'" onchange="xajax_updateTechnologyAndConnector(\''.$index.'\', document.getElementById(\'devtype\').value, this.value)">'.$toptions.'</select>
+		      <select name="netports['.$index.'][netporttype]" id="ptype'.$index.'" onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'.$index.'\')">'.$toptions.'</select>
 		      '.trans("Technology").':<select name="netports['.$index.'][nettechnology]" id="ptech'.$index.'">'.$techoptions.'</select>
 		      '.trans("Connector").':<select name="netports['.$index.'][netconnector]" id="pconn'.$index.'">'.$coptions.'</select>
 		      <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
@@ -189,12 +189,12 @@ error_log('i:'.$id.' med:'.$dev_type);
     case 0://active
     case 99: //client computer
   	$types_allowed=array(1,2,3,4,100,200);
-	$connectors_allowed=array(1,2,3,4,5,6,50,51, 100,101,102,103,104,151, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	$connectors_allowed=array(1,2,3,4,5,6,50,51, 100,101,102,103,104,151, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243,300);
 	$tech_allowed=array(1,2,3,4,5,6,7,8,9,10,11,12,50,51,52,70,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114, 200,201,202,203,204,205,206,207,208,209,210,211,212,213);
     break;
     case 1://passive
-	$types_allowed=array(1,2,200);
-  	$connectors_allowed=array(1,2,3,4,5,6,50,51, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	$types_allowed=array(1,2,200,300);
+  	$connectors_allowed=array(1,2,3,4,5,6,50,51, 201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243,300,999);
   	$tech_allowed=array('null');
     break;
     default:
@@ -311,6 +311,10 @@ error_log('i:'.$index.' typ:'.$devtype.' med:'.$medium);
 	    break;
 	    case 200:
 	      $connectors_allowed=array(200,201,202,203,210,211,212,213,220,221,222,223,230,231,232,233,240,241,242,243);
+	      $tech_allowed=array('null');
+	    break;
+	    case 300:
+	      $connectors_allowed=array(999);
 	      $tech_allowed=array('null');
 	    break;
 	}
