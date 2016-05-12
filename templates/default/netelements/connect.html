@@ -104,27 +104,6 @@ function update_fiber_info(content1, content2) {
 
 function submit_connect_fiber() {
 	xajax_validateConnectFiber(xajax.getFormValues('fiberconnect'));
-        var form = document.forms['fiberconnect'];
-	var wire = form.elements['wireid'].value;
-        var type = form.elements['type'].value;
-	var itype = 'netelement_' + type;
-	var element = form.elements[itype].value;
-	if (type==2) {
-		var iwire= 'wire_' + element;
-		wire += ':' + form.elements[iwire].value;
-		var port = form.elements['tray'].value;
-	} else {
-		var iport= 'port_' + element;
-		var port = form.elements[iport].value;
-	}
-	if (form.elements['validated'].value==1) {
-	        xajax_connectFiber({
-                        wires: wire,
-                        ports: port,
-                        parameter: form.elements['parameter'].value,
-                        description: form.elements['description'].value
-                } );
-	}
 }
 
 function resize_frame() {

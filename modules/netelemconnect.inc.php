@@ -92,6 +92,7 @@ function connectFiber($params) {
 function validateConnectFiber($data) {
 	$res = new xajaxResponse();
 	$error=0;
+	$params=array();
 	$type=$data['type'];
 	$element=$data['netelement_'.$type];
 	if ($type==2) {
@@ -101,6 +102,7 @@ function validateConnectFiber($data) {
 			$res->assign('wire_'.$element,'className', 'bold alert');
 		} else {
 			$res->assign('wire_'.$element,'className', '');
+			$params['wires']=$data['wireid'].":".$wire;
 		}
 		$tray=$data['tray'];
 		if ($tray<0) {
@@ -108,6 +110,7 @@ function validateConnectFiber($data) {
 			$res->assign('tray','className', 'bold alert');
 		} else {
 			$res->assign('tray','className', '');
+			$params['ports']=$tray;
 		}
 	} else {
 		$port=$data['port_'.$element];
@@ -116,6 +119,8 @@ function validateConnectFiber($data) {
 			$res->assign('port_'.$element,'className', 'bold alert');
 		} else {
 			$res->assign('port_'.$element,'className', '');
+			$params['wires']=$data['wireid'];
+			$params['ports']=$port;
 		}
 	}
 	if ($data['parameter']<>'' AND !preg_match('/^[0-9]+,?[0-9]*$/',$data['parameter'])) {
@@ -123,11 +128,15 @@ function validateConnectFiber($data) {
 		$res->assign('parameter','className', 'bold alert');
 	} else {
 		$res->assign('parameter','className', '');
+		$params['parameter']=$data['parameter'];
 	}
-	if (!$error)
+	$params['description']=$data['description'];
+	if (!$error) {
 		$res->assign('validated','value',1);
-	else 
+		$res->call('xajax_connectFiber',$params);
+	} else {
 		$res->assign('validated','value',0);
+	}
 
 	return($res);
 }
