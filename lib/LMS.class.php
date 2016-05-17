@@ -1341,11 +1341,30 @@ class LMS
         return $manager->GetConnectionForWire($id,$srcnodeid,$dstnodeid);
     }
 
+    public function GetConnPossForPort($portid)
+    {
+	$manager = $this->getNetElemManager();
+	return $manager->GetConnPossForPort($portid);
+    }
+
     public function GetConnPossForWire($nodeid,$wireid) 
     {
 	$manager = $this->getNetElemManager();
 	return $manager->GetConnPossForWire($nodeid,$wireid);
     }
+
+    public function GetCableDescByWire($wireid)
+    {
+	$manager = $this->getNetElemManager();
+	return $manager->GetCableDescByWire($wireid);
+    }
+
+    public function GetCableByWire($wireid)
+    {
+	$manager = $this->getNetElemManager();
+	return $manager->GetCableByWire($wireid);
+    }
+
     /*
      *   Request Tracker (Helpdesk)
      */

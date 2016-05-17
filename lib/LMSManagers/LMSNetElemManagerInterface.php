@@ -103,4 +103,10 @@ interface LMSNetElemManagerInterface
 
     public function GetConnPossForWire($nodeid,$wireid);
 
+    public function GetConnPossForPort($portid);
+
+    public function GetCableDescByWire($wireid);
+
+    public function GetCableByWire($wireid);
+
 }

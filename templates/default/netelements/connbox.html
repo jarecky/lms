@@ -15,7 +15,7 @@
         <THEAD>
 	<TR>
 		<TD style="width: 96%;">
-			<IMG src="img/netelem.gif" ALT=""> <span class="bold">{trans("Name")} / {trans("Producer")}:</span><BR>
+			<IMG src="img/netdev.gif" ALT=""> <span class="bold">{trans("Name")} / {trans("Producer")}:</span><BR>
 			<IMG src="img/home.gif" ALT=""> {trans("Location:")}
 		</TD>
 		<TD style="width: 1%;" class="nobr">
@@ -27,7 +27,7 @@
 			{trans("ID:")}
 		</TD>
 		<TD style="width: 1%;" class="nobr">
-			<IMG src="img/netelem_takenports.gif" ALT=""> {trans("Dest. port")}:<BR>
+			<IMG src="img/netdev_takenports.gif" ALT=""> {trans("Dest. port")}:<BR>
 			<IMG src="img/port.gif" ALT=""> {trans("Ports (used):")}
 		</TD>
 		<TD style="width: 1%;">
@@ -40,7 +40,7 @@
 	{section name=netelemlist loop=$netelemlist start=$start}
 	<TR class="highlight {cycle}">
 		<TD class="valign-top nobr" onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';">
-			<IMG src="img/netelem.gif" ALT=""> <a name="{$netelemlist[netelemlist].id}"><span class="bold">{$netelemlist[netelemlist].name} {if $netelemlist[netelemlist].producer}/ {$netelemlist[netelemlist].producer}{/if}</span></A><BR>
+			<IMG src="img/netdev.gif" ALT=""> <a name="{$netelemlist[netelemlist].id}"><span class="bold">{$netelemlist[netelemlist].name} {if $netelemlist[netelemlist].producer}/ {$netelemlist[netelemlist].producer}{/if}</span></A><BR>
 			<IMG src="img/home.gif" ALT=""> {$netelemlist[netelemlist].location}{if $netelemlist[netelemlist].borough_name} ({$netelemlist[netelemlist].state_name} / {$netelemlist[netelemlist].district_name} / {$_BOROUGHTYPES[$netelemlist[netelemlist].borough_type]} {$netelemlist[netelemlist].borough_name}){/if}
 		</TD>
 		<TD class="valign-top nobr" id="elem_{$netelemlist[netelemlist].id}">
@@ -53,7 +53,7 @@
 		</TD>
 		<TD class="nobr">
 			<span id="elemlinkproperties_{$netelemlist[netelemlist].id}" onClick="javascript:netlinkpropertieschoosewin('{$neteleminfo.id}', '{$netelemlist[netelemlist].id}', true);">
-				<IMG SRC="img/{if $netelemlist[netelemlist].linktype == 1}wireless.gif{elseif $netelemlist[netelemlist].linktype == 2}netelem_takenports.gif{else}netelem_takenports.gif{/if}" alt="[ {trans("Change connection properties")} ]" title="[ {trans("Change connection properties")} ]" {tip trigger="elemlinkproperties_$netelemlist[netelemlist].id" text="<span style=\"white-space: nowrap;\">{trans("Link type:")} {$_LINKTYPES[$netelemlist[netelemlist].linktype]}<br>{if $netelemlist[netelemlist].linktype == 1}{if $netelemlist[netelemlist].srcradiosector}{trans("Radio sector:")} {$netelemlist[netelemlist].srcradiosector}<br>{/if}{if $netelemlist[netelemlist].dstradiosector}{trans("Destination radio sector:")} {$netelemlist[netelemlist].dstradiosector}<br>{/if}{/if}{if $netelemlist[netelemlist].linktechnology}{trans("Link technology:")} {$_LINKTECHNOLOGIES[$netelemlist[netelemlist].linktype][$netelemlist[netelemlist].linktechnology]}<br>{/if}{trans("Link speed:")} {$_LINKSPEEDS[$netelemlist[netelemlist].linkspeed]}</span>"}>
+				<IMG SRC="img/{if $netelemlist[netelemlist].linktype == 1}wireless.gif{elseif $netelemlist[netelemlist].linktype == 2}netdev_takenports.gif{else}netdev_takenports.gif{/if}" alt="[ {trans("Change connection properties")} ]" title="[ {trans("Change connection properties")} ]" {tip trigger="elemlinkproperties_$netelemlist[netelemlist].id" text="<span style=\"white-space: nowrap;\">{trans("Link type:")} {$_LINKTYPES[$netelemlist[netelemlist].linktype]}<br>{if $netelemlist[netelemlist].linktype == 1}{if $netelemlist[netelemlist].srcradiosector}{trans("Radio sector:")} {$netelemlist[netelemlist].srcradiosector}<br>{/if}{if $netelemlist[netelemlist].dstradiosector}{trans("Destination radio sector:")} {$netelemlist[netelemlist].dstradiosector}<br>{/if}{/if}{if $netelemlist[netelemlist].linktechnology}{trans("Link technology:")} {$_LINKTECHNOLOGIES[$netelemlist[netelemlist].linktype][$netelemlist[netelemlist].linktechnology]}<br>{/if}{trans("Link speed:")} {$_LINKSPEEDS[$netelemlist[netelemlist].linkspeed]}</span>"}>
 			</span>
 			<span onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';">
 			[{if $netelemlist[netelemlist].dstport}{$netelemlist[netelemlist].dstport}{/if}]

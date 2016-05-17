@@ -72,7 +72,7 @@ function changeNetElem($elem,$elemlist) {
 	return $res;
 }
 
-function connectFiber($params) {
+function connect($params) {
 	global $DB;
 	$res = new xajaxResponse();
 	#$res->alert(print_r($data));
@@ -82,14 +82,14 @@ function connectFiber($params) {
 		$content2='';
 		// zamkniecie okna i zapisanie do przeglądarki
 		// docelowo - zamiast reloadu - aktualizacja TD
-		$res->call('update_fiber_info', $content1, $content2);
+		$res->call('update_info', $content1, $content2);
 	} else {
-		#$res->alert(print_r($DB->GetErrors(),true));
+		$res->alert(print_r($DB->GetErrors()));
 	}
 	return($res);
 }
 
-function validateConnectFiber($data) {
+function validateConnect($data) {
 	$res = new xajaxResponse();
 	$error=0;
 	$params=array();
@@ -100,27 +100,35 @@ function validateConnectFiber($data) {
 		if ($wire<0) {
 			$error=1;
 			$res->assign('wire_'.$element,'className', 'bold alert');
+		} elseif (isset($data['portid'])) {
+			$res->assign('wire_'.$element,'className', '');
+	       		$params['wires']=$wire;
+			$params['ports']=$data['portid'];
 		} else {
 			$res->assign('wire_'.$element,'className', '');
 			$params['wires']=$data['wireid'].":".$wire;
-		}
-		$tray=$data['tray'];
-		if ($tray<0) {
-			$error=1;
-			$res->assign('tray','className', 'bold alert');
-		} else {
-			$res->assign('tray','className', '');
-			$params['ports']=$tray;
+			$tray=$data['tray'];
+			if ($tray<0) {
+				$error=1;
+				$res->assign('tray','className', 'bold alert');
+			} else {
+				$res->assign('tray','className', '');
+				$params['ports']=$tray;
+			}
 		}
 	} else {
 		$port=$data['port_'.$element];
 		if ($port<0) {
 			$error=1;
 			$res->assign('port_'.$element,'className', 'bold alert');
-		} else {
+		} elseif (isset($data['wireid'])) {
 			$res->assign('port_'.$element,'className', '');
 			$params['wires']=$data['wireid'];
 			$params['ports']=$port;
+		} else {
+			$res->assign('port_'.$element,'className', '');
+			$params['wires']='';
+			$params['ports']=$port.':'.$data['portid'];
 		}
 	}
 	if ($data['parameter']<>'' AND !preg_match('/^[0-9]+,?[0-9]*$/',$data['parameter'])) {
@@ -130,21 +138,23 @@ function validateConnectFiber($data) {
 		$res->assign('parameter','className', '');
 		$params['parameter']=$data['parameter'];
 	}
-	$params['description']=$data['description'];
-	if (!$error) {
-		$res->assign('validated','value',1);
-		$res->call('xajax_connectFiber',$params);
-	} else {
-		$res->assign('validated','value',0);
-	}
+	if ($data['description']<>'')
+		$params['description']=$data['description'];
+	else
+		$params['description']='';
 
+	if (!$error) {
+		$res->call('xajax_connect',$params);
+	} else { 
+		$res->alert(print_r($params));
+	}
 	return($res);
 }
 
 global $LMS,$SMARTY;
 $LMS->InitXajax();
 $LMS->RegisterXajaxFunction(array(
-	'changeType','changeNetElem','connectFiber','validateConnectFiber',
+	'changeType','changeNetElem','connect','validateConnect',
 ));
 $SMARTY->assign('xajax', $LMS->RunXajax());
 

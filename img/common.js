@@ -135,6 +135,13 @@ function netfiberconnect(netnodeid, wireid)
 		'fiberconnect', 350, 160, 'true');
 }
 
+function netportconnect(netportid)
+{
+	return openSelectWindow('?m=netelement&action=connect&netportid=' + netportid,
+		'portconnect', 350, 160, 'true');
+}
+
+
 function sendvalue(targetfield, value)
 {
 	targetfield.value = value;

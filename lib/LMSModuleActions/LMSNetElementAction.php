@@ -52,6 +52,9 @@ class LMSNetElemAction extends LMSModuleAction
 			case 'connect':
 				$this->_connect();
 				break;
+			case 'disconnect':
+				$this->_disconnect();
+				break;
 			default:
 				$this->_error();
 				break;
@@ -167,12 +170,14 @@ class LMSNetElemAction extends LMSModuleAction
 				$netelemlist[$id]['ports']=$this->lms->GetNetElemPorts($netelem['id']);
 				if (is_array($netelemlist[$id]['ports']))
 				foreach ($netelemlist[$id]['ports'] as $port) {
-					if ($port['connectortype']==999)
+					if ($port['connectortype']==999) {
 						$netelemlist[$id]['conn'][$port['connectortype']]['total']+=$port['capacity'];
-					else
+						$netelemlist[$id]['conn'][$port['connectortype']]['taken']+=$port['taken'];
+					} else {
 						$netelemlist[$id]['conn'][$port['connectortype']]['total']++;
-					if ($port['taken']==$port['capacity'])
-						$netelemlist[$id]['conn'][$port['connectortype']]['taken']++;
+						if ($port['taken']==$port['capacity'])
+							$netelemlist[$id]['conn'][$port['connectortype']]['taken']++;
+					}
 				}
 				#echo '<PRE>';print_r($netelemlist[$id]);echo '</PRE>';
 				break;
@@ -446,6 +451,7 @@ class LMSNetElemAction extends LMSModuleAction
 				$netcomplist = $this->lms->GetNetElemLinkedNodes($_GET['id']);
 				$netelemlist = $this->lms->GetNotConnectedElements($_GET['id']);
 				$netports = $this->lms->GetNetElemPorts($_GET['id']);
+				echo '<PRE>';print_r($netports);echo '</PRE>';
 
 				$nodelist = $this->lms->GetUnlinkedNodes();
 				$netelemips = $this->lms->GetNetElemIPs($_GET['id']);
@@ -474,7 +480,6 @@ class LMSNetElemAction extends LMSModuleAction
 				$netcomplist = $hook_data['netcomplist'];
 				$this->smarty->assign('netelemlist', $netelemconnected);
 				$this->smarty->assign('netcomplist', $netcomplist);
-
 				if (isset($_GET['ip'])) {
 					$nodeipdata = $this->lms->GetNodeConnType($_GET['ip']);
 					$netelemauthtype = array();
@@ -616,14 +621,65 @@ class LMSNetElemAction extends LMSModuleAction
 		include(MODULES_DIR . '/netelemconnect.inc.php');
 		if (isset($_GET['wireid'])) {
 			$connlist=$this->lms->GetConnPossForWire($_GET['netnodeid'],$_GET['wireid']);
-		} else {
-			//
+			#echo '<HR>connlist:<PRE>';print_r($connlist);echo '</PRE>';
+			$this->smarty->assign('wireid',$_GET['wireid']);
+			$this->smarty->assign('connlist',$connlist);
+			$this->smarty->display('netelements/connectfiber.html');
+		} elseif ($_GET['netportid']) { 
+			$netport=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($_GET['netportid']));
+			$netport['taken']=$this->db->GetOne("SELECT count(*) FROM netconnections WHERE ports ?LIKE? ?",array("%".$_GET['netportid']."%"));
+			$type=$netport['type'];
+			if ($type<300) {
+				$elem=$this->db->GetAll("SELECT * FROM netconnections WHERE ports ?LIKE? ?",array("%".$_GET['netportid']."%"));
+				if (is_array($elem)) foreach ($elem AS $id => $e) {
+					if (preg_match('/:/',$e['wires'])) {
+						$wires=preg_split('/:/',$e['wires']);
+						foreach ($wires AS $i => $w) {
+							$elem[$id]['wire'][]=$this->lms->GetCableByWire($w);
+						}
+					} elseif (preg_match('/^[0-9]+$/',$e['wires'])) {
+						$elem[$id]['wire']=$this->lms->GetCableByWire($e['wires']);
+					}
+					if (preg_match('/:/',$e['ports'])) {
+						$ports=preg_split('/:/',$e['ports']);
+						foreach ($ports AS $i => $p) {
+							if ($p<>$_GET['netportid']) {
+								$port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($p));
+								$netelem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+								$netelem['port']=$port;
+								$elem[$id]['port'][]=$netelem;
+							}
+						}
+					}  
+					if (isset($elem[0]) and !isset($elem[1])) {
+						$elem[1]=$elem[0];
+						unset($elem[0]);
+					}
+				}
+				$this->smarty->assign('elem',$elem);
+				if ($netport['taken']<$netport['capacity']) {
+					$connlist=$this->lms->GetConnPossForPort($_GET['netportid']);
+					$this->smarty->assign('connlist',$connlist);
+				}
+			} else {
+				$splices=$this->db->GetAll("SELECT * FROM netconnections WHERE ports=?",array($_GET['netportid']));
+				foreach ($splices AS $idx => $splice) {
+					list($c1,$c2)=preg_split('/:/',$splice['wires']);
+					$splices[$idx]['cable1']=$this->lms->GetCableByWire($c1);
+					$splices[$idx]['cable2']=$this->lms->GetCableByWire($c2);
+				}
+				$this->smarty->assign('splices',$splices);
+			}
+			#echo '<PRE>';print_r($elem);echo '</pre>';
+			$this->smarty->assign('portid',$_GET['netportid']);
+			$this->smarty->assign('netport',$netport);
+			$this->smarty->display('netelements/connectport.html');
 		}
+	}
 
-		#echo '<HR>connlist:<PRE>';print_r($connlist);echo '</PRE>';
-		$this->smarty->assign('wireid',$_GET['wireid']);
-		$this->smarty->assign('connlist',$connlist);
-		$this->smarty->display('netelements/connect.html');
+	function _disconnect() {
+		$this->db->Execute("DELETE FROM netconnections WHERE id=?",array($_GET['id']));
+		echo '<script type="text/javascript">window.history.go(-1);</script>';
 	}
 
 	function _error() {

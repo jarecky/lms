@@ -94,7 +94,7 @@
 			<IMG src="img/netdev.gif" ALT=""> <a name="{$netelemlist[netelemlist].id}"><B>{$netelemlist[netelemlist].name}</B></A><BR>
 			<IMG src="img/netdev_model.gif" ALT=""> {$_NETELEMENTTYPES[$netelemlist[netelemlist].type]}
 		</TD>
-		<TD><TABLE WIDTH="100%"><TR>
+		<TD onClick="return self.location.href='?m=netelement&action=info&id={$netelemlist[netelemlist].id}';"><TABLE WIDTH="100%"><TR>
 		{if $netelemlist[netelemlist].type==0}
                 <TD WIDTH="15%" class="nobr valign-middle">
                         <IMG src="img/netdev.gif" ALT=""> {if $netelemlist[netelemlist].netnodeid}<a href="?m=netnodeinfo&id={$netelemlist[netelemlist].netnodeid}">{$netelemlist[netelemlist].netnode}</a>{/if}
@@ -125,7 +125,8 @@
                 </TD>
 		{foreach $netelemlist[netelemlist].conn key=id item=count}
                 <TD class="nobr valign-middle">
-			{if $id<100}{trans("Electric::")}{else}{trans("Optic:")}{/if} <B>{$_NETCONNECTORS[$id]} {$count.total}({if $count.taken}{$count.taken}{else}0{/if})</B>
+			{if $id<100}{trans("Electric:")}{else}{trans("Optic:")}{/if}
+			<B>{$_NETCONNECTORS[$id]} {$count.total}({$count.taken})</B>
                 </TD>
 		{/foreach}
 		<!-- *********************************** -->

@@ -13,7 +13,7 @@
 <body class="light">
 <div id="overDiv" style="position: absolute; visibility: hidden; z-index: 100;"></div>
 <script type="text/javascript" language="JavaScript" src="img/overlib.js"></script>
-	<FORM id="fiberconnect" name="fiberconnect" method="GET">
+	<FORM id="connect" name="connect" method="GET">
 	<input type="hidden" name="wireid" value="{$wireid}">
 	<input type="hidden" id="validated" name="validated" value="0">
 	<table id="propertiestable" style="width: 100%;" cellpadding="3">
@@ -88,7 +88,7 @@
 		</tr>
 		<tr class="light" id="level6" style="display:none;">
 			<td colspan="2" style="text-align: right; white-space: nowrap;">
-				<a href="javascript:submit_connect_fiber();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></a>
+				<a href="javascript:submit_connect();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></a>
 			</td>
 		</tr>
 	</table>
@@ -97,13 +97,13 @@
 <script type="text/javascript">
 <!--
 
-function update_fiber_info(content1, content2) {
+function update_info(content1, content2) {
 	window.parent.location.reload();
         window.parent.popclick();
 }
 
-function submit_connect_fiber() {
-	xajax_validateConnectFiber(xajax.getFormValues('fiberconnect'));
+function submit_connect() {
+	xajax_validateConnect(xajax.getFormValues('connect'));
 }
 
 function resize_frame() {

@@ -1001,9 +1001,25 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	$ports = $this->db->GetAll('SELECT * FROM netports WHERE netelemid=? ORDER BY label ASC',array($id));
 	if (is_array($ports)) foreach ($ports AS $idx => $port) {
 	    $rs = $this->db->GetRow('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
-	    if ($rs) 
-		$ports[$idx]['radiosector']=$rs;
-	    $ports[$idx]['taken']=$this->db->GetOne('SELECT COUNT(*) FROM netconnections WHERE ports ?LIKE? ?',array("%".$port['id']."%"));
+	    $ports[$idx]['radiosector']=$rs;
+	    $conns=$this->db->GetAll('SELECT * FROM netconnections WHERE ports ?LIKE? ?',array("%".$port['id']."%"));
+	    $ports[$idx]['taken']=count($conns);
+	    if (is_array($conns)) foreach ($conns AS $conn) {
+		if (preg_match('/^([0-9]*):([0-9]*)$/',$conn['wires'],$wires) and $port['type']==300) {
+		# spaw
+			$ports[$idx]['wire1']=$this->db->GetRow("SELECT netelements.name,netcables.label,netwires.* FROM netwires LEFT JOIN netelements ON netelements.id=netwires.netcableid LEFT JOIN netcables ON netcables.id=netwires.netcableid WHERE netwires.id=?",array($wires[1]));
+			$ports[$idx]['wire2']=$this->db->GetRow("SELECT netelements.name,netcables.label,netwires.* FROM netwires LEFT JOIN netelements ON netelements.id=netwires.netcableid LEFT JOIN netcables ON netcables.id=netwires.netcableid WHERE netwires.id=?",array($wires[2]));
+			$ports[$idx]['connections'][]='Spaw: '.$this->GetCableDescByWire($wires[1]).'|'.$this->GetCableDescByWire($wires[2]);
+		} elseif (preg_match('/^([0-9]*):([0-9]*)$/',$conn['ports'],$cports)) {
+		# patchcord
+			if ($cports[1]==$id) $cport=$cports[2];
+			else $cport=$cports[1];
+			$ports[$idx]['port']=$this->db->GetRow("SELECT netelements.name,netports.* FROM netports LEFT JOIN netelements ON netelements.id=netports.netelemid WHERE netports.id=?",array($cport));
+		} else {
+		# pigtail
+			$ports[$idx]['wire']=$this->db->GetRow("SELECT netelements.name,netcables.label,netwires.* FROM netwires LEFT JOIN netelements ON netelements.id=netwires.netcableid LEFT JOIN netcables ON netcables.id=netwires.netcableid WHERE netwires.id=?",array($conn['wires']));
+		}
+	    }
 	}
 	#echo '<PRE>';print_r($ports);echo '</PRE>';
 	return($ports);
@@ -1045,38 +1061,192 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
         $netwires=$this->db->GetAll("SELECT * FROM netconnections WHERE wires ?LIKE? ?",array("%".$id."%"));
 	#echo '<HR>netwires:<PRE>';print_r($netwires);echo '</PRE>';
 	if (count($netwires)==0) 
-		return FALSE;
+		return(array());
 	foreach ($netwires AS $wires) {
-	    $port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($wires['ports']));
-	    $pelem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
-	    $pelem['port']=$port;
-	    #echo 'port:<PRE>';print_r($port);echo '</PRE>';
-	    if ($port['type']<>300) {
-		// port nie jest tacka - kabel w port
-	        $elem=$pelem;
-	    	$elem['connid']=$wires['id'];
-	    } elseif (preg_match('/^([0-9]+):([0-9]+)$/',$wires['wires'],$x)) {
-		// kabel+kabel w tacke
-		if ($x[1]==$id) 
-		    $wire=$this->db->GetRow("SELECT * FROM netwires WHERE id=?",array($x[2]));
-		else 
-		    $wire=$this->db->GetRow("SELECT * FROM netwires WHERE id=?",array($x[1]));
-		$elem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($wire['netcableid']));
-		$elem['wire']=$wire;
-		$elem['cable']=$this->db->GetRow("SELECT * FROM netcables WHERE netelemid=?",array($wire['netcableid']));
-		#if ($elem['netnodeid']==$
-		$elem['tray']=$pelem;
-	    	$elem['connid']=$wires['id'];
-	    }
-	    #echo "($srcnodeid,$dstnodeid) -> ".$pelem['netnodeid']."<BR>";
-	    if ($pelem['netnodeid']==$srcnodeid) 
-		    $conn['src']=$elem;
-	    else
-		    $conn['dst']=$elem;
-	    unset($elem);
+		$port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($wires['ports']));
+		$pelem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+		$pelem['port']=$port;
+		#echo 'port:<PRE>';print_r($port);echo '</PRE>';
+		if ($port['type']<>300) {
+			// port nie jest tacka - kabel w port
+			$elem=$pelem;
+			$elem['connid']=$wires['id'];
+		} elseif (preg_match('/^([0-9]+):([0-9]+)$/',$wires['wires'],$x)) {
+			// kabel+kabel w tacke
+			if ($x[1]==$id) 
+			    $wire=$this->db->GetRow("SELECT * FROM netwires WHERE id=?",array($x[2]));
+			else 
+			    $wire=$this->db->GetRow("SELECT * FROM netwires WHERE id=?",array($x[1]));
+			$elem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($wire['netcableid']));
+			$elem['wire']=$wire;
+			$elem['cable']=$this->db->GetRow("SELECT * FROM netcables WHERE netelemid=?",array($wire['netcableid']));
+			#if ($elem['netnodeid']==$
+			$elem['tray']=$pelem;
+			$elem['connid']=$wires['id'];
+		}
+		#echo "($srcnodeid,$dstnodeid) -> ".$pelem['netnodeid']."<BR>";
+		if ($pelem['netnodeid']==$srcnodeid) 
+			$conn['src']=$elem;
+		else
+			$conn['dst']=$elem;
+		unset($elem);
 	}
 	#echo 'conn:<PRE>';print_r($conn);echo '</PRE>';
 	return($conn);
+    }
+
+    public function GetConnPossForPort($portid) {
+	global $NETTECHNOLOGIES;
+	$port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($portid));
+	#echo '<PRE>';print_r($port);echo '</PRE>';
+	$taken=$this->db->GetAll('SELECT * FROM netconnections WHERE ports ?LIKE? ?',array("%".$port['id']."%"));
+	if (count($taken)==$port['capacity'] OR $port['type']==300) {
+		return(array());
+	}
+	$element=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+	$list=$this->db->GetAll("SELECT netelements.id,netelements.type,netelements.name FROM netelements LEFT JOIN netcables ON netcables.netelemid=netelements.id WHERE (netelements.netnodeid=? OR netcables.dstnodeid=?) and netelements.id<>?",array($element['netnodeid'],$element['netnodeid'],$element['id']));
+	$connector=$port['connectortype'];
+        $porttype=$port['type'];
+	if ($port['type']==0 OR $element['type']==99) {
+		// aktywne
+		$portmedium=$NETTECHNOLOGIES[$port['technology']]['medium'];
+	} else {
+		// pasywne
+		if ($port['technology']>0)
+			$portmedium=$NETTECHNOLOGIES[$port['technology']]['medium'];
+		else
+			$portmedium=$port['type'];
+	}
+        $portmedium=floor($porttype/100);
+	foreach ($list AS $id => $elem) {
+		if ($elem['type']==0) {
+			#echo "ACTIVE [".$elem['type']."]: ".$elem['name'].'<BR>';
+			$ports=$this->GetNetElemPorts($elem['id']);
+			#echo '<UL>';
+			foreach ($ports AS $pid => $port) {
+				#echo "<LI>PORT [".$port['label']."]: ".$port['type']." '".$NETTECHNOLOGIES[$technology['medium']]."' ";
+				if ($port['capacity']==$port['taken']) {
+					#echo ' zajęty '.$port['taken'].'/'.$port['capacity'];
+					unset($ports[$pid]);
+				} else {
+                                        $portmedium=floor($port['type']/100);
+                                        $mediumfit=($portmedium-$wiremedium) ? 0 : 1;
+                                        #echo ' pasuje='.$mediumfit.' ';
+                                        if (!$mediumfit)
+                                                unset($ports[$pid]);
+                                }
+                                #echo '</LI>';
+                        }
+                        if (count($ports)) {
+                                #echo '<LI>Pasujące porty: <PRE>';print_r($ports);echo '</PRE></LI>';
+                                $list[$id]['ports']=$ports;
+                                $connlist[$elem['type']][$elem['id']]=$list[$id];
+                        } else {
+                                #echo '<LI>Brak pasujących portów</LI>';
+                        }
+                        #echo '</UL>';
+                } elseif ($elem['type']==1)  {
+                        #echo "PASSIVE [".$elem['id']."]: ".$elem['name'].'<BR>';
+                        $ports=$this->GetNetElemPorts($elem['id']);
+                        #echo '<UL>';
+                        foreach ($ports AS $pid => $port) {
+                                #echo "<LI>PORT [".$port['label']."] ".$port['type'].": ";
+                                if ($port['capacity']==$port['taken']) {
+                                        #echo ' zajęty '.$port['taken'].'/'.$port['capacity'];
+                                        unset($ports[$pid]);
+                                } elseif ($port['type']==300) {
+                                        #echo ' tacka na spawy ';
+                                        unset($ports[$pid]);
+                                } else {
+					// DOPASOWANIE PORT - PORT (w zasadzie dowolnosc!)
+					#echo $port['type'].'=='.$porttype.' - ';
+					if (($port['type']==1 and $porttype==1) or
+					    ($port['type']==2 and $porttype==2)) { // MIEDZ - DOPASOWANIE
+						$fit=$connector==$port['connectortype'];
+						#echo 'miedź '.$connector.'=='.$port['connectortype'];
+					} elseif (($porttype>=200 and $porttype<300) and
+				                  ($port['type']>=200 and $porttype<300)) {
+						$fit=1;
+						#echo 'swiatło';
+					} else {
+						$fit=0;
+					}
+                                        #echo ' pasuje='.$fit;
+                                        if (!$fit)
+                                                unset($ports[$pid]);
+                                }
+                                #echo "</LI>";
+                        }
+                        if (count($ports)) {
+                                if (count($ports)) {
+                                        #echo '<LI>Pasujące porty: <PRE>';print_r($ports);echo '</PRE></LI>';
+                                        $list[$id]['ports']=$ports;
+                                }
+                                $connlist[$elem['type']][$elem['id']]=$list[$id];
+                        } else {
+                                #echo '<LI>Brak pasujących portów</LI>';
+                        }
+                        #echo '</UL>';
+                } elseif ($elem['type']==2)  {
+                        #echo "CABLE [".$elem['id']."]: ".$elem['name'].'<BR>';
+                        $wires=$this->db->GetAll("select * from netwires where netcableid=? and id not in (select n1.id from netwires n1 left join netconnections nc on nc.wires regexp(n1.id) left join netports np on nc.ports=np.id left join netelements ne on ne.id=np.netelemid where n1.netcableid=? and ne.netnodeid<>?)",array($elem['id'],$elem['id'],$element['netnodeid']));
+			#echo '<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
+                        #echo '<UL>';
+                        if (is_array($wires)) foreach ($wires AS $wid => $wire) {
+                                #echo '<LI>#'.$wire['id'].' tuba #'.$wire['bundle'].' włókno #'.$wire['wire'].' ';
+                                #echo ' polaczenia: '.$cc.' type: '.$wire['type'];
+                                if ( ($wire['type']<100 AND $wire['type']<>$wiretype) OR // miedz musi pasowac do siebie
+                                     ($wiretype<250 AND $wire['type']>=250) OR // SM do MM
+                                     ($wiretype>=250 AND $wire['type']<250)  // MM do SM
+                                ) {
+                                        unset($wires[$wid]);
+                                        #echo '- usuwamy wlokno <BR>';
+                                } # else echo 'wlokno #'.$wire['id'].'|'.$wire['bundle'].'|'.$wire['wire'].' ('.$wire['type'].') jest OK<BR>';
+                        }
+                        if (count($wires)) { // Nie ma pasujących włókien!
+                                #echo '<LI>Pasujące włókna: <PRE>';print_r($wires);echo '</PRE></LI>';
+                                $list[$id]['wires']=$wires;
+                                $connlist[$elem['type']][$elem['id']]=$list[$id];
+                        } else {
+                                #echo '<LI>Brak pasujących włókien</LI>';
+                        }
+                        #echo '</UL>';
+                } elseif ($elem['type']==3 OR $elem['type']==4)  {
+                        #echo "SPLITTER/MUX[".$elem['type']."]: ".$elem['name'].'<BR>';
+                        $ports=$this->GetNetElemPorts($elem['id']);
+                        #echo '<UL>';
+                        foreach ($ports AS $pid => $port) {
+                                #echo '<LI>'.$port['label'].' '.$port['type'].' ';
+                                if ($port['connectortype']==999) {
+                                        #echo ' spaw!';
+                                        unset($ports[$pid]);
+                                } elseif ($port['capacity']==$port['taken']) {
+                                        #echo ' zajęty '.$port['taken'].'/'.$port['capacity'];
+                                        unset($ports[$pid]);
+                                } else {
+					$fit=1;
+                                        #echo ' pasuje='.$fit.' ';
+                                        if (!$fit)
+                                                unset($ports[$pid]);
+                                }
+                                #echo '</LI>';
+                        }
+                        if (count($ports)) {
+                                #echo '<LI>Pasujące porty: <PRE>';print_r($ports);echo '</PRE></LI>';
+                                $list[$id]['ports']=$ports;
+                                $connlist[$elem['type']][$elem['id']]=$list[$id];
+                        } else {
+                                #echo '<LI>Brak pasujących portów</LI>';
+                        }
+                        #echo '</UL>';
+                } elseif ($elem['type']==99)  {
+                        #echo "COMPUTER [".$elem['type']."]: ".$elem['name'].'<BR>';
+
+                }
+	}
+        #echo '<HR>Błędy bazy:<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
+        ksort($connlist);
+        return($connlist);
     }
 
     public function GetConnPossForWire($nodeid,$wireid) {
@@ -1179,8 +1349,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 				#echo '<LI>Brak pasujących włókien</LI>';
 			}
 			#echo '</UL>';
-                } elseif ($elem['type']==3)  {
-                	#echo "SPLITTER [".$elem['type']."]: ".$elem['name'].'<BR>';
+                } elseif ($elem['type']==3 OR $elem['type']==4)  {
+                	#echo "SPLITTER/MUX [".$elem['type']."]: ".$elem['name'].'<BR>';
 			$ports=$this->GetNetElemPorts($elem['id']);
 			#echo '<UL>';
 			foreach ($ports AS $pid => $port) {
@@ -1208,36 +1378,6 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                                 #echo '<LI>Brak pasujących portów</LI>';
                         }
 			#echo '</UL>';
-                } elseif ($elem['type']==4)  {
-                	#echo "MUX [".$elem['type']."]: ".$elem['name'].'<BR>';
-                        $ports=$this->GetNetElemPorts($elem['id']);
-                        #echo '<UL>';
-                        foreach ($ports AS $pid => $port) {
-                                #echo '<LI>'.$port['label'].' '.$port['type'].' ';
-                                if ($port['connectortype']) {
-                                        #echo ' z konektorem!';
-                                        unset($ports[$pid]);
-                                } elseif ($port['capacity']==$port['taken']) {
-                                        #echo ' zajęty '.$port['taken'].'/'.$port['capacity'];
-                                        unset($ports[$pid]);
-                                } else {
-                                        $portmedium=floor($port['type']/100);
-                                        $mediumfit=($portmedium-$wiremedium) ? 0 : 1;
-                                        #echo ' pasuje='.$mediumfit.' ';
-                                        if (!$mediumfit)
-                                                unset($ports[$pid]);
-                                }
-                                #echo '</LI>';
-                        }
-                        if (count($ports)) {
-                                #echo '<LI>Pasujące porty: <PRE>';print_r($ports);echo '</PRE></LI>';
-                                $list[$id]['ports']=$ports;
-                                $connlist[$elem['type']][]=$list[$id];
-                        } else {
-                                #echo '<LI>Brak pasujących portów</LI>';
-                        }
-                        #echo '</UL>';
-
                 } elseif ($elem['type']==99)  {
                 	echo "COMPUTER [".$elem['type']."]: ".$elem['name'].'<BR>';
 
@@ -1249,5 +1389,16 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	return($connlist);
     }
 
+ 	public function GetCableDescByWire($wireid) {
+		$cable=$this->db->GetRow("SELECT bundle,wire,netelements.name FROM netwires LEFT JOIN netelements ON netelements.id=netwires.netcableid WHERE netwires.id=?",array($wireid));
+		return($cable['name'].'/#'.$cable['bundle'].'/#'.$cable['wire']);
 
+	}
+
+	public function GetCableByWire($wireid) {
+		$wire=$this->db->GetRow("SELECT * FROM netwires WHERE id=?",array($wireid));
+		$cable=$this->GetNetElemCable($wire['netcableid']);
+		$cable['wire']=$wire;
+		return($cable);
+	}
 }
