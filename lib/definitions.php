@@ -366,8 +366,8 @@ $NETTECHNOLOGIES = array(
 	52 => array('name'=>'(EURO)DOCSIS 3.x)','medium'=>'51','speed'=>13,'connector'=>8),
 	70 => array('name'=>'POTS','medium'=>'3','speed'=>100,'connector'=>6),
 //RADIO
-        100 => array('name'=>'WiFi - 2,4 GHz','medium'=>'100','speed'=>'14','connector'=>''),
-        101 => array('name'=>'WiFi - 5 GHz','medium'=>'102','speed'=>'15','connector'=>''),
+        100 => array('name'=>'WiFi - 2,4 GHz','medium'=>'100','speed'=>'14','connector'=>'100'),
+        101 => array('name'=>'WiFi - 5 GHz','medium'=>'102','speed'=>'15','connector'=>'102'),
         102 => array('name'=>'WiMAX','medium'=>'101,102','speed'=>'','connector'=>''),
         103 => array('name'=>'LMDS','medium'=>'104','speed'=>'','connector'=>''),
         104 => array('name'=>'radiolinia','medium'=>'103,104','speed'=>'','connector'=>''),

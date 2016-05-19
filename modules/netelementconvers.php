@@ -137,7 +137,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
                                                         'netelemid'     => $dev['id'],
                                                         'type'          => 100,
                                                         'label'         => 'wireless'.$wport_num++,
-                                                        'connectortype' => 0,
+                                                        'connectortype' => $NETTECHNOLOGIES[$t]['connector'],
                                                         'technology'    => $t,
                                                         'capacity'      => 100,
 							'radiosector'	=> $rs,
@@ -152,7 +152,7 @@ if (is_array($devices)) foreach ($devices AS $dev) {
 								'netelemid'     => $dev['id'],
 								'type'          => 100,
 								'label'         => 'wireless'.$wport_num++,
-								'connectortype' => 0,
+								'connectortype' => $NETTECHNOLOGIES[$t]['connector'],
 								'technology'    => $t,
 								'capacity'      => 1
 							);
