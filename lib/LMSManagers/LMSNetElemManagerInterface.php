@@ -109,4 +109,5 @@ interface LMSNetElemManagerInterface
 
     public function GetCableByWire($wireid);
 
+    public function GetElementByPort($portid);
 }

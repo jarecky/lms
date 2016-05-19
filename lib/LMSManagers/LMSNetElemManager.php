@@ -1001,7 +1001,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	$ports = $this->db->GetAll('SELECT * FROM netports WHERE netelemid=? ORDER BY label ASC',array($id));
 	if (is_array($ports)) foreach ($ports AS $idx => $port) {
 	    $rs = $this->db->GetRow('SELECT * FROM netradiosectors WHERE netportid=?',array($port['id']));
-	    $ports[$idx]['radiosector']=$rs;
+	    if (is_array($rs))
+		    $ports[$idx]['radiosector']=$rs;
 	    $conns=$this->db->GetAll('SELECT * FROM netconnections WHERE ports ?LIKE? ?',array("%".$port['id']."%"));
 	    $ports[$idx]['taken']=count($conns);
 	    if (is_array($conns)) foreach ($conns AS $conn) {
@@ -1245,7 +1246,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
                 }
 	}
         #echo '<HR>Błędy bazy:<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
-        ksort($connlist);
+	if (is_array($connlist))
+	       	ksort($connlist);
         return($connlist);
     }
 
@@ -1385,7 +1387,8 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
         }
 
         #echo '<HR>Błędy bazy:<PRE>';print_r($this->db->GetErrors());echo '</PRE>';
-	ksort($connlist);
+	if (is_array($connlist))
+		ksort($connlist);
 	return($connlist);
     }
 
@@ -1400,5 +1403,16 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 		$cable=$this->GetNetElemCable($wire['netcableid']);
 		$cable['wire']=$wire;
 		return($cable);
+	}
+
+
+	public function GetElementByPort($portid) {
+		$port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($portid));
+		$port['taken']=$this->db->GetOne("SELECT count(*) FROM netconnections WHERE ports ?LIKE? ?",array("%".$portid."%"));
+		$netelem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
+		$rs = $this->db->GetRow('SELECT * FROM netradiosectors WHERE netportid=?',array($portid));
+		if (is_array($rs)) $port['radiosector']=$rs;
+		$netelem['port']=$port;
+		return($netelem);
 	}
 }

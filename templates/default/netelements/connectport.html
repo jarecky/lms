@@ -21,13 +21,13 @@
 	{if $splices[$i].id}
 	{$cable1=$splices[$i].cable1}
 	{$cable2=$splices[$i].cable2}
-        <TD> <a href="?m=netelement&action=info&id={$cable1.id}"><IMG SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable1.name}</b>"}></A></TD>
+        <TD><IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$cable1.id}')" SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable1.name}</b>"}></A></TD>
         <TD style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$cable1.colorschemaid].tubes[$cable1.wire.bundle]}; ">{trans("tube #")}{$cable1.wire.bundle} {trans("wire #")}{$cable1.wire.wire}</TD>
         <TD><img src="img/fiber{$cable1.wire.wire}.gif" width="50" height="12"></TD>
         <TD><img src="img/splice.png" height="16" {tip text="{trans("Parameter:")} <b>{$splices[$i].parameter}</b><br>{trans("Description:")} <b>{$splices[$i].description}</b>"}></TD>
 	<TD><img src="img/fiber{$cable2.wire.wire}.gif" width="50" height="12"></TD>
 	<TD style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$cable2.colorschemaid].tubes[$cable2.wire.bundle]}; ">{trans("tube #")}{$cable2.wire.bundle} {trans("wire #")}{$cable2.wire.wire}</TD>
-	<TD><a href="?m=netelement&action=info&id={$cable2.id}"><IMG SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable2.name}</b>"}></A></TD>
+	<TD><IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$cable2.id}')" SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable2.name}</b>"}></A></TD>
 	<TD><A HREF="?m=netelement&action=disconnect&id={$splices[$i].id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
 	{else}
 	<TD COLSPAN="8">&nbsp;</TD>
@@ -40,20 +40,13 @@
 	<input type="hidden" name="portid" value="{$portid}">
 	<table id="propertiestable" style="width: 100%;" cellpadding="10">
 	<tr class="lucid">
-	<td width="50%">
-        {assign "typelist" ""}
-        {assign "elemlist" ""}
-        {foreach from=$connlist key=type item=netelem}
-        {assign var="typelist1" value="`$typelist`,`$type`"}{assign var="typelist" value="`$typelist1`"}
-        {foreach from=$netelem key=elemid item=$element}
-        {assign var="elemlist1" value="`$elemlist`,`$element.id`"}{assign var="elemlist" value="`$elemlist1`"}
-        {/foreach}
-        {/foreach}
+	{if $passive}
+	<td width="49%">
 	{if $elem.0.wire.id}
 		{$cable=$elem.0.wire}
 		<table STYLE="float:right;"><tr>
 		<TD><A HREF="?m=netelement&action=disconnect&id={$elem.0.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>	
-		<TD><a href="?m=netelement&action=info&id={$cable.id}"><IMG SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable.name}</b>"}></A></TD>
+		<TD><IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$cable.id}'"><IMG SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable.name}</b>"}></A></TD>
 		<TD style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$cable.colorschemaid].tubes[$cable.wire.bundle]}; ">{trans("tube #")}{$cable.wire.bundle} {trans("wire #")}{$cable.wire.wire}</TD>
 		<TD><img src="img/fiber{$cable.wire.wire}.gif" width="50" height="12"></TD>
 		</tr></table>
@@ -80,12 +73,130 @@
                 {/if}
                 <table STYLE="float:right;"><tr>
 		<TD><A HREF="?m=netelement&action=disconnect&id={$elem.0.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>	
-                <td style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text="$tiptext"}><IMG src="{$port_img}" ALT=""></td>
+                <td style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text="$tiptext"}><IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$elem.0.port.0.id}' src="{$port_img}" ALT=""></td>
                 <td><IMG SRC="img/cable.png" height="16" width="100" {tip text="{trans("Patchcord")}<br>"}</td>
                 </tr></table>
 	{else}
-		<table STYLE="float:right;">
-                <tr>
+		&nbsp;
+	{/if}
+	</td>
+	{/if}
+        {if $netport.connectortype<100}
+                {if $netport.taken==0}{$port_color="lightgray"}
+                {elseif $netport.taken<$netport.capacity}{$port_color="red"}
+                {else}{$port_color="lightgreen"}
+                {/if}
+                {if $netport.connectortype<=3}{$port_img="img/ethernet.png"}
+                {elseif $netport.connectortype<=4}{$port_img="img/ethernet.png"}
+                {elseif $netport.connectortype<=6}{$port_img="img/ethernet.png"}
+                {else}{$port_img="img/bnc.png"}
+                {/if}
+	{elseif $netport.connectortype<200}
+                {if $netport.radiosector}
+                        {if $netport.taken/$netport.capacity<=0.4}
+                                  {$port_color="lightgreen"}
+                        {elseif $netport.taken/$netport.capacity<=0.8}
+                                  {$port_color="yellow"}
+                        {else}
+                                  {$port_color="red"}
+                        {/if}
+                        {$port_img="img/radiosector.png"}
+                {else}
+                        {if $netport.taken}
+                                  {$port_color="lightgreen"}
+                        {else}
+                                  {$port_color="red"}
+                        {/if}
+                        {$port_img="img/radio_cpe.png"}
+                {/if}
+        {elseif $netport.connectortype<300}
+                {if $netport.taken==0}{$port_color="lightgray"}
+                {elseif $netport.taken<$netport.capacity}{$port_color="red"}
+                {elseif $netport.taken==$netport.capacity}{$port_color="lightgreen"}
+                {/if}
+                {$port_img="img/sc.png"}
+        {else}
+                {if $netport.taken<$netport.capacity}{$port_color="lightgreen"}
+                {else}{$port_color="red"}
+                {/if}
+                {$port_img="img/tray.png"}
+        {/if}
+	<td width="2%" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;"><IMG src="{$port_img}" ALT=""></td>
+	<td width="{if $passive}49{else}98{/if}%">
+	{if $netport.radiosector}
+		<table><tr><td>
+		{foreach from=$elem item=$port name=cpe}
+			<IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$port.port.0.id}'" src="img/radio_cpe.png" height="32" {tip text="{trans("Element:")} <b>{$port.port.0.name}</b><br>{trans("Port:")} <b>{$port.port.0.port.label}</b>"}>
+			{if $smarty.foreach.cpe.iteration is div by 15}</td></tr><tr><td>{/if}
+		{/foreach}
+		</td></tr><tr><td>
+			Podłączamy
+		</td>
+		</tr></table>
+	{elseif $elem.1.wire}
+                {$cable=$elem.1.wire}
+                <table><tr>
+                <TD><img src="img/fiber{$cable.wire.wire}.gif" width="50" height="12"></TD>
+                <TD style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$cable.colorschemaid].tubes[$cable.wire.bundle]}; ">{trans("tube #")}{$cable.wire.bundle} {trans("wire #")}{$cable.wire.wire}</TD>
+                <TD><IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$cable.id}'" SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable.name}</b>"}></A></TD>
+                <TD><A HREF="?m=netelement&action=disconnect&id={$elem.1.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
+                </tr></table>
+        {elseif $elem.1.port}
+		{$port=$elem.1.port.0.port}
+		{$tiptext="{trans("Type:")} <b>{$_NETELEMENTTYPES[$elem.1.port.0.type]}</b><br>{trans("Element:")} <b>{$elem.1.port.0.name}</b><br>{trans("Port:")} <b>{$port.label}</b>"}
+		{if $port.connectortype<100}
+			{if $port.taken==0}{$port_color="lightgray"}
+			{elseif $port.taken<$port.capacity}{$port_color="red"}
+			{else}{$port_color="lightgreen"}
+			{/if}
+			{if $port.connectortype<=3}{$port_img="img/ethernet.png"}
+			{elseif $port.connectortype<=4}{$port_img="img/ethernet.png"}
+			{elseif $port.connectortype<=6}{$port_img="img/ethernet.png"}
+			{else}{$port_img="img/bnc.png"}
+			{/if}
+		{elseif $port.connectortype<200}
+			{if $port.radiosector}
+				{$tiptext="{trans("Radiosector:")} <b>{$port.radiosector.name}</b><br>{trans("Utilization:")} <b>{$port.taken}/{$port.capacity}</b>"}
+				{if $port.taken/$port.capacity<=0.4}
+					  {$port_color="lightgreen"}
+				{elseif $port.taken/$port.capacity<=0.8}
+					  {$port_color="yellow"}
+				{else}
+					  {$port_color="red"}
+				{/if}
+				{$port_img="img/radiosector.png"}
+			{else}
+				{if $port.taken}
+					  {$port_color="lightgreen"}
+				{else}
+					  {$port_color="red"}
+				{/if}
+				{$port_img="img/radio_cpe.png"}
+			{/if}
+
+		{elseif $port.connectortype<300}
+			{if $port.taken==0}{$port_color="lightgray"}
+			{elseif $port.taken<$port.capacity}{$port_color="red"}
+			{elseif $port.taken==$port.capacity}{$port_color="lightgreen"}
+			{/if}
+			{$port_img="img/sc.png"}
+		{/if}
+
+		<table><tr>
+		<td><IMG SRC="img/cable.png" height="16" width="80" {tip text="{trans("Patchcord")}<br>"}</td>
+		<td style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text="$tiptext"}><IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$elem.1.port.0.id}'" src="{$port_img}" ALT=""></td>
+                <TD><A HREF="?m=netelement&action=disconnect&id={$elem.1.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
+		</tr></table>
+		{else}
+		{assign "typelist" ""}
+		{assign "elemlist" ""}
+		{foreach from=$connlist key=type item=netelem}
+		{assign var="typelist1" value="`$typelist`,`$type`"}{assign var="typelist" value="`$typelist1`"}
+		{foreach from=$netelem key=elemid item=$element}
+		{assign var="elemlist1" value="`$elemlist`,`$element.id`"}{assign var="elemlist" value="`$elemlist1`"}
+		{/foreach}
+		{/foreach}
+		<table><tr>
                         <td style="width: 1%; white-space: nowrap;"><b>{trans("Type:")}</b></td>
                         <td style="width: 99%;"> <select id="type" name="type" {tip text="Select element type to connect"} style="width: 100%;" onchange="xajax_changeType(this.value,'{$typelist}');xajax_changeNetElem(0,'{$elemlist}')">
                                 <option value="-1" SELECTED>{trans("Select element type to connect")}</option>
@@ -126,11 +237,11 @@
                         {/foreach}
                 {/foreach}
                 <tr id="level4" style="display:none;">
-                        <td class="nobr"><b>{trans("Parameter for connection:")}</b></td>
+                        <td class="nobr"><b>{trans("Parameter:")}</b></td>
                         <td><input style="width: 100%" type="text" id="parameter" name="parameter" value="" {tip text="Enter parameter for connection"}></td>
                 </tr>
                 <tr id="level5" style="display:none;">
-                        <td class="nobr"><b>{trans("Description for connection:")}</b></td>
+                        <td class="nobr"><b>{trans("Description:")}</b></td>
                         <td><input style="width: 100%" type="text" id="description" name="description" value="" {tip text="Enter description for connection"}></td>
                 </tr>
                 <tr id="level6" style="display:none;">
@@ -139,69 +250,6 @@
                         </td>
                 </tr>
 	</table>
-	{/if}
-	</td>
-        {if $netport.connectortype<100}
-                {if $netport.taken==0}{$port_color="lightgray"}
-                {elseif $netport.taken<$netport.capacity}{$port_color="red"}
-                {else}{$port_color="lightgreen"}
-                {/if}
-                {if $netport.connectortype<=3}{$port_img="img/ethernet.png"}
-                {elseif $netport.connectortype<=4}{$port_img="img/ethernet.png"}
-                {elseif $netport.connectortype<=6}{$port_img="img/ethernet.png"}
-                {else}{$port_img="img/bnc.png"}
-                {/if}
-        {elseif $netport.connectortype<300}
-                {if $netport.taken==0}{$port_color="lightgray"}
-                {elseif $netport.taken<$netport.capacity}{$port_color="red"}
-                {elseif $netport.taken==$netport.capacity}{$port_color="lightgreen"}
-                {/if}
-                {$port_img="img/sc.png"}
-        {else}
-                {if $netport.taken<$netport.capacity}{$port_color="lightgreen"}
-                {else}{$port_color="red"}
-                {/if}
-                {$port_img="img/tray.png"}
-        {/if}
-	<td style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}><IMG src="{$port_img}" ALT=""></td>
-	<td width="50%">
-        {if $elem.1.wire}
-                {$cable=$elem.1.wire}
-                <table><tr>
-                <TD><img src="img/fiber{$cable.wire.wire}.gif" width="50" height="12"></TD>
-                <TD style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$cable.colorschemaid].tubes[$cable.wire.bundle]}; ">{trans("tube #")}{$cable.wire.bundle} {trans("wire #")}{$cable.wire.wire}</TD>
-                <TD><a href="?m=netelement&action=info&id={$cable.id}"><IMG SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable.name}</b>"}></A></TD>
-                <TD><A HREF="?m=netelement&action=disconnect&id={$elem.1.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
-                </tr></table>
-        {elseif $elem.1.port}
-		{$port=$elem.1.port.0.port}
-		{if $port.connectortype<100}
-			{$tiptext="aktywny"}
-			{if $port.taken==0}{$port_color="lightgray"}
-			{elseif $port.taken<$port.capacity}{$port_color="red"}
-			{else}{$port_color="lightgreen"}
-			{/if}
-			{if $port.connectortype<=3}{$port_img="img/ethernet.png"}
-			{elseif $port.connectortype<=4}{$port_img="img/ethernet.png"}
-			{elseif $port.connectortype<=6}{$port_img="img/ethernet.png"}
-			{else}{$port_img="img/bnc.png"}
-			{/if}
-		{elseif $port.connectortype<300}
-			{$tiptext="pasywny"}
-			{if $port.taken==0}{$port_color="lightgray"}
-			{elseif $port.taken<$port.capacity}{$port_color="red"}
-			{elseif $port.taken==$port.capacity}{$port_color="lightgreen"}
-			{/if}
-			{$port_img="img/sc.png"}
-		{/if}
-
-		<table><tr>
-		<td><IMG SRC="img/cable.png" height="16" width="100" {tip text="{trans("Patchcord")}<br>"}</td>
-		<td style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text="$tiptext"}><IMG src="{$port_img}" ALT=""></td>
-                <TD><A HREF="?m=netelement&action=disconnect&id={$elem.1.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>
-		</tr></table>
-	{else}
-		&nbsp;
         {/if}
 	</td>
 	</tr>
@@ -221,7 +269,9 @@ function submit_connect() {
 }
 
 function resize_frame() {
-	var pt = xjx.$('propertiestable'), h = pt.offsetHeight; autoiframe_setsize('autoiframe', 450, Math.max(h, 10));
+	{if $netport.radiosector}{$width=620}{elseif $passive}{$width=350}{else}{$width=250}{/if}
+	{if !$elem.1.port}{$width=$width+150}{/if}
+	var pt = xjx.$('propertiestable'), h = pt.offsetHeight; autoiframe_setsize('autoiframe', {$width}, Math.max(h, 10));
 }
 
 resize_frame();

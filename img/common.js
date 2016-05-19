@@ -135,9 +135,9 @@ function netfiberconnect(netnodeid, wireid)
 		'fiberconnect', 350, 160, 'true');
 }
 
-function netportconnect(netportid)
+function netportconnect(portid)
 {
-	return openSelectWindow('?m=netelement&action=connect&netportid=' + netportid,
+	return openSelectWindow('?m=netelement&action=connect&portid=' + portid,
 		'portconnect', 350, 160, 'true');
 }
 

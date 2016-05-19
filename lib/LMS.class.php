@@ -1365,6 +1365,12 @@ class LMS
 	return $manager->GetCableByWire($wireid);
     }
 
+    public function GetElementByPort($portid)
+    {
+	$manager = $this->getNetElemManager();
+	return $manager->GetElementByPort($portid);
+    }
+
     /*
      *   Request Tracker (Helpdesk)
      */

@@ -451,7 +451,7 @@ class LMSNetElemAction extends LMSModuleAction
 				$netcomplist = $this->lms->GetNetElemLinkedNodes($_GET['id']);
 				$netelemlist = $this->lms->GetNotConnectedElements($_GET['id']);
 				$netports = $this->lms->GetNetElemPorts($_GET['id']);
-				echo '<PRE>';print_r($netports);echo '</PRE>';
+				#echo '<PRE>';print_r($netports);echo '</PRE>';
 
 				$nodelist = $this->lms->GetUnlinkedNodes();
 				$netelemips = $this->lms->GetNetElemIPs($_GET['id']);
@@ -625,12 +625,15 @@ class LMSNetElemAction extends LMSModuleAction
 			$this->smarty->assign('wireid',$_GET['wireid']);
 			$this->smarty->assign('connlist',$connlist);
 			$this->smarty->display('netelements/connectfiber.html');
-		} elseif ($_GET['netportid']) { 
-			$netport=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($_GET['netportid']));
-			$netport['taken']=$this->db->GetOne("SELECT count(*) FROM netconnections WHERE ports ?LIKE? ?",array("%".$_GET['netportid']."%"));
+		} elseif ($_GET['portid']) { 
+			$netport=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($_GET['portid']));
+			$rs = $this->db->GetRow('SELECT * FROM netradiosectors WHERE netportid=?',array($_GET['portid']));
+			if (is_array($rs)) $netport['radiosector']=$rs;
+			$netport['taken']=$this->db->GetOne("SELECT count(*) FROM netconnections WHERE ports ?LIKE? ?",array("%".$_GET['portid']."%"));
 			$type=$netport['type'];
+			$passive=$this->db->GetOne("SELECT type FROM netelements WHERE id=?",array($netport['netelemid']));
 			if ($type<300) {
-				$elem=$this->db->GetAll("SELECT * FROM netconnections WHERE ports ?LIKE? ?",array("%".$_GET['netportid']."%"));
+				$elem=$this->db->GetAll("SELECT * FROM netconnections WHERE ports ?LIKE? ?",array("%".$_GET['portid']."%"));
 				if (is_array($elem)) foreach ($elem AS $id => $e) {
 					if (preg_match('/:/',$e['wires'])) {
 						$wires=preg_split('/:/',$e['wires']);
@@ -643,18 +646,19 @@ class LMSNetElemAction extends LMSModuleAction
 					if (preg_match('/:/',$e['ports'])) {
 						$ports=preg_split('/:/',$e['ports']);
 						foreach ($ports AS $i => $p) {
-							if ($p<>$_GET['netportid']) {
-								$port=$this->db->GetRow("SELECT * FROM netports WHERE id=?",array($p));
-								$netelem=$this->db->GetRow("SELECT * FROM netelements WHERE id=?",array($port['netelemid']));
-								$netelem['port']=$port;
-								$elem[$id]['port'][]=$netelem;
+							if ($p<>$_GET['portid']) {
+								$elem[$id]['port'][]=$this->lms->GetElementByPort($p);
 							}
 						}
 					}  
-					if (isset($elem[0]) and !isset($elem[1])) {
+					if (!$passive and !isset($netport['radiosector'])) {
 						$elem[1]=$elem[0];
 						unset($elem[0]);
 					}
+					#if (isset($elem[0]) and !isset($elem[1])) {
+					#	$elem[1]=$elem[0];
+					#	unset($elem[0]);
+					#}
 				}
 				$this->smarty->assign('elem',$elem);
 				if ($netport['taken']<$netport['capacity']) {
@@ -671,6 +675,7 @@ class LMSNetElemAction extends LMSModuleAction
 				$this->smarty->assign('splices',$splices);
 			}
 			#echo '<PRE>';print_r($elem);echo '</pre>';
+			$this->smarty->assign('passive',$passive);
 			$this->smarty->assign('portid',$_GET['netportid']);
 			$this->smarty->assign('netport',$netport);
 			$this->smarty->display('netelements/connectport.html');

@@ -15,67 +15,73 @@
         
 			  <TBODY>
 	<TR class="{cycle}">
-	{cycle values="light,lucid" print=false}
-	{section name=n loop=$netports start=0}
-	{$technology=$netports[n].technology}
+	{foreach from=$netports key=n item=netport name=ports}
+	{$technology=$netport.technology}
 	{$speed=$_NETTECHNOLOGIES[$technology].speed}
-			{if $netports[n].connectortype}
-				{assign var=connector value=","|explode:$netports[n].connectortype}
+			{if $netport.connectortype}
+				{assign var=connector value=","|explode:$netport.connectortype}
 			{else}
 				{assign var=connector value=","|explode:$_NETTECHNOLOGIES[$technology].connector}
 			{/if}	
 			{section name=connector loop=$connector}
 				{assign var=conn value=$_NETCONNECTORS[$connector[connector]]} 
 			{/section}
-	{if $netports[n].technology<100}
-		{$tiptext="{trans("Label:")} <b>{$netports[n].label}</b><br>{trans("Type:")} <b>{$_NETPORTTYPES[$netports[n].type]}</b><br>{trans("Technology:")} <b>{$_NETTECHNOLOGIES[$technology].name}</b><br>{trans("Connector:")} <b>{$conn}</b>"}
-		{if $netports[n].taken}
+	{if $netport.technology<100}
+		{$tiptext="{trans("Label:")} <b>{$netport.label}</b><br>{trans("Type:")} <b>{$_NETPORTTYPES[$netport.type]}</b><br>{trans("Technology:")} <b>{$_NETTECHNOLOGIES[$technology].name}</b><br>{trans("Connector:")} <b>{$conn}</b>"}
+		{if $netport.taken}
 			  {$port_color="lightgreen"}
 		{else}
 			  {$port_color="red"}
 		{/if}
-		{if $netports[n].connectortype<=3}
+		{if $netport.connectortype<=3}
 			  {$port_img="img/ethernet.png"}
 		{else}
 			  {$port_img="img/ethernet.png"}
 		{/if}
-	{elseif $netports[n].technology<200}
-		{$tiptext="{trans("Label:")} <b>{$netports[n].label}</b><br>{trans("Type:")} <b>{$_NETPORTTYPES[$netports[n].type]}</b><br>{trans("Technology:")} <b>{$_NETTECHNOLOGIES[$technology].name}</b>"}
-		{if $netports[n].radiosector}
-			{$tiptext="{$tiptext}<br>{trans("Radiosector:")} <b>{$netports[n].radiosector.name}</b><br>{trans("Utilization:")} <b>{$netports[n].taken}/{$netports[n].capacity}</b>"}
-			{if $netports[n].taken/$netports[n].capacity<=0.4}
+	{elseif $netport.technology<200}
+		{$tiptext="{trans("Label:")} <b>{$netport.label}</b><br>{trans("Type:")} <b>{$_NETPORTTYPES[$netport.type]}</b><br>{trans("Technology:")} <b>{$_NETTECHNOLOGIES[$technology].name}</b>"}
+		{if $netport.radiosector}
+			{$tiptext="{$tiptext}<br>{trans("Radiosector:")} <b>{$netport.radiosector.name}</b><br>{trans("Utilization:")} <b>{$netport.taken}/{$netport.capacity}</b>"}
+			{if $netport.taken/$netport.capacity<=0.4}
 				  {$port_color="lightgreen"}
-			{elseif $netports[n].taken/$netports[n].capacity<=0.8}
+			{elseif $netport.taken/$netport.capacity<=0.8}
 				  {$port_color="yellow"}
 			{else}
 				  {$port_color="red"}
 			{/if}
 			{$port_img="img/radiosector.png"}
 		{else}
-			{if $netports[n].taken}
+			{if $netport.taken}
 				  {$port_color="lightgreen"}
 			{else}
 				  {$port_color="red"}
 			{/if}
 			{$port_img="img/radio_cpe.png"}
 		{/if}
-	{elseif $netports[n].technology<300}
-	
+	{elseif $netport.technology<300}
+		{$tiptext="{trans("Label:")} <b>{$netport.label}</b><br>{trans("Type:")} <b>{$_NETPORTTYPES[$netport.type]}</b><br>{trans("Technology:")} <b>{$_NETTECHNOLOGIES[$technology].name}</b><br>{trans("Connector:")} <b>{$conn}</b>"}
+                {if $netport.taken<$netport.capacity}
+                        {$port_color="red"}
+                {else}
+                        {$port_color="lightgreen"}
+                {/if}
+                {$port_img="img/sc.png"}
+		
 	{else}
 
 	{/if}
-	<TD class="highlight ftop fbottom fleft fright text-center" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
+	<TD class="highlight ftop fbottom fleft fright text-center" onClick="javascript:netportconnect('{$netport.id}');" style=" background-color:{$port_color}; background-image:url('img/transparent12x12.png'); width:12px; height:12px;" {tip text=$tiptext}>
 			<IMG src="{$port_img}" ALT="">
 		</TD>
-		{if $smarty.section.n.iteration is div by 12}</tr><tr>{/if}
-	{sectionelse}
+	{if $smarty.foreach.ports.iteration is div by 12}</tr><tr>{/if}
+	{foreachelse}
 <!--		<TD class="valign-top nobr">
 			{$_NETTECHNOLOGIES[$technology].name}<BR>
 			{if $speed}{$_NETSPEEDS[$speed][0]}Mbps / {$_NETSPEEDS[$speed][1]}MBps{/if}
 		</TD>
 		<TD class="valign-top nobr">
-			{if $netports[n].connectortype}
-				{assign var=connector value=","|explode:$netports[n].connectortype}
+			{if $netport.connectortype}
+				{assign var=connector value=","|explode:$netport.connectortype}
 			{else}
 				{assign var=connector value=","|explode:$_NETTECHNOLOGIES[$technology].connector}
 			{/if}	
@@ -110,7 +116,7 @@
 			<P>{trans("No such ports.")}</P>
 		</TD>
 	</TR>
-	{/section}
+	{/foreach}
 	</tr>
 	</TBODY>
 </TABLE>
