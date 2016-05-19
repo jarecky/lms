@@ -46,7 +46,7 @@
 		{$cable=$elem.0.wire}
 		<table STYLE="float:right;"><tr>
 		<TD><A HREF="?m=netelement&action=disconnect&id={$elem.0.id}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A></TD>	
-		<TD><IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$cable.id}'"><IMG SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable.name}</b>"}></A></TD>
+		<TD><IMG onclick="window.parent.location.href='?m=netelement&action=info&id={$cable.id}'" SRC="img/cable.png" height="16" {tip text="{trans("Cable:")} <b>{$cable.name}</b>"}></A></TD>
 		<TD style="opacity: 0.6; background-color:{$_FIBEROPTICCOLORSCHEMAS[$cable.colorschemaid].tubes[$cable.wire.bundle]}; ">{trans("tube #")}{$cable.wire.bundle} {trans("wire #")}{$cable.wire.wire}</TD>
 		<TD><img src="img/fiber{$cable.wire.wire}.gif" width="50" height="12"></TD>
 		</tr></table>

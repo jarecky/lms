@@ -662,11 +662,11 @@ class LMSNetElemAction extends LMSModuleAction
 				}
 				$this->smarty->assign('elem',$elem);
 				if ($netport['taken']<$netport['capacity']) {
-					$connlist=$this->lms->GetConnPossForPort($_GET['netportid']);
+					$connlist=$this->lms->GetConnPossForPort($_GET['portid']);
 					$this->smarty->assign('connlist',$connlist);
 				}
 			} else {
-				$splices=$this->db->GetAll("SELECT * FROM netconnections WHERE ports=?",array($_GET['netportid']));
+				$splices=$this->db->GetAll("SELECT * FROM netconnections WHERE ports=?",array($_GET['portid']));
 				foreach ($splices AS $idx => $splice) {
 					list($c1,$c2)=preg_split('/:/',$splice['wires']);
 					$splices[$idx]['cable1']=$this->lms->GetCableByWire($c1);
@@ -676,7 +676,7 @@ class LMSNetElemAction extends LMSModuleAction
 			}
 			#echo '<PRE>';print_r($elem);echo '</pre>';
 			$this->smarty->assign('passive',$passive);
-			$this->smarty->assign('portid',$_GET['netportid']);
+			$this->smarty->assign('portid',$_GET['portid']);
 			$this->smarty->assign('netport',$netport);
 			$this->smarty->display('netelements/connectport.html');
 		}
