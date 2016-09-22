@@ -51,7 +51,7 @@ $layout['pagetitle'] = trans('Net Element Node Info: $a', $info['name']);
 $SMARTY->assign('nodeinfo', $result);
 $SMARTY->assign('objectid', $result['id']);
 
-$nlist = $DB->GetAll("SELECT * FROM netelements WHERE netnodeid=".$id." ORDER BY NAME");
+$nlist = $DB->GetAll("SELECT * FROM netelements WHERE netnodeid=? OR id IN (SELECT netelemid FROM netcables WHERE dstnodeid=?) ORDER BY NAME",array($id,$id));
 $SMARTY->assign('netelemlist', $nlist);
 
 

@@ -1260,7 +1260,7 @@ class LMSNetElemManager extends LMSManager implements LMSNetElemManagerInterface
 	$wiretype=$wire['type'];
         $wiremedium=floor($wiretype/100);
 	#echo "Kabel: id=$cableid,cabletype=$cabletype,wiretype=$wiretype<BR>";
-        $list=$this->db->GetAll("SELECT id,type,name FROM netelements WHERE netnodeid=? AND id<>? ORDER BY name ASC",array($_GET['netnodeid'],$cableid));
+        $list=$this->db->GetAll("SELECT id,type,name FROM netelements WHERE (netnodeid=? OR id IN (SELECT netelemid FROM netcables WHERE dstnodeid=?)) AND id<>? ORDER BY name ASC",array($_GET['netnodeid'],$_GET['netnodeid'],$cableid));
         if (count($list))
         foreach ($list AS $id => $elem) {
                 if ($elem['type']==0) {
