@@ -86,16 +86,16 @@ if(isset($_POST['netnode']))
 		'ownerid'=>$netnodedata['ownerid'],
 		'uip'=>$netnodedata['uip'],
 		'miar'=>$netnodedata['miar'],
-		'divisionid' => !empty($netnodedata['divisionid']) ? $netnodedata['divisionid'] : NULL
+		'divisionid'=>$netnodedata['divisionid']
             );
 
 	if ($netnodedata['invprojectid'] == '-1' || intval($ipi)>0) {
 		$args['invprojectid'] = intval($ipi);
-		$fields = 'name,type,status,location,location_city,location_street,location_house,location_flat,longitude,latitude,ownership,coowner,uip,miar,divisionid,invprojectid';
-		$values = "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?";
+		$fields = 'name,type,status,location,location_city,location_street,location_house,location_flat,longitude,latitude,ownership,coowner,ownerid,uip,miar,divisionid,invprojectid';
+		$values = "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?";
 	} else {
-		$fields = 'name,type,status,location,location_city,location_street,location_house,location_flat,longitude,latitude,ownership,coowner,uip,miar,divisionid';
-		$values = "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?";
+		$fields = 'name,type,status,location,location_city,location_street,location_house,location_flat,longitude,latitude,ownership,coowner,ownerid,uip,miar,divisionid';
+		$values = "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?";
 	}
 
 
