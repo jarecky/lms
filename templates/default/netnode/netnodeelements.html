@@ -5,11 +5,8 @@
 		<TD style="width: 100%; text-align: left; white-space: nowrap;" class="hand" >
 		<table style="width:100%;"> 
 			<tr>
-			<td style="width:50%;text-align:left;" class="bold" onClick="showOrHide('elementnodes');">
+			<td style="width:100%;text-align:left;" class="bold" onClick="showOrHide('elementnodes');">
 				<IMG SRC="img/node.gif" ALT="">{t a=$netelemlist|@count}Assigned net elements ($a):{/t}</td>
-			<td style="width:50%;text-align:right;">
-				<a href="#" onclick="popup('?m=choosenetelem&id={$objectid}',1,1,-50,-40);autoiframe_setsize('autoiframe',500,290);return false;">
-					<IMG SRC="img/netdev.gif" ALT=""> {trans("Add elements to node")}</a></td>
 		</table>
 		</TD>
 	</TR>
