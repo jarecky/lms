@@ -238,7 +238,7 @@ class LMSNetElemAction extends LMSModuleAction
 		global $NETPORTTYPES, $NETCONNECTORS, $NETTECHNOLOGIES;
 
 		if(isset($_POST['netelem'])) {
-		print_r($_POST);
+			#print_r($_POST);
 			$netelemdata = $_POST['netelem'];
 			if($netelemdata['name'] == '')
 				$error['name'] = trans('Element name is required!');
