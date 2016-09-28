@@ -169,7 +169,7 @@ function addports($devtype){
 		      <select name="netports['.$index.'][netporttype]" id="ptype'.$index.'" onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'.$index.'\')">'.$toptions.'</select>
 		      '.trans("Technology").':<select name="netports['.$index.'][nettechnology]" id="ptech'.$index.'">'.$techoptions.'</select>
 		      '.trans("Connector").':<select name="netports['.$index.'][netconnector]" id="pconn'.$index.'">'.$coptions.'</select>
-		      <IMG src="img/add.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
+		      <IMG src="img/add.gif" alt="" title="'.trans("Clone").'" onclick="clone(this);">&nbsp;
 		      <IMG src="img/delete.gif" alt="" title="'.trans("Delete").'" onclick="remports(this);">
 		      </td></tr>');
 
@@ -237,8 +237,8 @@ error_log('i:'.$id.' med:'.$dev_type);
 		  $list.=trans("Connector").':<select name="netports['.$p['id'].'][netconnector]" id="pconn'.$p['id'].'">';
 
 	$list.=$coptions.'</select>';
-	$list.='<IMG src="img/clone.gif" alt="" title="{trans("Clone")}" onclick="clone(this);">&nbsp;
-			    <IMG src="img/delete.gif" alt="" title="{trans("Delete")}" onclick="remports(this);">
+	$list.='<IMG src="img/clone.gif" alt="" title="'.trans("Clone").'" onclick="clone(this);">&nbsp;
+			    <IMG src="img/delete.gif" alt="" title="'.trans("Delete").'" onclick="remports(this);">
 			  </td>
 		</tr>';
 			
