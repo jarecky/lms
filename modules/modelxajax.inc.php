@@ -165,7 +165,7 @@ function addports($devtype){
 		if($tn=='null')$techoptions.='<option value="null">N/A</option>';
 		else $techoptions.='<option value="'.$tn.'">'.$NETTECHNOLOGIES[$tn]['name'].'</option>';
 	}
-	$res->append('porttable','innerHTML','<tr><td class="nobr" colspan="3">'.trans('Label:').'<input name="netports['.$index.'][label]">
+	$res->append('porttable','innerHTML','<tr><td class="nobr fleft fright" colspan="3">'.trans('Label:').'<input name="netports['.$index.'][label]">
 		      <select name="netports['.$index.'][netporttype]" id="ptype'.$index.'" onchange="xajax_getConnectorOptionsByPortType(this.value, \'conn'.$index.'\')">'.$toptions.'</select>
 		      '.trans("Technology").':<select name="netports['.$index.'][nettechnology]" id="ptech'.$index.'">'.$techoptions.'</select>
 		      '.trans("Connector").':<select name="netports['.$index.'][netconnector]" id="pconn'.$index.'">'.$coptions.'</select>
@@ -227,7 +227,7 @@ error_log('i:'.$id.' med:'.$dev_type);
 	  }
 	
 	  $list='<tr>
-			  <td class="nobr" colspan="3">
+			  <td class="nobr fleft fright" colspan="3">
 			    '.trans("Label:").'<input type=text name="netports['.$p['id'].'][label]" value="'.$p['label'].'">
 			    '.trans("Type:").'<select name="netports['.$p['id'].'][netporttype]" id="ptype'.$p['id'].'" onchange="xajax_updateTechnologyAndConnector(\''.$p['id'].'\', document.getElementById(\'devtype\').value, this.value)">';		    
 	$list.=$toptions;
