@@ -36,11 +36,37 @@ class NetDevInfoHandler {
  * @param mixed $hook_data
  */
 	public function netDevInfoBeforeDisplay(array $hook_data) {
-		global $LMS;
+		global $LMS,$DB, $SMARTY;
 
 		$SMARTY=$hook_data['smarty'];
 		$netdevinfo=$SMARTY->getTemplateVars('netdevinfo');
 		$netdevips=$SMARTY->getTemplateVars('netdevips');
+		if (isset($netdevips[0]['id'])) {
+			$nodeid=$netdevips[0]['id'];
+		} elseif (preg_match('/-cl/i',$netdevinfo['name'])) {
+			$nodeid=$DB->GetOne("SELECT id FROM nodes WHERE netdev=?",array($netdevinfo['id']));
+		}
+		if (isset($nodeid)) {
+			$rrd_dir = ConfigHelper::getConfig('rrdstats.rrd_directory', '/tmp');
+			if (is_file($rrd_dir . "/signals/" . $nodeid . ".rrd"))
+				$hook_data['rrdsignal']=$nodeid;
+			
+			$nodesignals=$DB->GetAll('SELECT * FROM signals WHERE nodeid='.$nodeid.' ORDER BY date DESC LIMIT 0,20');
+			if (is_array($nodesignals)) foreach ($nodesignals as $idx => $row) {
+				$netdev=$LMS->GetNetDev($row['netdev']);
+				$nodesignals[$idx]['ap']=$netdev['name'];
+				list($data,$units)=setunits($row['rxbytes']);
+				$nodesignals[$idx]['rxbytes']=number_format($data,2,',',' ').' '.$units;
+				list($data,$units)=setunits($row['txbytes']);
+				$nodesignals[$idx]['txbytes']=number_format($data,2,',',' ').' '.$units;
+				$nodesignals[$idx]['date']=substr($row['date'],0,16);
+			}
+			$nodeinfo['id']=$nodeid;
+			$nodeinfo['nodesignals']=$nodesignals;
+			$nodeinfo['listdata']=$listdata;
+			$SMARTY->assign('nodeinfo',$nodeinfo);
+		}
+		#$hook_data['smarty']=$SMARTY;
 		if (!preg_match('/mikrotik/i',$netdevinfo['producer'])) {
 			return($hook_data);
 		} else {
@@ -51,7 +77,7 @@ class NetDevInfoHandler {
 				return($hook_data);
 		}
 		if (preg_match('/-cl/i',$netdevinfo['name'])) {
-			return $hook_data;
+			#return $hook_data;
 		} elseif ($mt->wireless()) {
 			#preg_match('/(sxt|rb[3479][13][123])/i',$hook_data['netdevinfo']['model'])
 			$hook_data=self::readMikrotikWireless($mtip,$hook_data);
@@ -61,6 +87,7 @@ class NetDevInfoHandler {
 			$hook_data=self::readMikrotikPOE($mtip,$hook_data); 
 			$SMARTY->assign('type','wired');
 		}
+		#$hook_data['smarty']=$SMARTY;
 		return $hook_data;
 	}
 	private function readMikrotikPOE($mtip,$hook_data) {
@@ -68,12 +95,15 @@ class NetDevInfoHandler {
 		$mt=new Mikrotik($mtip,3);
 		if (is_array($hook_data['netdevconnected'])) foreach ($hook_data['netdevconnected'] AS $id => $netdev) {
 			$ether=$mt->get_ether_stats($netdev['srcport']);
+			$ether[0]['speed']=preg_replace('/mbps/i','000',$ether[0]['speed']);
 			$hook_data['netdevconnected'][$id]['mt']['speed']=$ether[0]['speed'];
 			$hook_data['netdevconnected'][$id]['mt']['full-duplex']=$ether[0]['full-duplex'];
 			$hook_data['netdevconnected'][$id]['mt']['auto-negotiation']=$ether[0]['auto-negotiation'];
+			#echo $netdev['linkspeed'].'->'.($ether[0]['speed']).'<BR>';
+			#echo '<PRE>';print_r($ether);echo '</PRE>';
 			if ($ether[0]['running']=='false') {
 				$hook_data['netdevconnected'][$id]['mt']['status']=0;
-			} elseif ($netdev['linkspeed']==$ether[0]['speed']*1000) {
+			} elseif ($netdev['linkspeed']==$ether[0]['speed']) {
 				$hook_data['netdevconnected'][$id]['mt']['status']=2;
 			} else {
 				$hook_data['netdevconnected'][$id]['mt']['status']=1;

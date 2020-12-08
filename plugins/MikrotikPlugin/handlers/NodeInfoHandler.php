@@ -51,7 +51,10 @@ class NodeInfoHandler {
 			$nodesignals[$idx]['txbytes']=number_format($data,2,',',' ').' '.$units;
 			$nodesignals[$idx]['date']=substr($row['date'],0,16);
 		}
-
+		$rrd_dir = ConfigHelper::getConfig('rrdstats.rrd_directory', '/tmp');
+		if (is_file($rrd_dir . "/signals/" . $nodeid . ".rrd"))
+			$hook_data['rrdsignal']=$nodeid;
+		
 		$hook_data['nodeinfo']['nodesignals']=$nodesignals;
 		$hook_data['nodeinfo']['listdata']=$listdata;
 		return $hook_data;

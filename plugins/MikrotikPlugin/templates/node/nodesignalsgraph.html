@@ -1,0 +1,19 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+{$xajax}
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox">
+	<TBODY><TR><TD class="text-center">
+	<a href="?m=nodeinfo&amp;id={$id}">
+		<img src="?m=mikrotiksignalimage&id={$id}&period=7d" alt="{trans("signal charts")}"><BR><BR>
+		<img src="?m=mikrotiksignalimage&id={$id}&period=60d" alt="{trans("signal charts")}"><BR><BR>
+		<img src="?m=mikrotiksignalimage&id={$id}&period=730d" alt="{trans("signal charts")}"><BR><BR>
+		<img src="?m=mikrotiksignalimage&id={$id}&period=1800d" alt="{trans("signal charts")}"><BR><BR>
+	</a>
+	</TD></TR></TBODY>
+</TABLE>
+{/block}
+
+

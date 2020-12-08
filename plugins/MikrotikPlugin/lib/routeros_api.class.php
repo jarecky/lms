@@ -107,6 +107,7 @@ class RouterosAPI
                         if ($MATCHES[0][0] == 'ret' && strlen($MATCHES[0][1]) == 32) {
                             $this->write('/login', false);
                             $this->write('=name=' . $login, false);
+                            $this->write('=password=' . $password, false);
                             $this->write('=response=00' . md5(chr(0) . $password . pack('H*', $MATCHES[0][1])));
                             $RESPONSE = $this->read(false);
                             if ($RESPONSE[0] == '!done') {

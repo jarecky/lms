@@ -35,6 +35,15 @@
 	</TR>
 	{/section}
 	</TBODY>
+        <TFOOT>
+        {if $pagination->getTotal() != 0}
+        <TR>
+                <TD class="lms-ui-pagination" colspan="11">
+                        {include file="pagination.html"}
+                </TD>
+        </TR>
+        {/if}
+        </TFOOT>
 </TABLE>
 {/block}
 

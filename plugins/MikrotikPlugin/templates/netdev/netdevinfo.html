@@ -1,8 +1,9 @@
-{extends file="netdev/netdevinfo.html"}
-{block name=netdevconnbox}
-	{include file="netdev/netdevconnbox1.html"}
+{block name=netdevconnbox prepend}
+	{if $rrdsignal}
+        {include file="node/nodesignalsbox.html"}
+	{/if}
 {/block}
 {block name=netdevnodes}
-	{include file="netdev/netdevnodes1.html"}
+	{include file="netdev/netdevnodes.html"}
 {/block}
 

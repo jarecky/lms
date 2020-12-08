@@ -32,7 +32,7 @@ class Mikrotik {
 		if ($interface=='all') $interface='wlan1';
 		self::$mt->connect(self::$ip,self::$login,self::$password);
 		if (!self::$mt->connected) {
-			echo "Not connected to ".self::$ip."\n";
+			#echo "Not connected to ".self::$ip."\n";
 			return('');
 		}
 		$iface=self::$mt->comm("/interface/wireless/print",array('?name'=>$interface));
@@ -46,7 +46,7 @@ class Mikrotik {
 		#echo "GetRadiosectorConnected:$interface\n";
 		self::$mt->connect(self::$ip,self::$login,self::$password);
 		if (!self::$mt->connected) {
-			echo "Not connected to ".self::$ip."\n";
+			#echo "Not connected to ".self::$ip."\n";
 			return(array());
 		}
 		if ($interface<>'all') {
