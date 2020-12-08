@@ -64,7 +64,7 @@ lms-signals.php
 
 -C, --config-file=/etc/lms/lms.ini      alternate config file (default: /etc/lms/lms.ini);
 -h, --help                      print this help and exit;
--t, --test			test only - don't update database
+-t, --test			test only - dont update database
 -d, --debug			print debugging information
 -v, --version                   print version info and exit;
 -q, --quiet                     suppress any output, except errors
